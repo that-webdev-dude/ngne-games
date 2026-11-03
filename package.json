@@ -7,13 +7,16 @@
         "games/*"
     ],
     "scripts": {
-        "format": "prettier --write package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\"",
-        "format:check": "prettier --check package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\"",
+        "format": "prettier --write package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling",
+        "format:check": "prettier --check package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling",
         "typecheck": "npm run typecheck --workspaces",
         "test:games": "npm run test --workspaces",
-        "test": "npm run test:games",
+        "test:tooling": "node --test tooling/tests/*.test.mjs",
+        "test": "npm run test:tooling && npm run test:games",
         "build:games": "npm run build --workspaces",
-        "build": "npm run build:games"
+        "build:site": "node tooling/build-site.mjs",
+        "build": "npm run build:games && npm run build:site",
+        "preview": "vite preview --host 127.0.0.1 --outDir dist"
     },
     "devDependencies": {
         "@types/node": "24.19.1",

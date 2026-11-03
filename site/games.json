@@ -1,0 +1,11 @@
+[
+    {
+        "slug": "starfall",
+        "directory": "games/starfall",
+        "title": "Starfall",
+        "description": "Fight through three sectors in a full-window arcade shoot-em-up. Dodge enemy fire, face sector bosses, and use Nova to clear a path.",
+        "requirements": "Desktop browser with WebGPU support.",
+        "screenshot": "games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png",
+        "screenshotAlt": "Starfall in Midnight Citadel: the player faces the Starfall Engine amid enemy projectiles, with the score and hull visible."
+    }
+]
