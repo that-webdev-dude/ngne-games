@@ -36,7 +36,7 @@ Install dependencies once from the collection root. Run commands in the game-loc
 
 ## GitHub Pages
 
-The intended collection path is `/ngne-games/starfall/`. Collection deployment is not configured yet. The existing [standalone Starfall site](https://that-webdev-dude.github.io/ngne-starfall/) remains independently maintained.
+This collection is Starfall's sole planned deployment home, at `/ngne-games/starfall/`. Collection deployment is not configured yet. Source and playable-game links should point to this repository and its collection deployment.
 
 ## Controls
 

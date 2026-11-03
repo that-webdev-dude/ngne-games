@@ -4,7 +4,7 @@ A collection of small games built with NGNE. Each game owns its source, assets, 
 
 ## Games
 
-- [Starfall](games/starfall/README.md): a full-window arcade shoot-em-up with three sectors. Requires a WebGPU-capable desktop browser. Its planned play location is `/ngne-games/starfall/`; deployment and the gallery are not available yet.
+- [Starfall](games/starfall/README.md): a full-window arcade shoot-em-up with three sectors. Requires a WebGPU-capable desktop browser. Its sole planned deployment is [Starfall in NGNE Games](https://that-webdev-dude.github.io/ngne-games/starfall/); deployment and the gallery are not available yet.
 
 ## Requirements
 
