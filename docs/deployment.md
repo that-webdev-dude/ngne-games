@@ -1,10 +1,10 @@
 # Deployment
 
-The collection builds one static artifact in root `dist/`. Pages publication is prepared in `.github/workflows/pages.yml`, is manual-only, and accepts only `main`. No public deployment has been verified yet.
+The collection builds one static artifact in root `dist/`. Pages publication uses `.github/workflows/pages.yml`, is manual-only, and accepts only `main`. The verified deployment is commit [`3d9da22`](https://github.com/that-webdev-dude/ngne-games/commit/3d9da22d4367c08ace397c246310324f982b6fdf), published by [this successful run](https://github.com/that-webdev-dude/ngne-games/actions/runs/41719715671).
 
 ## Destinations
 
-| Item                | Planned URL                                                                                                                             |
+| Item                | URL                                                                                                                                     |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | Gallery             | https://that-webdev-dude.github.io/ngne-games/                                                                                          |
 | Starfall play       | https://that-webdev-dude.github.io/ngne-games/starfall/                                                                                 |
@@ -12,7 +12,7 @@ The collection builds one static artifact in root `dist/`. Pages publication is 
 | Starfall source     | https://github.com/that-webdev-dude/ngne-games/tree/main/games/starfall                                                                 |
 | Starfall screenshot | https://raw.githubusercontent.com/that-webdev-dude/ngne-games/main/games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png |
 
-This collection is Starfall's sole future deployment home. These links become accepted public targets only after the selected revision is published and checked. Keep operational play/source/screenshot links on these collection destinations; retain genuine historical attribution in provenance files.
+This collection manages Starfall's deployment. These gallery, game, source, and screenshot targets have been verified. Keep operational play/source/screenshot links on these collection destinations; retain genuine historical attribution in provenance files.
 
 ## Prerequisites and approvals
 
@@ -54,7 +54,7 @@ dist/starfall/LICENSE-NGNE.txt
 
 Check a copy of this artifact served below `/ngne-games/`, including `/ngne-games/starfall/`, emitted JS/CSS/images/audio, and the license. Relative gallery/game links must work with the trailing slash. Do not upload only `games/starfall/dist/` or a repository root. Fixtures, dependencies, source maps, archives, and local evidence must stay out of the artifact.
 
-CI runs for pull requests into `main` and pushes to `main` or `feature/**`. It uploads scoped check logs and any campaign JSON on failure with seven-day retention. Remote CI remains pending until an authorized push runs it.
+CI runs for pull requests into `main` and pushes to `main` or `feature/**`. It uploads scoped check logs and any campaign JSON on failure with seven-day retention. Review CI results in the repository's [Actions history](https://github.com/that-webdev-dude/ngne-games/actions/workflows/ci.yml).
 
 ## Manual publication
 

@@ -12,7 +12,7 @@ A full-window arcade shoot-em-up with three sectors, sector bosses, and a rechar
 
 [Gameplay and controls](games/starfall/README.md) · [Source](games/starfall/) · [Screenshot provenance](games/starfall/docs/screenshots/README.md)
 
-The planned [gallery](https://that-webdev-dude.github.io/ngne-games/) and [Starfall play URL](https://that-webdev-dude.github.io/ngne-games/starfall/) are **not published or verified yet**. This collection is Starfall's sole planned deployment home. Build and preview locally with the commands below.
+[Open the gallery](https://that-webdev-dude.github.io/ngne-games/) or [play Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/). This collection is Starfall's deployment home. Build and preview locally with the commands below.
 
 ## Requirements
 
@@ -56,7 +56,7 @@ npm run build
 npm run preview -- --port 4173 --strictPort
 ```
 
-Open the printed local URL for the gallery, or `/starfall/` on that origin for the game. Production paths are planned as `/ngne-games/` and `/ngne-games/starfall/`; local preview at `/` alone does not verify a repository prefix.
+Open the printed local URL for the gallery, or `/starfall/` on that origin for the game. Production paths are `/ngne-games/` and `/ngne-games/starfall/`; local preview at `/` alone does not verify a repository prefix.
 
 `site/games.json` owns catalog metadata. Play and source links are derived from each game's slug and workspace directory. Build every game first; `npm run build:site` then assembles existing game output without running game builds. Missing inputs, unsafe paths, symlinks/junctions, and non-production files in game builds fail assembly. The gallery has no game runtime and links to each full-window game.
 
@@ -77,7 +77,7 @@ Each game owns its runtime dependencies and can pin its own published NGNE versi
 
 CI checks pull requests targeting `main` and pushes to `main` or `feature/**`. It installs with `npm ci`, checks formatting, runs tooling/game tests, builds the complete collection, and asserts the three Starfall campaign clears. Failed runs upload scoped logs and any campaign report for seven days.
 
-Pages publication is manual-only and guarded to `main`; pushing or merging does not deploy. See [Deployment](docs/deployment.md) for prerequisites, separate approvals, verification, and rollback. Remote CI and publication remain unverified until those workflows actually run.
+Pages publication is manual-only and guarded to `main`; pushing or merging does not deploy. See [Deployment](docs/deployment.md) for prerequisites, separate approvals, verification, and rollback. Check workflow results in [GitHub Actions](https://github.com/that-webdev-dude/ngne-games/actions).
 
 See [Adding a game](docs/adding-a-game.md) for the workspace, catalog, storage, legal, and validation contract.
 

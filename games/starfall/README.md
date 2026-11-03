@@ -1,6 +1,6 @@
 # Starfall
 
-**Planned play location: [Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/)** — not deployed from this repository. Requires a WebGPU-capable desktop browser.
+**[Play Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/)**. Requires a WebGPU-capable desktop browser.
 
 A standalone full-window arcade shoot-em-up built with **@ngne/core 0.3.0** and TypeScript. Three authored sectors lead from Orbital Breakwater through Furnace Belt to Midnight Citadel, with distinct bosses, destructible machinery, bullet patterns, mines and charged beams.
 
@@ -36,7 +36,7 @@ Install dependencies once from the collection root. Run commands in the game-loc
 
 ## GitHub Pages
 
-This collection is Starfall's sole planned deployment home, at `/ngne-games/starfall/`. Collection deployment is not configured yet. Source and playable-game links should point to this repository and its collection deployment.
+Starfall is deployed by this collection at `/ngne-games/starfall/`. Publication uses the collection's manual Pages workflow on `main`. Source and playable-game links should point to this repository and its collection deployment.
 
 ## Controls
 
