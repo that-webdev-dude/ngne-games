@@ -9,3 +9,9 @@ __pycache__/
 *.py[cod]
 .DS_Store
 Thumbs.db
+
+# Game authoring archives and review output
+games/*/art/rev01/
+games/*/artifacts/
+games/*/evidence/
+games/*/docs/rev01-integration/

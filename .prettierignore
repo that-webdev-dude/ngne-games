@@ -6,3 +6,7 @@ dist/
 .vite/
 package-lock.json
 **/package-lock.json
+games/*/art/rev01/
+games/*/artifacts/
+games/*/evidence/
+games/*/docs/rev01-integration/

@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Preserve Starfall file bytes across checkouts.
+games/starfall/** -text

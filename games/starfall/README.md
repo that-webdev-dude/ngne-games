@@ -1,0 +1,82 @@
+# Starfall
+
+**Planned play location: [Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/)** — not deployed from this repository. Requires a WebGPU-capable desktop browser.
+
+A standalone full-window arcade shoot-em-up built with **@ngne/core 0.3.0** and TypeScript. Three authored sectors lead from Orbital Breakwater through Furnace Belt to Midnight Citadel, with distinct bosses, destructible machinery, bullet patterns, mines and charged beams.
+
+The logical view is **640×360**, enlarged by an integer number of device pixels with DPR-aware CSS sizing. Spare space is letterboxed; windows below 640×360 device pixels clip the centred 1× canvas.
+
+## Gameplay
+
+Real gameplay captured in Chrome/WebGPU, with the campaign bot using normal movement, fire and Nova controls. Click an image to view the original PNG. [Capture notes](docs/screenshots/README.md).
+
+[![Starfall Engine firing violet rings and projectile curtains in Midnight Citadel](docs/screenshots/midnight-citadel-starfall-engine.png)](docs/screenshots/midnight-citadel-starfall-engine.png)
+
+**Starfall Engine · Midnight Citadel**
+
+| Orbital Breakwater                                                                                                                                                                    | Gatebreaker                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [<img src="docs/screenshots/orbital-breakwater-combat.png" width="320" alt="Enemy formations and crossfire over Orbital Breakwater">](docs/screenshots/orbital-breakwater-combat.png) | [<img src="docs/screenshots/orbital-breakwater-gatebreaker.png" width="320" alt="Fighting Gatebreaker through rings of violet projectiles">](docs/screenshots/orbital-breakwater-gatebreaker.png) |
+| **Kiln Serpent · Furnace Belt**                                                                                                                                                       | **Nova · Midnight Citadel**                                                                                                                                                                       |
+| [<img src="docs/screenshots/furnace-belt-kiln-serpent.png" width="320" alt="The segmented Kiln Serpent firing across Furnace Belt">](docs/screenshots/furnace-belt-kiln-serpent.png)  | [<img src="docs/screenshots/midnight-citadel-nova.png" width="320" alt="A Nova blast destroying enemy formations in Midnight Citadel">](docs/screenshots/midnight-citadel-nova.png)               |
+
+## Run
+
+Use Node.js 24 or newer and a WebGPU-capable desktop browser. Serve on localhost or HTTPS; opening `index.html` directly from disk does not work. Run the following commands from the collection's repository root:
+
+```powershell
+npm.cmd ci
+npm.cmd run build --workspace=starfall
+npm.cmd run preview --workspace=starfall -- --port 4173 --strictPort
+```
+
+Open **http://127.0.0.1:4173/**. The built game is in `games/starfall/dist/`; it uses relative asset URLs and can be served from a subdirectory. For development, use `npm.cmd run dev --workspace=starfall -- --port 5173 --strictPort`.
+
+Install dependencies once from the collection root. Run commands in the game-local documentation from `games/starfall/`; the root commands here use npm's workspace context.
+
+## GitHub Pages
+
+The intended collection path is `/ngne-games/starfall/`. Collection deployment is not configured yet. The existing [standalone Starfall site](https://that-webdev-dude.github.io/ngne-starfall/) remains independently maintained.
+
+## Controls
+
+| Action                | Keyboard / mouse         | Standard gamepad mapping |
+| --------------------- | ------------------------ | ------------------------ |
+| Move                  | WASD or arrows           | Left stick               |
+| Shoot straight upward | Hold Space or left mouse | Hold X                   |
+| Nova                  | B                        | A                        |
+| Pause                 | Escape or P              | Start                    |
+| Fullscreen            | F                        | —                        |
+| Menu navigation       | Arrows, Enter or click   | D-pad, A                 |
+
+Holding both fire inputs keeps one firing cadence. Nova clears hostile projectiles and beams, damages enemies, and recharges in 15 seconds. The bright center dot marks the player's small hitbox. Movement accelerates and coasts on release; the ship banks with horizontal input.
+
+Each sector begins with full hull and Nova. Retry restores that sector's entry score, preventing repeated attempts from accumulating score. Clear all three sectors to finish the campaign. Best score and settings are stored locally in the browser. Music, effects, mute and reduced motion are available in Settings. Touch controls are not included; physical gamepad support still needs device testing.
+
+## Source layout
+
+`src/main.ts` wires the browser shell and campaign. `components/` contains ECS schemas; `entities/` composes archetypes; `systems/` implements simulation; `render/` contains background, enemy, player/effect and HUD passes; `scenes/` composes gameplay and menus. `config/` owns stage/balance data, `world/` owns session state and geometry, `ui/` provides native font/sprite/menu helpers, and `services/` owns assets, campaign preparation, audio, display and persistence. Runtime artwork lives in `src/assets/sprites/` and `src/assets/backgrounds/`; frame/socket metadata and specified gameplay values come from `src/assets/spec.json`. `src/assets/audio/` retains synthesized audio and provenance.
+
+## Checks
+
+```powershell
+npm.cmd run test --workspace=starfall
+npm.cmd run build --workspace=starfall
+npm.cmd run campaign --workspace=starfall -- ../../.test-output/campaign-bot.json 17 41 83
+```
+
+The command above writes the bot evidence to the root's gitignored `.test-output/campaign-bot.json`; without an output argument, it defaults to `.test-output/campaign-bot.json` inside the game workspace. It uses normal movement/fire/Nova inputs and exact read-only entity observations, demonstrating reachability rather than human difficulty or fun.
+
+Development-only routes (use the workspace development command above, then open localhost):
+
+- `tests/browser-campaign.html`: rendered bot using production campaign composition.
+- `tests/browser-integration.html?stage=1&manual=1&calm=0`: ordinary production stage start; stages 1–3, motion off/on through `calm=0|1`, normal pause/settings/controls/results/retry routes.
+- `tests/browser-integration.html?stage=1&scenario=boss&calm=0&capture=1`: frozen presentation preset using real renderers/assets. Presets seed clocks/entities/HP and do not establish reachability. H shows/hides diagnostics; O saves current native 640×360 canvas pixels as PNG.
+
+Fixture code is excluded from the production Vite entry/build. See [Testing](docs/testing.md) for route options, manual checks, current integration decisions and known limitations.
+
+## Asset provenance
+
+The rev01 pixel-art pack was generated from palette-index grids and background generators. Its exported PNGs and specification are maintained under `src/assets/`; builds and tests need no separate authoring archive. Keep the original generators, palette, review and art tools in an archive if future artwork regeneration is needed. Music/effects are original deterministic synthesis with no external samples; the generator and WAV provenance remain under `src/assets/audio/`.
+
+NGNE is used through the pinned published package's public APIs. Its license is included with the dependency. No engine source modifications or publishing are part of this delivery.
