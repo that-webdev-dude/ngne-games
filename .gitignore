@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.test-output/
+.npm-cache/
+.cache/
+.vite/
+*.log
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db

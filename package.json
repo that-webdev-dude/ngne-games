@@ -1,0 +1,22 @@
+{
+    "name": "ngne-games",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "workspaces": [
+        "games/*"
+    ],
+    "scripts": {
+        "format": "prettier --write package.json .prettierrc.json README.md",
+        "format:check": "prettier --check package.json .prettierrc.json README.md"
+    },
+    "devDependencies": {
+        "@types/node": "24.19.1",
+        "prettier": "3.9.10",
+        "typescript": "5.9.3",
+        "vite": "7.3.1"
+    },
+    "engines": {
+        "node": ">=24"
+    }
+}

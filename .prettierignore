@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.test-output/
+.npm-cache/
+.cache/
+.vite/
+package-lock.json
+**/package-lock.json
