@@ -7,12 +7,13 @@
         "games/*"
     ],
     "scripts": {
-        "format": "prettier --write package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling",
-        "format:check": "prettier --check package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling",
+        "format": "prettier --write package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling docs .github/workflows",
+        "format:check": "prettier --check package.json .prettierrc.json README.md \"games/*/package.json\" \"games/*/README.md\" site tooling docs .github/workflows",
         "typecheck": "npm run typecheck --workspaces",
         "test:games": "npm run test --workspaces",
         "test:tooling": "node --test tooling/tests/*.test.mjs",
         "test": "npm run test:tooling && npm run test:games",
+        "check:campaign": "npm run campaign --workspace=starfall -- ../../.test-output/campaign-bot.json 17 41 83 && node tooling/check-starfall-campaign.mjs .test-output/campaign-bot.json",
         "build:games": "npm run build --workspaces",
         "build:site": "node tooling/build-site.mjs",
         "build": "npm run build:games && npm run build:site",
