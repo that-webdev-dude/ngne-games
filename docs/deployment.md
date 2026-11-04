@@ -54,7 +54,7 @@ dist/starfall/LICENSE-NGNE.txt
 
 Check a copy of this artifact served below `/ngne-games/`, including `/ngne-games/starfall/`, emitted JS/CSS/images/audio, and the license. Relative gallery/game links must work with the trailing slash. Do not upload only `games/starfall/dist/` or a repository root. Fixtures, dependencies, source maps, archives, and local evidence must stay out of the artifact.
 
-CI runs for pull requests into `main` and pushes to `main` or `feature/**`. It uploads scoped check logs and any campaign JSON on failure with seven-day retention. Review CI results in the repository's [Actions history](https://github.com/that-webdev-dude/ngne-games/actions/workflows/ci.yml).
+CI runs for pull requests into `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It uploads scoped check logs and any campaign JSON on failure with seven-day retention. Review CI results in the repository's [Actions history](https://github.com/that-webdev-dude/ngne-games/actions/workflows/ci.yml).
 
 ## Manual publication
 

@@ -75,7 +75,7 @@ Each game owns its runtime dependencies and can pin its own published NGNE versi
 
 ## CI and deployment
 
-CI checks pull requests targeting `main` and pushes to `main` or `feature/**`. It installs with `npm ci`, checks formatting, runs tooling/game tests, builds the complete collection, and asserts the three Starfall campaign clears. Failed runs upload scoped logs and any campaign report for seven days.
+CI checks pull requests targeting `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It installs with `npm ci`, checks formatting, runs tooling/game tests, builds the complete collection, and asserts the three Starfall campaign clears. Failed runs upload scoped logs and any campaign report for seven days.
 
 Pages publication is manual-only and guarded to `main`; pushing or merging does not deploy. See [Deployment](docs/deployment.md) for prerequisites, separate approvals, verification, and rollback. Check workflow results in [GitHub Actions](https://github.com/that-webdev-dude/ngne-games/actions).
 
