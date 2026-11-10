@@ -452,7 +452,12 @@ test("HUD geometry: opaque bands, plates at the layout columns, text at its x/ro
             `0${stage.index + 1} / ${stage.name}`,
         );
         assert.equal(readText(drawn, 160, 344, 6), "PLASMA");
-        assert.equal(readText(drawn, 368, 344, 37), CONTROLS_HINT);
+        const { controlsHint, timerPlate } = PRESENTATION.layout.bottom;
+        assert.equal(
+            readText(drawn, controlsHint.x, 344, CONTROLS_HINT.length),
+            "FIRE SPACE/MOUSE   NOVA B   PAUSE ESC",
+        );
+        assert.ok(controlsHint.x + textWidth(CONTROLS_HINT) <= timerPlate[0]);
         assert.equal(
             readText(drawn, 631 - textWidth("1:23") + 1, 344, 4),
             "1:23",
@@ -1237,7 +1242,19 @@ test("settings: fixed labels with optionMeter / optionToggle controls; SOUND = !
             back.map((item) => [item.top, item.bottom]),
             [[itemsTop + 92, itemsTop + 106]],
         );
-        CONTROLS_LINES.forEach((line, i) => {
+        const expectedLines = [
+            "MOVE WITH MOMENTUM  WASD / ARROWS",
+            "MOVE  GAMEPAD LEFT STICK",
+            "FIRE UP  HOLD LEFT MOUSE / SPACE",
+            "FIRE UP  HOLD PAD X",
+            "NOVA BLAST  B / PAD A",
+            "PAUSE  ESC / P / PAD START",
+            "FULLSCREEN  F",
+            "YOUR HITBOX  BRIGHT CORE DOT",
+        ];
+        const { lineX } = PRESENTATION.screens.controls;
+        expectedLines.forEach((line, i) => {
+            assert.ok(lineX + textWidth(line) <= PRESENTATION.screens.panel.x[1] + 1);
             assert.equal(readText(drawn, 224, itemsTop + 11 * i, line.length), line);
             assert.equal(
                 colourAt(drawn, 224, itemsTop + 11 * i),
@@ -1248,6 +1265,12 @@ test("settings: fixed labels with optionMeter / optionToggle controls; SOUND = !
             readText(drawn, centredX("FLIGHT CONTROLS", 320), top + 10, 15),
             "FLIGHT CONTROLS",
         );
+        const footer = PRESENTATION.screens.footer;
+        assert.equal(
+            readText(drawn, centredX(footer.text, footer.centreX), footer.row, footer.text.length),
+            "SELECT  ARROWS   CONFIRM  ENTER",
+        );
+        assert.ok(footer.row + FONT.cell[1] <= PRESENTATION.bands.bottom.rows[0]);
         menu.click(ITEM.left, back[0].top);
         assert.equal(
             drawnItems(menu.render()).length,

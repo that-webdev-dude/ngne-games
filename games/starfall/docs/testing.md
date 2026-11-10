@@ -64,7 +64,7 @@ Use movement, held primary fire, Nova, damage/repair, pause, pointer navigation,
 | 2: Furnace Belt       | Mines, pickups and beam warnings remain legible; Kiln links/rotation/damaged head read consistently; destroyed segment husks neither collide nor fire.     |
 | 3: Midnight Citadel   | Engine phases, attached emitters, disabled machinery and defeat remain distinct during dense patterns; final result and replay work.                       |
 
-Across all stages, inspect crisp pixels, letterboxing, text/card/result readability, menu hit areas and low-hull cues. Threats, lanes and the player core must remain readable over HUD/Nova/explosions. Reduced motion should provide understandable static cues without blinking. Check the dimmed HUD/footer overlap in menus.
+Across all stages, inspect crisp pixels, letterboxing, text/card/result readability, menu hit areas and low-hull cues. Threats, lanes and the player core must remain readable over HUD/Nova/explosions. Reduced motion should provide understandable static cues without blinking. Check that the menu footer sits above the dimmed HUD band.
 
 Record stage, scale, DPR, reduced-motion setting, device/browser, gamepad availability and pass/fail details. Physical scaling, gamepad behavior, audible balance, accessibility and human play feel still need owner/device acceptance; automated checks and screenshots do not establish those results.
 

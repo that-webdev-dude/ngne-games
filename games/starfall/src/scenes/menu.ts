@@ -39,14 +39,14 @@ const centred = (frame: Frame, value: string, top: number, color: number) =>
     text(frame, value, centredX(value, CENTRE_X), top, color);
 
 export const CONTROLS_LINES = [
-    "WASD / ARROWS  MOVE WITH MOMENTUM",
-    "HOLD LEFT MOUSE / SPACE  FIRE UP",
-    "GAMEPAD LEFT STICK  MOVE",
-    "HOLD PAD X  FIRE STRAIGHT UP",
-    "B / PAD A  NOVA BLAST",
-    "ESC / P / START  PAUSE",
-    "F  FULLSCREEN",
-    "BRIGHT CORE DOT  YOUR HITBOX",
+    "MOVE WITH MOMENTUM  WASD / ARROWS",
+    "MOVE  GAMEPAD LEFT STICK",
+    "FIRE UP  HOLD LEFT MOUSE / SPACE",
+    "FIRE UP  HOLD PAD X",
+    "NOVA BLAST  B / PAD A",
+    "PAUSE  ESC / P / PAD START",
+    "FULLSCREEN  F",
+    "YOUR HITBOX  BRIGHT CORE DOT",
 ];
 
 /** One menuItem row: 3-slice plate (focused caps when selected), centred text or a settings label + control. */

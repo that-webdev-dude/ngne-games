@@ -70,8 +70,8 @@ for (const [key, fractions] of Object.entries(BOSS_PHASE_FRACTIONS)) {
         throw new Error(`Boss mark thresholds disagree with gameplay: ${key}`);
 }
 
-/** The bottom-band hint (spec bottom.controlsHint: 37 chars, 221 px, no plate). */
-export const CONTROLS_HINT = "SPACE/MOUSE FIRE   B NOVA   ESC PAUSE";
+/** Compact keyboard and mouse hint for the bottom HUD band. */
+export const CONTROLS_HINT = PRESENTATION.layout.bottom.controlsHint.text;
 /** Timer right edge (spec bottom.timer "right edge 631"). */
 const TIMER_RIGHT = 631;
 /** Banner plate margin each side of the text (spec banner width = textWidth + 22). */

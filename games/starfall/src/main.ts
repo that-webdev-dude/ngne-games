@@ -56,7 +56,7 @@ const app = new BrowserGame<Progress, ProgressCommand>({
         canvas.dataset.screen = session.screen;
         canvas.setAttribute(
             "aria-label",
-            `Starfall. ${session.screen}. ${run && session.screen !== "title" ? `Stage ${run.stageIndex + 1}: ${STAGES[run.stageIndex].name}. Time ${run.seconds.toFixed(1)}. Hull ${run.hull}. Score ${run.score}. Kills ${run.kills}. Phase ${run.phase}. Boss ${Math.round(run.bossHealth)}. Nova ${Math.round(run.nova * 100)} percent. Position ${run.x.toFixed(1)}, ${run.y.toFixed(1)}.` : "Enter or click Launch Campaign to begin."} FPS ${Math.round(stats.fps)}. WASD, arrows or gamepad left stick move. Hold left mouse, Space or gamepad X to fire straight up. B or gamepad A Nova. Escape pause. F fullscreen.`,
+            `Starfall. ${session.screen}. ${run && session.screen !== "title" ? `Stage ${run.stageIndex + 1}: ${STAGES[run.stageIndex].name}. Time ${run.seconds.toFixed(1)}. Hull ${run.hull}. Score ${run.score}. Kills ${run.kills}. Phase ${run.phase}. Boss ${Math.round(run.bossHealth)}. Nova ${Math.round(run.nova * 100)} percent. Position ${run.x.toFixed(1)}, ${run.y.toFixed(1)}.` : "Launch Campaign with Enter, a click or gamepad A."} FPS ${Math.round(stats.fps)}. Move with WASD, arrows or the gamepad left stick. Fire straight up by holding the left mouse button, Space or gamepad X. Use Nova with B or gamepad A. Pause with Escape, P or gamepad Start. Toggle fullscreen with F.`,
         );
     },
 });

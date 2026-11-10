@@ -3250,7 +3250,7 @@
           264
         ],
         "controlsHint": {
-          "text": "SPACE/MOUSE FIRE   B NOVA   ESC PAUSE (37 chars, 221 px)",
+          "text": "FIRE SPACE/MOUSE   NOVA B   PAUSE ESC",
           "x": 368,
           "color": "label",
           "plate": "none"
@@ -3390,8 +3390,8 @@
         "note": "the clear banner (combat-collision.ts, NAME SECURED / STARFALL / VICTORY) overlaps the plate meaning; result stats colours map to textColors (score value, others label), all lines centred"
       },
       "footer": {
-        "text": "ARROWS SELECT   ENTER CONFIRM",
-        "row": 344,
+        "text": "SELECT  ARROWS   CONFIRM  ENTER",
+        "row": 326,
         "centreX": 320,
         "color": "label (ui[0]); the dim overlay counts as a band, so the footer needs no plate (panel[3] was too weak)"
       },
