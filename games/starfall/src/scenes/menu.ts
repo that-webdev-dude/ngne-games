@@ -3,7 +3,7 @@ import { playbackFrame, poseSockets } from "../render/player-fx-model.ts";
 import { rev01ScreenImages } from "../services/rev01-claims.ts";
 import { rev01Image, rev01Sprite } from "../services/rev01-assets.ts";
 import { saveSettings } from "../services/storage.ts";
-import { centredX, drawText } from "../ui/bitmap-text.ts";
+import { centredX, drawText, textWidth } from "../ui/bitmap-text.ts";
 import {
     CENTRE_X,
     ITEM,
@@ -38,16 +38,15 @@ const text = (frame: Frame, value: string, left: number, top: number, color: num
 const centred = (frame: Frame, value: string, top: number, color: number) =>
     text(frame, value, centredX(value, CENTRE_X), top, color);
 
-export const CONTROLS_LINES = [
-    "MOVE WITH MOMENTUM  WASD / ARROWS",
-    "MOVE  GAMEPAD LEFT STICK",
-    "FIRE UP  HOLD LEFT MOUSE / SPACE",
-    "FIRE UP  HOLD PAD X",
-    "NOVA BLAST  B / PAD A",
-    "PAUSE  ESC / P / PAD START",
-    "FULLSCREEN  F",
-    "YOUR HITBOX  BRIGHT CORE DOT",
-];
+export const CONTROL_BINDINGS = [
+    ["MOVE", "WASD / ARROWS"],
+    ["MOVE", "GAMEPAD LEFT STICK"],
+    ["FIRE UP", "LEFT MOUSE / SPACE"],
+    ["FIRE UP", "PAD X"],
+    ["NOVA BLAST", "B / PAD A"],
+    ["PAUSE", "ESC / P / PAD START"],
+    ["FULLSCREEN", "F"],
+] as const;
 
 /** One menuItem row: 3-slice plate (focused caps when selected), centred text or a settings label + control. */
 function drawItem(
@@ -355,16 +354,21 @@ export function menuScene(
                               : screens.pause.title,
                     );
                 }
-                if (page === "controls")
-                    CONTROLS_LINES.forEach((line, i) =>
+                if (page === "controls") {
+                    const { actionX, bindingRight } = PRESENTATION.screens.controls;
+                    const top = current.linesTop!;
+                    CONTROL_BINDINGS.forEach(([action, binding], i) => {
+                        const row = top + i * LINE_STEP;
+                        text(frame, action, actionX, row, TEXT_COLOR.label);
                         text(
                             frame,
-                            line,
-                            PRESENTATION.screens.controls.lineX,
-                            current.linesTop! + i * LINE_STEP,
-                            i === 7 ? TEXT_COLOR.heading : TEXT_COLOR.label,
-                        ),
-                    );
+                            binding,
+                            bindingRight + 1 - textWidth(binding),
+                            row,
+                            TEXT_COLOR.label,
+                        );
+                    });
+                }
                 current.items.forEach((rect, i) => {
                     const value = pending && i === selection ? "PREPARING FLIGHT..." : list[i];
                     drawItem(

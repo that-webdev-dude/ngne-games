@@ -80,7 +80,7 @@ export interface Presentation {
         };
         pause: { title: string; items: string[] };
         settings: { title: string };
-        controls: { title: string; lines: number; lineStep: number; lineX: number };
+        controls: { title: string; lines: number; lineStep: number; actionX: number; bindingRight: number };
         result: { plate: { x: number; y: number } };
         footer: { text: string; row: number; centreX: number };
     };

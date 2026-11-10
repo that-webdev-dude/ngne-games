@@ -3369,11 +3369,12 @@
         "title": "FLIGHT CONTROLS",
         "lines": 8,
         "lineStep": 11,
-        "lineX": 224,
+        "actionX": 224,
+        "bindingRight": 416,
         "then": "BACK item",
         "linesTop": "itemsTop",
         "backItemTop": "itemsTop + 11 * lines + 4",
-        "note": "gate 5 as built: lineX matches the settings label column; +4 rows before BACK"
+        "note": "actions are left-aligned at actionX and bindings end at bindingRight; the last line is blank"
       },
       "result": {
         "plate": {

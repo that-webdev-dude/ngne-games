@@ -20,7 +20,7 @@ import {
     createStageCard,
     drawHud,
 } from "../src/render/hud.ts";
-import { CONTROLS_LINES, menuScene } from "../src/scenes/menu.ts";
+import { CONTROL_BINDINGS, menuScene } from "../src/scenes/menu.ts";
 import { FONT_MASK_TEXTURE, fontImage } from "../src/services/font-assets.ts";
 import {
     REV01_SPEC,
@@ -349,7 +349,7 @@ test("every string the HUD and screens draw is covered by the font (no silent mi
         PRESENTATION.screens.settings.title,
         PRESENTATION.screens.controls.title,
         ...SETTINGS_LABELS,
-        ...CONTROLS_LINES,
+        ...CONTROL_BINDINGS.flat(),
         PRESENTATION.screens.footer.text,
         "LAUNCH CAMPAIGN",
         "NEXT SECTOR",
@@ -371,7 +371,7 @@ test("every string the HUD and screens draw is covered by the font (no silent mi
                 character === " " || glyph(character),
                 `${JSON.stringify(value)}: no glyph for ${character}`,
             );
-    assert.equal(CONTROLS_LINES.length, PRESENTATION.screens.controls.lines);
+    assert.equal(CONTROL_BINDINGS.length + 1, PRESENTATION.screens.controls.lines);
 });
 
 // ---- HUD ----
@@ -1229,7 +1229,7 @@ test("settings: fixed labels with optionMeter / optionToggle controls; SOUND = !
             state.rows.map((item) => item.focused),
             [false, false, false, true, false],
         );
-        // Controls page: 8 lines at x 224 from itemsTop, step 11, hitbox line in heading; BACK at itemsTop + 92.
+        // Controls page: seven binding rows and one blank row, then BACK.
         menu.press("Escape");
         menu.press("ArrowDown");
         menu.press("ArrowDown");
@@ -1242,25 +1242,29 @@ test("settings: fixed labels with optionMeter / optionToggle controls; SOUND = !
             back.map((item) => [item.top, item.bottom]),
             [[itemsTop + 92, itemsTop + 106]],
         );
-        const expectedLines = [
-            "MOVE WITH MOMENTUM  WASD / ARROWS",
-            "MOVE  GAMEPAD LEFT STICK",
-            "FIRE UP  HOLD LEFT MOUSE / SPACE",
-            "FIRE UP  HOLD PAD X",
-            "NOVA BLAST  B / PAD A",
-            "PAUSE  ESC / P / PAD START",
-            "FULLSCREEN  F",
-            "YOUR HITBOX  BRIGHT CORE DOT",
-        ];
-        const { lineX } = PRESENTATION.screens.controls;
-        expectedLines.forEach((line, i) => {
-            assert.ok(lineX + textWidth(line) <= PRESENTATION.screens.panel.x[1] + 1);
-            assert.equal(readText(drawn, 224, itemsTop + 11 * i, line.length), line);
-            assert.equal(
-                colourAt(drawn, 224, itemsTop + 11 * i),
-                i === 7 ? TEXT_COLOR.heading : TEXT_COLOR.label,
-            );
+        const expectedBindings = [
+            ["MOVE", "WASD / ARROWS"],
+            ["MOVE", "GAMEPAD LEFT STICK"],
+            ["FIRE UP", "LEFT MOUSE / SPACE"],
+            ["FIRE UP", "PAD X"],
+            ["NOVA BLAST", "B / PAD A"],
+            ["PAUSE", "ESC / P / PAD START"],
+            ["FULLSCREEN", "F"],
+        ] as const;
+        const { actionX, bindingRight } = PRESENTATION.screens.controls;
+        const [panelLeft, panelRight] = PRESENTATION.screens.panel.x;
+        assert.ok(panelLeft < actionX && bindingRight < panelRight);
+        expectedBindings.forEach(([action, binding], i) => {
+            const row = itemsTop + 11 * i;
+            const bindingX = bindingRight + 1 - textWidth(binding);
+            assert.ok(bindingX - (actionX + textWidth(action)) >= FONT.advance);
+            assert.equal(readText(drawn, actionX, row, action.length), action);
+            assert.equal(readText(drawn, bindingX, row, binding.length), binding);
+            assert.equal(colourAt(drawn, actionX, row), TEXT_COLOR.label);
+            assert.equal(colourAt(drawn, bindingX, row), TEXT_COLOR.label);
         });
+        const blankTop = itemsTop + 11 * expectedBindings.length;
+        assert.ok(!glyphs(drawn).some(({ y0 }) => y0 >= blankTop && y0 < back[0].top));
         assert.equal(
             readText(drawn, centredX("FLIGHT CONTROLS", 320), top + 10, 15),
             "FLIGHT CONTROLS",
