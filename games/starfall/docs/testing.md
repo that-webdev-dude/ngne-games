@@ -88,6 +88,12 @@ For a timed replay from the default position, hold D for about 0.6 seconds at 5.
 2. Let the first shot fire, then move just left of its lane. Watch the sweeper spread while you hold that position. For a timed attempt from the default height and near centre, hold A for about 0.2 seconds at 83.15, then S for about 0.25 seconds at 84.5. Hold Space after the first move.
 3. Check that you can read the order of the shots, the interceptors clear the right edge before the warning at 86 seconds, and Gatebreaker enters at 90 seconds.
 
+### Orbital Breakwater cue and pacing review
+
+1. Use the ordinary Sector 1 manual route. Around 24.5 seconds, watch the gunship entering on the right. Two amber muzzle glows should be visible below the top HUD before its first fan. The opening gunship still cues with its visible vents.
+2. Around 79–86 seconds, check whether the single sweeper leaves enough room to read the final interceptor ripple while both gunships are active. The warning still clears the field at 86 seconds.
+3. At Gatebreaker's first curtain cue, around 96.6 seconds, look for two thin lines framing the safe lane. Check whether you can read the edges while watching the player ship. If you clear the boss, note the time from Gatebreaker's entry to defeat and from the second turret's destruction to defeat.
+
 ### Full-stage review
 
 For each stage, play at scales 2 and 3 with reduced motion both off and on. Use the manual route above with the corresponding stage number. Target browser content areas of 1280×720 or 1920×1080 **device pixels**; Windows scaling changes CSS pixels, so verify DPR and reported `k`. Smaller than 640×360 device pixels clips the centred 1× canvas.

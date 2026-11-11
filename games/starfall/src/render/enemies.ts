@@ -4,7 +4,8 @@ import { drawAttackCue, hitColor } from "../bosses/boss.ts";
 import { Kind } from "../config/enemies.ts";
 import { LAYER } from "../config/layers.ts";
 import { rev01Sprite, type NativeSprite } from "../services/rev01-assets.ts";
-import { interceptorMuzzle } from "../systems/combat-enemies.ts";
+import { ENEMY_MUZZLES, interceptorMuzzle } from "../systems/combat-enemies.ts";
+import { PRESENTATION } from "../ui/presentation.ts";
 import { drawNative } from "../ui/sprite.ts";
 import {
     interceptorPass,
@@ -14,6 +15,8 @@ import {
 import { ORDINARY_SPRITES, ordinaryFrame } from "./enemy-frames.ts";
 import type { RenderPassFactory } from "./pass.ts";
 import { drawMine } from "./player-fx.ts";
+
+const TOP_HUD_END = PRESENTATION.bands.top.rows[1] + 1;
 
 /**
  * Ordinary enemies as native rev01 frames (spec pivot, one texel per pixel), mines through the player-fx `drawMine`, then the
@@ -57,7 +60,8 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                     ? interceptorPass(interceptorPassAge(e.age[row], e.pattern[row]), direction)
                           .rotation
                     : 0;
-                drawNative(frame, sprite.frame(name), x, y, {
+                const art = sprite.frame(name);
+                drawNative(frame, art, x, y, {
                     layer: LAYER.enemy,
                     color: hitColor(e.flash[row], reduced),
                     bank,
@@ -72,6 +76,23 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                         run.effectClock,
                         reduced,
                     );
+                }
+                // The first vent cue can start behind the top HUD while the barrels are already visible.
+                if (
+                    kind === Kind.Gunship &&
+                    run.stageIndex === 0 &&
+                    e.cue[row] &&
+                    e.fireIndex[row] === 0 &&
+                    Math.floor(y) - art.pivotY < TOP_HUD_END
+                ) {
+                    for (const [mx, my] of ENEMY_MUZZLES.gunship)
+                        drawAttackCue(
+                            legacy,
+                            Math.floor(x) + mx,
+                            Math.floor(y) + my,
+                            run.effectClock,
+                            reduced,
+                        );
                 }
             }
         });

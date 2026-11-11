@@ -242,6 +242,7 @@ export const gatebreaker: BossDefinition = {
                         w(Math.floor(e.fireIndex[row] / 8) % 2 ? 360 : 120),
                         w(64),
                         0x67e3be,
+                        { edges: true },
                     );
                 const hull = gatebreakerHull(e.hp[row], e.cue[row]);
                 drawNative(frame, HULL.frame(hull.frame), x, y, { layer: LAYER.enemy, color });

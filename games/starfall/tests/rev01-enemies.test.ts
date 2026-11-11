@@ -820,6 +820,74 @@ test("ordinary enemies render natively at their spec pivot with the hit tint (no
     }
 });
 
+test("Breakwater adds visible muzzle cues for a gunship's first shot while the vent is behind the HUD", async () => {
+    for (const reduced of [false, true]) {
+        const h = await stage(
+            0,
+            (scene, run) => {
+                spawnEnemy(scene.world, run, Kind.Gunship, w(350), w(-25));
+                spawnEnemy(scene.world, run, Kind.Gunship, w(130), w(-25), { cooldown: 2.8 });
+            },
+            reduced,
+        );
+        const cues = () => h.render().filter((quad) => quad.layer === LAYER.enemyCue);
+        try {
+            h.tick(91);
+            const cued = enemyRows(h.world, Kind.Gunship).find((row) => row.cue)!;
+            assert.equal(cued.fireIndex, 0);
+            const glows = cues();
+            assert.equal(glows.length, 2);
+            for (const [mx, my] of ENEMY_MUZZLES.gunship) {
+                assert.ok(
+                    glows.some(
+                        ({ d }) =>
+                            Math.round(d[0] + d[2] / 2) === Math.floor(cued.x) + mx &&
+                            Math.round(d[1] + d[5] / 2) === Math.floor(cued.y) + my &&
+                            d[1] >= 32,
+                    ),
+                );
+            }
+            h.tick(25);
+            assert.equal(cues().length, 0, "the cue ends when the first gunship fires");
+            h.tick(28);
+            assert.ok(enemyRows(h.world, Kind.Gunship).some((row) => row.cue && !row.fireIndex));
+            assert.equal(cues().length, 0, "the opening gunship's visible vent is enough");
+        } finally {
+            h.game.dispose();
+        }
+    }
+});
+
+test("Gatebreaker's curtain cue marks both edges of the active safe lane", async () => {
+    for (const [cycle, edges] of [
+        [0, [117, 203]],
+        [1, [437, 523]],
+    ] as const) {
+        const index = 3 + cycle * 8;
+        const h = await stage(0, (scene, run) => {
+            run.phase = "boss";
+            spawnBoss(scene, run, Kind.Gatebreaker, w(240), w(67), {
+                age: 6.6 + cycle * 12,
+                fireIndex: index,
+            });
+        });
+        const lane = () => h.render().filter((quad) => quad.layer === LAYER.floorTelegraph);
+        try {
+            h.tick();
+            const marks = lane();
+            assert.equal(marks.length, 3);
+            assert.deepEqual(
+                marks.filter(({ d }) => near(d[2], 1)).map(({ d }) => [d[0], d[1], d[5]]),
+                edges.map((x) => [x, 48, 288]),
+            );
+            while (enemyRows(h.world, Kind.Gatebreaker)[0].fireIndex === index) h.tick();
+            assert.equal(lane().length, 0);
+        } finally {
+            h.game.dispose();
+        }
+    }
+});
+
 test("Gatebreaker: hull wreck/telegraph states, flipped turret sockets, turret telegraph/firing/down, split turret fans", async () => {
     const max = enemySpec(Kind.Gatebreaker).hp;
     assert.deepEqual(gatebreakerHull(max, 0), { frame: "idle", coreTelegraph: false });

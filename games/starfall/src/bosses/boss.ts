@@ -6,7 +6,7 @@ import { fromLegacy } from "../config/view.ts";
 import type { NativeFrame } from "../services/rev01-assets.ts";
 import type { CombatContext } from "../systems/combat-context.ts";
 import { centredX, drawText } from "../ui/bitmap-text.ts";
-import { TEXT_COLOR } from "../ui/presentation.ts";
+import { PRESENTATION, TEXT_COLOR, fillRect } from "../ui/presentation.ts";
 import { drawNative, type NativeDraw } from "../ui/sprite.ts";
 import type { RunState } from "../world/session.ts";
 import type { Point } from "./sockets.ts";
@@ -120,9 +120,16 @@ export function drawGap(
     x: number,
     width: number,
     color: number,
+    { edges = false }: { edges?: boolean } = {},
 ): void {
     frame.rect(x, fromLegacy(151), width, fromLegacy(230), color, 0.07, LAYER.floorTelegraph, true);
-    drawText(native, "GAP", centredX("GAP", Math.round(x)), 48, TEXT_COLOR.heading, LAYER.hudText);
+    const top = 48;
+    if (edges) {
+        const height = PRESENTATION.bands.bottom.rows[0] - top;
+        for (const edge of [x - width / 2, x + width / 2])
+            fillRect(native, Math.round(edge), top, 1, height, color, LAYER.floorTelegraph, 0.52);
+    }
+    drawText(native, "GAP", centredX("GAP", Math.round(x)), top, TEXT_COLOR.heading, LAYER.hudText);
 }
 
 /** The defeat pose is shown tinted at the death position until the clear cascade's last burst (1.45 s), as before. */

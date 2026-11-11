@@ -42,7 +42,7 @@ export const ENCOUNTERS: Encounter[] = (
         ...[36, 60, 66, 72, 79].map((at, index) => ({
             at,
             kind: "sweeper" as const,
-            count: 2,
+            count: at === 79 ? 1 : 2,
             side: (index + 1) % 2,
         })),
         { at: 52, kind: "repair", count: 1, side: fromLegacy(240) },
