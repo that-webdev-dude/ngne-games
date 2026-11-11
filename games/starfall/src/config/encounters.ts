@@ -1,13 +1,14 @@
 import { REV01_GAMEPLAY } from "./rev01-gameplay.ts";
 import { fromLegacy } from "./view.ts";
 
-/** side: spawn x for every kind except sweeper, where it is the entry side flag (0 left, 1 right). */
+/** side: spawn x (left group's x for "both"), or the sweeper entry flag (0 left, 1 right). */
 export interface Encounter {
     at: number;
     kind: "interceptor" | "gunship" | "sweeper" | "minelayer" | "warden" | "repair";
     count: number;
     side: number;
-    bankFrom?: "left" | "right";
+    /** "both" mirrors the formation and fires a synchronized forward volley. */
+    bankFrom?: "left" | "right" | "both";
     firstVolley?: number;
     /** Starting lane in logical pixels for a sweeper. */
     laneY?: number;
@@ -21,9 +22,10 @@ export const ENCOUNTERS: Encounter[] = (
         // The left pair locks its aim after the player has had time to react to the right pair.
         { at: 41, kind: "interceptor", count: 2, side: 592, bankFrom: "right" },
         { at: 42.8, kind: "interceptor", count: 2, side: 48, bankFrom: "left" },
+        { at: 60, kind: "interceptor", count: 6, side: 32, bankFrom: "both" },
         ...[
             { side: fromLegacy(160), times: [13, 23, 35, 46, 55, 65, 76] },
-            { side: fromLegacy(320), times: [18, 29, 50, 60, 70, 81] },
+            { side: fromLegacy(320), times: [18, 29, 50, 70, 81] },
         ].flatMap(({ side, times }) =>
             times.map((at) => ({ at, kind: "interceptor" as const, count: at < 60 ? 4 : 6, side })),
         ),

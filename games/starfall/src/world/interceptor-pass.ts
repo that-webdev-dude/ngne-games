@@ -11,11 +11,15 @@ export const InterceptorPattern = {
     Quiet: 1,
     FromLeft: 2,
     FromRight: 3,
+    ForwardFromLeft: 4,
+    ForwardFromRight: 5,
 } as const;
 
 export function interceptorPassDirection(pattern: number): number {
-    if (pattern === InterceptorPattern.FromLeft) return 1;
-    if (pattern === InterceptorPattern.FromRight) return -1;
+    if (pattern === InterceptorPattern.FromLeft || pattern === InterceptorPattern.ForwardFromLeft)
+        return 1;
+    if (pattern === InterceptorPattern.FromRight || pattern === InterceptorPattern.ForwardFromRight)
+        return -1;
     return 0;
 }
 

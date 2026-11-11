@@ -332,6 +332,50 @@ test("Breakwater's staggered left pair locks onto the player's position after th
     }
 });
 
+test("Breakwater's 60-second formation fires six forward shots together with a centre gap", async () => {
+    const h = await stage(0, (_scene, run) => {
+        run.seconds = 59.9;
+        run.waveIndex = STAGES[0].encounters.findIndex((event) => event.at === 60);
+    });
+    const formation = () =>
+        enemyRows(h.world, Kind.Interceptor).filter(
+            ({ pattern }) =>
+                pattern === InterceptorPattern.ForwardFromLeft ||
+                pattern === InterceptorPattern.ForwardFromRight,
+        );
+    try {
+        while (h.run.seconds < 62.3) h.tick();
+        const cued = formation();
+        assert.equal(cued.length, 6);
+        assert.ok(cued.every((row) => row.cue === 1 && row.fireIndex === 0));
+
+        while (h.run.seconds < 62.7 && formation().every((row) => row.fireIndex === 0)) h.tick();
+        const firing = formation(),
+            shots = freshShots(h.world).sort((a, b) => a.x - b.x),
+            sprite = rev01Sprite("interceptor"),
+            frames = byTexture(h.render(), "interceptor");
+        assert.equal(firing.length, 6);
+        assert.ok(firing.every((row) => row.fireIndex === 1));
+        assert.equal(shots.length, 6);
+        assert.ok(shots.every((shot) => near(shot.vx, 0) && shot.vy > 0));
+        assert.deepEqual(
+            shots.map((shot) => Math.round(shot.x)),
+            [216, 252, 288, 352, 388, 424],
+        );
+        assert.equal(frames.length, 6);
+        for (const quad of frames) {
+            assert.equal(frameOf(quad, sprite)?.name, "fire");
+            const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+            assert.ok(shots.some((shot) => Math.floor(shot.x) === x && Math.floor(shot.y) === y));
+        }
+
+        while (h.run.seconds < 65.4) h.tick();
+        assert.equal(formation().length, 0);
+    } finally {
+        h.game.dispose();
+    }
+});
+
 /** A boss row with a preset clock (setup-time queries cannot see uncommitted spawns). */
 function spawnBoss(
     scene: Setup,

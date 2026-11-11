@@ -46,7 +46,7 @@ const SCHEDULES: Record<string, string[]> = {
         "50:interceptor:4:320",
         "52:repair:1:240",
         "55:interceptor:4:160",
-        "60:interceptor:6:320",
+        "60:interceptor:6:px32:both",
         "60:sweeper:2:flag0",
         "64:gunship:1:130",
         "65:interceptor:6:160",

@@ -2,7 +2,7 @@ import { Enemy, Pose } from "../components/combat.ts";
 import { specSocket, splitVolley } from "../bosses/sockets.ts";
 import { COMBAT } from "../config/encounters.ts";
 import { Kind } from "../config/enemies.ts";
-import { fromLegacy as w } from "../config/view.ts";
+import { VIEW, fromLegacy as w } from "../config/view.ts";
 import { spawnEnemy, spawnRepair } from "../entities/combat.ts";
 import {
     INTERCEPTOR_PASS,
@@ -45,6 +45,20 @@ export function installCombatEnemies({
 }: CombatContext): void {
     const enemies = scene.world.query(Pose, Enemy),
         { emit } = hostiles;
+    function spawnInterceptors(count: number, x: number, pattern: number) {
+        const banking = interceptorPassDirection(pattern) !== 0;
+        for (let i = 0; i < count; i++) {
+            const slot = i - (count - 1) / 2;
+            spawnEnemy(
+                scene.world,
+                run,
+                Kind.Interceptor,
+                x + slot * w(27),
+                w(-22) - Math.abs(slot) * w(14),
+                { pattern, cooldown: banking ? INTERCEPTOR_PASS.fireAt : 1.8 + i * 0.13 },
+            );
+        }
+    }
     let warning = false;
     scene.system(({ dt }) => {
         if (run.phase === "dead" || run.phase === "clear") return;
@@ -76,27 +90,27 @@ export function installCombatEnemies({
                 spawnRepair(scene.world, event.side, w(-10));
                 continue;
             }
-            for (let i = 0; i < event.count; i++) {
-                if (event.kind === "interceptor") {
-                    const pattern =
-                        event.bankFrom === "left"
-                            ? InterceptorPattern.FromLeft
-                            : event.bankFrom === "right"
-                              ? InterceptorPattern.FromRight
-                              : InterceptorPattern.Aimed;
-                    const slot = i - (event.count - 1) / 2;
-                    spawnEnemy(
-                        scene.world,
-                        run,
-                        Kind.Interceptor,
-                        event.side + slot * w(27),
-                        w(-22) - Math.abs(slot) * w(14),
-                        {
-                            pattern,
-                            cooldown: event.bankFrom ? INTERCEPTOR_PASS.fireAt : 1.8 + i * 0.13,
-                        },
+            if (event.kind === "interceptor") {
+                if (event.bankFrom === "both") {
+                    const leftCount = Math.ceil(event.count / 2);
+                    spawnInterceptors(leftCount, event.side, InterceptorPattern.ForwardFromLeft);
+                    spawnInterceptors(
+                        event.count - leftCount,
+                        VIEW.width - event.side,
+                        InterceptorPattern.ForwardFromRight,
                     );
+                } else {
+                    const pattern = event.bankFrom
+                        ? {
+                              left: InterceptorPattern.FromLeft,
+                              right: InterceptorPattern.FromRight,
+                          }[event.bankFrom]
+                        : InterceptorPattern.Aimed;
+                    spawnInterceptors(event.count, event.side, pattern);
                 }
+                continue;
+            }
+            for (let i = 0; i < event.count; i++) {
                 if (event.kind === "gunship")
                     spawnEnemy(scene.world, run, Kind.Gunship, event.side, w(-25), {
                         cooldown: event.firstVolley,
@@ -149,7 +163,12 @@ export function installCombatEnemies({
                         if (e.fireIndex[row] === 0) {
                             if (e.cooldown[row] < cueLead && !e.cue[row]) {
                                 e.cue[row] = 1;
-                                e.targetAngle[row] = Math.atan2(run.y - p.y[row], run.x - p.x[row]);
+                                const forward =
+                                    e.pattern[row] === InterceptorPattern.ForwardFromLeft ||
+                                    e.pattern[row] === InterceptorPattern.ForwardFromRight;
+                                e.targetAngle[row] = forward
+                                    ? Math.PI / 2
+                                    : Math.atan2(run.y - p.y[row], run.x - p.x[row]);
                             }
                             if (e.cooldown[row] <= 0) {
                                 const [mx, my] = interceptorMuzzle(bank?.rotation ?? 0);

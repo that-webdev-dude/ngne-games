@@ -76,6 +76,12 @@ For a timed replay from the default position, hold D for about 0.6 seconds at 5.
 2. From the default height and near centre, try a short move left after the right pair fires. The left pair locks its aim around 44.9 seconds and fires around 45.4. Compare waiting in the new position with moving back right after the second volley. Keep an eye on any remaining sweeper shots and the gunship entering from the left.
 3. For a timed comparison, hold A for about 0.2 seconds at 44.1, then hold D for about 0.47 seconds at 45.65 on the return attempt. Record whether you read both muzzle cues and whether the second pair made you move again.
 
+### Orbital Breakwater synchronized interceptor volley
+
+1. Use the empty-Nova route. Around 59 seconds, move up along the middle of the field to get above the gunship's low shots. At 60 seconds, watch for three interceptors banking in from each side and the two sweepers entering from the left.
+2. Around 62 seconds, look for both trios' muzzle cues. They straighten and fire together around 62.6. Climb between the two groups of shots, keeping near the middle as the interceptors peel away. For a timed attempt from the default height, hold W for about 0.55 seconds at 59, then again for about 0.36 seconds at 62.2.
+3. Record whether you could pick out the wider centre gap before the shots reached you, and whether the gunship or sweeper fire changed your approach. If you take damage, note which projectile hit you.
+
 ### Full-stage review
 
 For each stage, play at scales 2 and 3 with reduced motion both off and on. Use the manual route above with the corresponding stage number. Target browser content areas of 1280×720 or 1920×1080 **device pixels**; Windows scaling changes CSS pixels, so verify DPR and reported `k`. Smaller than 640×360 device pixels clips the centred 1× canvas.
