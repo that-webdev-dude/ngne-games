@@ -6,7 +6,11 @@ import { LAYER } from "../config/layers.ts";
 import { rev01Sprite, type NativeSprite } from "../services/rev01-assets.ts";
 import { interceptorMuzzle } from "../systems/combat-enemies.ts";
 import { drawNative } from "../ui/sprite.ts";
-import { interceptorPass, interceptorPassDirection } from "../world/interceptor-pass.ts";
+import {
+    interceptorPass,
+    interceptorPassAge,
+    interceptorPassDirection,
+} from "../world/interceptor-pass.ts";
 import { ORDINARY_SPRITES, ordinaryFrame } from "./enemy-frames.ts";
 import type { RenderPassFactory } from "./pass.ts";
 import { drawMine } from "./player-fx.ts";
@@ -49,7 +53,10 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                 );
                 const direction =
                     kind === Kind.Interceptor ? interceptorPassDirection(e.pattern[row]) : 0;
-                const bank = direction ? interceptorPass(e.age[row], direction).rotation : 0;
+                const bank = direction
+                    ? interceptorPass(interceptorPassAge(e.age[row], e.pattern[row]), direction)
+                          .rotation
+                    : 0;
                 drawNative(frame, sprite.frame(name), x, y, {
                     layer: LAYER.enemy,
                     color: hitColor(e.flash[row], reduced),

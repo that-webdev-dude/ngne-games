@@ -82,6 +82,12 @@ For a timed replay from the default position, hold D for about 0.6 seconds at 5.
 2. Around 62 seconds, look for both trios' muzzle cues. They straighten and fire together around 62.6. Climb between the two groups of shots, keeping near the middle as the interceptors peel away. For a timed attempt from the default height, hold W for about 0.55 seconds at 59, then again for about 0.36 seconds at 62.2.
 3. Record whether you could pick out the wider centre gap before the shots reached you, and whether the gunship or sweeper fire changed your approach. If you take damage, note which projectile hit you.
 
+### Orbital Breakwater final interceptor ripple
+
+1. Use the empty-Nova route and approach 81 seconds near the lower middle. Watch the six interceptors bank in from the right in a diagonal line. Their muzzle cues and shots progress from the inside ship to the outside ship. The first shot fires around 82.9 seconds and the last around 83.9.
+2. Let the first shot fire, then move just left of its lane. Watch the sweeper spread while you hold that position. For a timed attempt from the default height and near centre, hold A for about 0.2 seconds at 83.15, then S for about 0.25 seconds at 84.5. Hold Space after the first move.
+3. Check that you can read the order of the shots, the interceptors clear the right edge before the warning at 86 seconds, and Gatebreaker enters at 90 seconds.
+
 ### Full-stage review
 
 For each stage, play at scales 2 and 3 with reduced motion both off and on. Use the manual route above with the corresponding stage number. Target browser content areas of 1280×720 or 1920×1080 **device pixels**; Windows scaling changes CSS pixels, so verify DPR and reported `k`. Smaller than 640×360 device pixels clips the centred 1× canvas.

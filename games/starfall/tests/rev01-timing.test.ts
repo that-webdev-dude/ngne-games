@@ -57,7 +57,7 @@ const SCHEDULES: Record<string, string[]> = {
         "77:gunship:1:350",
         "79:sweeper:2:flag1",
         "80:gunship:1:130",
-        "81:interceptor:6:320",
+        "81:interceptor:6:px624:right-ripple",
     ],
     "furnace-belt": [
         "2:interceptor:4:160",

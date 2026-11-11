@@ -376,6 +376,49 @@ test("Breakwater's 60-second formation fires six forward shots together with a c
     }
 });
 
+test("Breakwater's final bank ripples six shots and leaves before Gatebreaker's warning", async () => {
+    const h = await stage(0, (_scene, run) => {
+        run.seconds = 80.9;
+        run.waveIndex = STAGES[0].encounters.findIndex((event) => event.at === 81);
+    });
+    const sprite = rev01Sprite("interceptor");
+    const fired: { at: number; x: number }[] = [];
+    try {
+        while (h.run.seconds < 85.9) {
+            h.tick();
+            const shots = freshShots(h.world);
+            if (!shots.length) continue;
+            assert.equal(shots.length, 1);
+            const [shot] = shots;
+            assert.ok(near(shot.vx, 0) && shot.vy > 0);
+            const flashes = byTexture(h.render(), "interceptor").filter(
+                (quad) => frameOf(quad, sprite)?.name === "fire",
+            );
+            assert.equal(flashes.length, 1);
+            const [x, y] = socketPixel(flashes[0], sprite, ENEMY_MUZZLES.interceptor);
+            assert.deepEqual([Math.floor(shot.x), Math.floor(shot.y)], [x, y]);
+            fired.push({ at: h.run.seconds, x: Math.round(shot.x) });
+        }
+        assert.deepEqual(
+            fired.map(({ x }) => x),
+            [314, 350, 386, 422, 458, 494],
+        );
+        assert.ok(near(fired[0].at, 82.87, dt));
+        fired.slice(1).forEach(({ at }, i) => assert.ok(near(at - fired[i].at, 0.2, dt / 2)));
+        assert.equal(enemyRows(h.world, Kind.Interceptor).length, 0);
+        assert.equal(h.run.bannerKind, "stage");
+
+        while (h.run.seconds < 86) h.tick();
+        assert.equal(h.run.banner, `WARNING / ${STAGES[0].boss.name}`);
+        assert.equal(h.run.phase, "waves");
+        while (h.run.seconds < 90) h.tick();
+        assert.equal(h.run.phase, "boss");
+        assert.equal(enemyRows(h.world, Kind.Gatebreaker).length, 1);
+    } finally {
+        h.game.dispose();
+    }
+});
+
 /** A boss row with a preset clock (setup-time queries cannot see uncommitted spawns). */
 function spawnBoss(
     scene: Setup,

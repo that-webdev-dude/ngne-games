@@ -11,7 +11,7 @@ export function spawnEnemy(
     kind: Kind,
     x: number,
     y: number,
-    options: { vx?: number; pattern?: number; hp?: number; cooldown?: number } = {},
+    options: { vx?: number; pattern?: number; hp?: number; cooldown?: number; age?: number } = {},
 ) {
     const spec = enemySpec(kind),
         hp = options.hp ?? spec.hp;
@@ -22,6 +22,7 @@ export function spawnEnemy(
             hp,
             maxHp: hp,
             originX: x,
+            age: options.age ?? 0,
             cooldown: options.cooldown ?? spec.cooldown,
             vx: options.vx ?? 0,
             pattern: options.pattern ?? 0,

@@ -7,8 +7,8 @@ export interface Encounter {
     kind: "interceptor" | "gunship" | "sweeper" | "minelayer" | "warden" | "repair";
     count: number;
     side: number;
-    /** "both" mirrors the formation and fires a synchronized forward volley. */
-    bankFrom?: "left" | "right" | "both";
+    /** "both" fires a mirrored volley together. "right-ripple" releases a right bank in order. */
+    bankFrom?: "left" | "right" | "both" | "right-ripple";
     firstVolley?: number;
     /** Starting lane in logical pixels for a sweeper. */
     laneY?: number;
@@ -23,9 +23,10 @@ export const ENCOUNTERS: Encounter[] = (
         { at: 41, kind: "interceptor", count: 2, side: 592, bankFrom: "right" },
         { at: 42.8, kind: "interceptor", count: 2, side: 48, bankFrom: "left" },
         { at: 60, kind: "interceptor", count: 6, side: 32, bankFrom: "both" },
+        { at: 81, kind: "interceptor", count: 6, side: 624, bankFrom: "right-ripple" },
         ...[
             { side: fromLegacy(160), times: [13, 23, 35, 46, 55, 65, 76] },
-            { side: fromLegacy(320), times: [18, 29, 50, 70, 81] },
+            { side: fromLegacy(320), times: [18, 29, 50, 70] },
         ].flatMap(({ side, times }) =>
             times.map((at) => ({ at, kind: "interceptor" as const, count: at < 60 ? 4 : 6, side })),
         ),

@@ -6,6 +6,12 @@ export const INTERCEPTOR_PASS = {
     descent: 64,
 } as const;
 
+export const INTERCEPTOR_RIPPLE = {
+    spacingY: 6,
+    delay: 0.2,
+    speed: 1.4,
+} as const;
+
 export const InterceptorPattern = {
     Aimed: 0,
     Quiet: 1,
@@ -13,14 +19,25 @@ export const InterceptorPattern = {
     FromRight: 3,
     ForwardFromLeft: 4,
     ForwardFromRight: 5,
+    RippleFromRight: 6,
 } as const;
 
 export function interceptorPassDirection(pattern: number): number {
     if (pattern === InterceptorPattern.FromLeft || pattern === InterceptorPattern.ForwardFromLeft)
         return 1;
-    if (pattern === InterceptorPattern.FromRight || pattern === InterceptorPattern.ForwardFromRight)
+    if (
+        pattern === InterceptorPattern.FromRight ||
+        pattern === InterceptorPattern.ForwardFromRight ||
+        pattern === InterceptorPattern.RippleFromRight
+    )
         return -1;
     return 0;
+}
+
+export function interceptorPassAge(age: number, pattern: number): number {
+    return pattern === InterceptorPattern.RippleFromRight
+        ? Math.max(0, age) * INTERCEPTOR_RIPPLE.speed
+        : age;
 }
 
 /** Horizontal offset in logical pixels and heading relative to the sprite's downward nose. */
