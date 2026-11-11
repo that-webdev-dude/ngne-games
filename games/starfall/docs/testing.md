@@ -31,7 +31,7 @@ Integration route options:
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
 | `stage`    | `1`, `2`, `3`: Breakwater, Furnace, Citadel.                                                                  |
 | `manual`   | `1` starts ordinary play; PLAY STAGE does the same. LOAD PRESET seeds presentation state instead.             |
-| `emptyNova` | `1` with `stage=1&manual=1` holds the Nova meter empty from launch for opening-wave review. |
+| `emptyNova` | `1` with `stage=1&manual=1` holds the Nova meter empty from launch for Breakwater encounter review. |
 | `calm`     | `0` normal motion; `1` reduced motion. Manual play also permits changing it in Settings.                      |
 | `scenario` | `card`, `play`, `boss`, `pause`, `result`, `settings`, `controls`, `death`, `loss`, `nova`, `dense`, `title`. |
 | `capture`  | `1` hides fixture controls and freezes presentation presets. Manual play still advances normally.             |
@@ -63,6 +63,12 @@ For production smoke, run `npm.cmd run build`, then `npm.cmd run preview -- --po
 4. Record the cue you saw before each volley, your route and hull change, and how the gunship affected your second crossing. Confirm the muzzle flash and projectile origins on both passes. Use the ordinary manual route to continue to Gatebreaker's warning at 86 seconds and arrival at 90 seconds. Record campaign-bot outcomes separately.
 
 For a timed replay from the default position, hold D for about 0.6 seconds at 5.55, then A for about 0.6 seconds at 7.00 to recenter. Compare holding A for 0.6 seconds at 11.55 with tapping A for about 0.3 seconds at 11.25, W for 0.3 seconds at 11.85, and D for 0.45 seconds at 12.55. Use the diagnostics clock if you need fractional seconds.
+
+### Orbital Breakwater sweeper crossing
+
+1. Use the same empty-Nova route. Reach 28 seconds near the lower middle with the right-hand gunship alive. An upper sweeper enters from the left, then a lower sweeper enters from the right.
+2. Watch the gunship's vents and the lower sweeper's first spreads. From near the lower middle, compare crossing right around 31 seconds with waiting until around 32 seconds, after those spreads have moved farther down. Hold Space as you cross and aim up the right-hand lane. Adjust for the bullets you see if your starting position changes.
+3. Record which shot or ship made you wait or change course, and whether the gap was readable in time to use it. Note any hull change during the crossing.
 
 ### Full-stage review
 

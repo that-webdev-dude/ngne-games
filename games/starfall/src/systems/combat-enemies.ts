@@ -107,7 +107,7 @@ export function installCombatEnemies({
                         run,
                         Kind.Sweeper,
                         event.side ? w(505) + i * w(40) : w(-25) - i * w(40),
-                        w(92) + i * w(46),
+                        (event.laneY ?? w(92)) + i * w(46),
                         { vx: event.side ? -w(65) : w(65), cooldown: 0.8 + i * 0.3 },
                     );
                 if (event.kind === "minelayer" || event.kind === "warden")

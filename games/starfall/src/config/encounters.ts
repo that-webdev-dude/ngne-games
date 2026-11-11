@@ -9,6 +9,8 @@ export interface Encounter {
     side: number;
     bankFrom?: "left" | "right";
     firstVolley?: number;
+    /** Starting lane in logical pixels for a sweeper. */
+    laneY?: number;
 }
 export const ENCOUNTERS: Encounter[] = (
     [
@@ -28,11 +30,14 @@ export const ENCOUNTERS: Encounter[] = (
             count: 1,
             side: fromLegacy(index % 2 ? 130 : 350),
         })),
-        ...[28, 36, 60, 66, 72, 79].map((at, index) => ({
+        // The gunship on the right is already firing when these staggered lanes cross.
+        { at: 28, kind: "sweeper", count: 1, side: 0 },
+        { at: 28.75, kind: "sweeper", count: 1, side: 1, laneY: fromLegacy(138) },
+        ...[36, 60, 66, 72, 79].map((at, index) => ({
             at,
             kind: "sweeper" as const,
             count: 2,
-            side: index % 2,
+            side: (index + 1) % 2,
         })),
         { at: 52, kind: "repair", count: 1, side: fromLegacy(240) },
     ] satisfies Encounter[]

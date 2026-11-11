@@ -15,7 +15,7 @@ import type { Progress, ProgressCommand, RunState, Session } from "../src/world/
 import spec from "../src/assets/spec.json" with { type: "json" };
 
 /**
- * Timing evidence for ordinary waves and bosses. Outside the authored Breakwater opening, schedules,
+ * Timing evidence for ordinary waves and bosses. Outside the authored Breakwater sequences, schedules,
  * counts, HP, scores and cadences keep their pre-migration values. Legacy trajectories equal the
  * 480x270 formulas x 4/3 tick by tick,
  * so every position-driven event (entry, crossing, exit) happens on the same tick as before. Real interceptor rows hit
@@ -33,7 +33,8 @@ const SCHEDULES: Record<string, string[]> = {
         "18:interceptor:4:320",
         "23:interceptor:4:160",
         "23:gunship:1:350",
-        "28:sweeper:2:flag0",
+        "28:sweeper:1:flag0",
+        "28.75:sweeper:1:flag1:::184",
         "29:interceptor:4:320",
         "35:interceptor:4:160",
         "36:sweeper:2:flag1",
@@ -127,12 +128,12 @@ const SCHEDULES: Record<string, string[]> = {
     ],
 };
 
-test("the banking sequence and every remaining encounter keep their scheduled spawn data", () => {
+test("the Breakwater sequences and every remaining encounter keep their scheduled spawn data", () => {
     for (const stage of STAGES) {
         const expected = SCHEDULES[stage.id].map((row) => row.split(":"));
         assert.equal(stage.encounters.length, expected.length, stage.id);
         stage.encounters.forEach((event, index) => {
-            const [at, kind, count, side, bankFrom, firstVolley] = expected[index];
+            const [at, kind, count, side, bankFrom, firstVolley, laneY] = expected[index];
             assert.deepEqual(
                 [event.at, event.kind, event.count, event.bankFrom],
                 [Number(at), kind, Number(count), bankFrom || undefined],
@@ -148,6 +149,7 @@ test("the banking sequence and every remaining encounter keep their scheduled sp
                 `${stage.id} #${index} side`,
             );
             assert.equal(event.firstVolley, firstVolley ? Number(firstVolley) : undefined);
+            assert.equal(event.laneY, laneY ? Number(laneY) : undefined);
         });
     }
     assert.deepEqual(
