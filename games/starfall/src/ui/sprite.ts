@@ -21,12 +21,14 @@ export interface NativeDraw {
     color?: number;
     flipX?: boolean;
     rotation?: 0 | -90;
+    /** Radians clockwise about the native pivot, for a banked frame. */
+    bank?: number;
     screen?: boolean;
 }
 
 /**
  * Quad for one native frame (1 texel = 1 logical pixel) whose pivot pixel is the screen pixel containing (x, y).
- * Every edge lands on a whole pixel, so nearest sampling never meets a texel boundary. `flipX` mirrors about the
+ * Unbanked edges land on whole pixels. `flipX` mirrors about the
  * pivot column (right-hand turrets/emitters); `rotation: -90` turns canvas +x to screen up about the pivot (Kiln).
  * Requires `camera.pixelSnap = false` and a whole-pixel camera offset (see `pixelSnapped`).
  */
@@ -57,6 +59,18 @@ export function nativeQuad(art: NativeFrame, x: number, y: number, draw: NativeD
             y: py - (w - 1 - pivotColumn) + w / 2,
             rotation: -Math.PI / 2,
         };
+    if (draw.bank) {
+        const dx = w / 2 - pivotColumn - 0.5,
+            dy = h / 2 - pivotY - 0.5,
+            cos = Math.cos(draw.bank),
+            sin = Math.sin(draw.bank);
+        return {
+            ...common,
+            x: px + 0.5 + dx * cos - dy * sin,
+            y: py + 0.5 + dx * sin + dy * cos,
+            rotation: draw.bank,
+        };
+    }
     return { ...common, x: px - pivotColumn + w / 2, y: py - pivotY + h / 2, rotation: 0 };
 }
 

@@ -10,24 +10,26 @@ import { fromLegacy as w } from "../src/config/view.ts";
 import { spawnBullet, spawnEnemy } from "../src/entities/combat.ts";
 import { stageScene } from "../src/scenes/stage.ts";
 import type { CombatSound } from "../src/systems/combat-context.ts";
+import { InterceptorPattern } from "../src/world/interceptor-pass.ts";
 import type { Progress, ProgressCommand, RunState, Session } from "../src/world/session.ts";
 import spec from "../src/assets/spec.json" with { type: "json" };
 
 /**
- * Timing evidence for the 4/3 migration: schedules, counts, HP, scores and cadences are pinned to their
- * pre-migration values, and simulated trajectories equal the legacy (480x270) formulas x 4/3 tick by tick,
+ * Timing evidence for ordinary waves and bosses. Outside the authored Breakwater opening, schedules,
+ * counts, HP, scores and cadences keep their pre-migration values. Legacy trajectories equal the
+ * 480x270 formulas x 4/3 tick by tick,
  * so every position-driven event (entry, crossing, exit) happens on the same tick as before. Real interceptor rows hit
  * the exit boundary exactly; their exit ticks are pinned against main's arithmetic (INTERCEPTOR_EXIT_TOLERANCE).
  */
 const dt = 1 / 60;
 
-// Pre-migration tables: at:kind:count:legacy side (sweeper side is a direction flag).
+// at:kind:count:legacy side, except flags for sweepers and logical px for the banking passes.
 const SCHEDULES: Record<string, string[]> = {
     "orbital-breakwater": [
-        "2:interceptor:4:150:quiet",
-        "8:interceptor:5:330:quiet",
+        "2:interceptor:4:px48:left",
+        "7.1:gunship:1:130::2.8",
+        "8:interceptor:4:px592:right",
         "13:interceptor:4:160",
-        "15:gunship:1:130",
         "18:interceptor:4:320",
         "23:interceptor:4:160",
         "23:gunship:1:350",
@@ -125,22 +127,27 @@ const SCHEDULES: Record<string, string[]> = {
     ],
 };
 
-test("encounter schedules keep their times, kinds and counts; only spawn x moves, by exactly 4/3", () => {
+test("the banking sequence and every remaining encounter keep their scheduled spawn data", () => {
     for (const stage of STAGES) {
         const expected = SCHEDULES[stage.id].map((row) => row.split(":"));
         assert.equal(stage.encounters.length, expected.length, stage.id);
         stage.encounters.forEach((event, index) => {
-            const [at, kind, count, side, quiet] = expected[index];
+            const [at, kind, count, side, bankFrom, firstVolley] = expected[index];
             assert.deepEqual(
-                [event.at, event.kind, event.count, Boolean(event.quiet)],
-                [Number(at), kind, Number(count), quiet === "quiet"],
+                [event.at, event.kind, event.count, event.bankFrom],
+                [Number(at), kind, Number(count), bankFrom || undefined],
                 `${stage.id} #${index}`,
             );
             assert.equal(
                 event.side,
-                side.startsWith("flag") ? Number(side.slice(4)) : w(Number(side)),
+                side.startsWith("flag")
+                    ? Number(side.slice(4))
+                    : side.startsWith("px")
+                      ? Number(side.slice(2))
+                      : w(Number(side)),
                 `${stage.id} #${index} side`,
             );
+            assert.equal(event.firstVolley, firstVolley ? Number(firstVolley) : undefined);
         });
     }
     assert.deepEqual(
@@ -283,7 +290,7 @@ const LEGACY: {
         kind: Kind.Interceptor,
         at: [100, -22.25],
         ticks: 600,
-        options: { pattern: 1 },
+        options: { pattern: InterceptorPattern.Quiet },
         step: (s) => {
             const y = s.y + dt * 40;
             return y > 300 ? undefined : [100 + Math.sin(s.age * 1.6) * 19, y];
@@ -419,7 +426,7 @@ test("enemy and boss trajectories equal the legacy formulas x 4/3 on every tick,
     }
 });
 
-test("real interceptor waves (4/5/6 ships) leave on main's exact ticks, including the exact-300 floating-point ties", async () => {
+test("legacy interceptor waves (4/5/6 ships) leave on main's exact ticks, including the exact-300 floating-point ties", async () => {
     // Main (480x270) arithmetic: spawn row -22 - |i - mid| * 14, y += dt * 40 per tick, removed on the first tick with y > 300.
     // 5-ship rows -22/-36/-50 land on 300 exactly; main's sum stays ~2e-13 below, so the tie is kept alive for one more tick.
     const mainExitTicks = (count: number) =>
@@ -440,13 +447,12 @@ test("real interceptor waves (4/5/6 ships) leave on main's exact ticks, includin
     ]);
     for (const [stage, count] of [
         [0, 4],
-        [0, 5],
         [0, 6],
         [1, 5],
         [2, 5],
     ] as const) {
         const index = STAGES[stage].encounters.findIndex(
-            (event) => event.kind === "interceptor" && event.count === count,
+            (event) => event.kind === "interceptor" && event.count === count && !event.bankFrom,
         );
         const event = STAGES[stage].encounters[index];
         const h = await harness(stage, (_scene, run) => {

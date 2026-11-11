@@ -52,6 +52,7 @@ import {
 import { MINE_RELEASE } from "../src/systems/advanced-enemies.ts";
 import type { CombatSound } from "../src/systems/combat-context.ts";
 import { ENEMY_MUZZLES, GUNSHIP_TIMING } from "../src/systems/combat-enemies.ts";
+import { InterceptorPattern } from "../src/world/interceptor-pass.ts";
 import { fan } from "../src/world/patterns.ts";
 import type { Progress, ProgressCommand, RunState, Session } from "../src/world/session.ts";
 import spec from "../src/assets/spec.json" with { type: "json" };
@@ -224,6 +225,80 @@ function freshShots(world: WorldAccess) {
     return shots;
 }
 const near = (a: number, b: number, eps = 1e-9) => Math.abs(a - b) < eps;
+
+test("Breakwater's mirrored banks cue before a straight volley and leave past the side edges", async () => {
+    const h = await stage(0, (_scene, run) => {
+        run.waveIndex = 0;
+    });
+    const sprite = rev01Sprite("interceptor");
+    const passes = [
+        { pattern: InterceptorPattern.FromLeft, spawn: 2, direction: 1 },
+        { pattern: InterceptorPattern.FromRight, spawn: 8, direction: -1 },
+    ];
+    try {
+        for (const { pattern, spawn, direction } of passes) {
+            const formation = () =>
+                enemyRows(h.world, Kind.Interceptor).filter((row) => row.pattern === pattern);
+            while (h.run.seconds < spawn + 2.18) h.tick();
+            const cued = formation();
+            assert.equal(cued.length, 4);
+            assert.ok(cued.every((row) => row.cue && row.fireIndex === 0));
+            const cueFrame = h.render(),
+                banking = byTexture(cueFrame, "interceptor"),
+                cues = cueFrame.filter((quad) => quad.layer === LAYER.enemyCue);
+            assert.equal(banking.length, 4);
+            assert.equal(cues.length, 4);
+            for (const quad of banking) {
+                assert.ok(direction * quad.d[3] < -10, "the nose still banks inward");
+                const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+                assert.ok(
+                    cues.some(
+                        ({ d }) =>
+                            Math.abs(d[0] + d[2] / 2 - x) <= 1 &&
+                            Math.abs(d[1] + d[5] / 2 - y) <= 1,
+                    ),
+                    "the cue follows the banked muzzle",
+                );
+            }
+            if (direction === -1)
+                assert.ok(enemyRows(h.world, Kind.Gunship)[0]?.fireIndex >= 1, "fan leads return");
+
+            while (formation()[0].fireIndex === 0 && h.run.seconds < spawn + 2.7) h.tick();
+            const firing = formation(),
+                shots = freshShots(h.world),
+                straight = byTexture(h.render(), "interceptor");
+            assert.equal(straight.length, 4);
+            assert.equal(shots.length, 4);
+            assert.ok(firing.every((row) => row.fireIndex === 1 && row.age >= 2.6 - 1e-9));
+            for (const quad of straight) {
+                assert.equal(quad.d[3], 0, "ships straighten before firing");
+                assert.equal(frameOf(quad, sprite)?.name, "fire");
+                const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+                assert.ok(
+                    shots.some((shot) => Math.floor(shot.x) === x && Math.floor(shot.y) === y),
+                );
+            }
+            assert.ok(direction * (firing[0].x - cued[0].x) > 0);
+
+            while (h.run.seconds < spawn + 4) h.tick();
+            assert.ok(
+                byTexture(h.render(), "interceptor").every((quad) => direction * quad.d[3] > 10),
+                "ships bank back outward after the shot",
+            );
+            let lastPositions = formation();
+            while (h.run.seconds < spawn + 5.35 && formation().length > 0) {
+                lastPositions = formation();
+                h.tick();
+            }
+            assert.ok(lastPositions.length > 0);
+            assert.ok(lastPositions.every(({ x }) => (direction === 1 ? x < -16 : x > 656)));
+            assert.equal(formation().length, 0, "the pass leaves no live ships");
+        }
+    } finally {
+        h.game.dispose();
+    }
+});
+
 /** A boss row with a preset clock (setup-time queries cannot see uncommitted spawns). */
 function spawnBoss(
     scene: Setup,

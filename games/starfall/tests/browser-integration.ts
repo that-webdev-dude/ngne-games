@@ -22,6 +22,7 @@ const params = new URLSearchParams(location.search);
 const stageIndex = Math.max(0, Math.min(2, Number(params.get("stage") || 1) - 1));
 const manual = params.get("manual") === "1",
     capture = params.get("capture") === "1";
+const emptyNova = manual && stageIndex === 0 && params.get("emptyNova") === "1";
 const requested = params.get("scenario") || "play";
 if (!Number.isInteger(stageIndex) || !SCENARIOS.includes(requested as IntegrationScenario))
     throw new Error("Invalid stage/scenario route");
@@ -126,12 +127,16 @@ function updateStatus() {
         stage: stageIndex + 1,
         scenario: manual ? "manual" : scenario,
         setup: manual
-            ? "NORMAL RULES / ordinary stage beginning"
+            ? emptyNova
+                ? "EMPTY NOVA / ordinary stage beginning"
+                : "NORMAL RULES / ordinary stage beginning"
             : "SEEDED PRESENTATION / not reachability evidence",
         frozen: !manual && !novaPlayback && (capture || scenario !== "title"),
         novaOrigin: scenario === "nova" ? novaOrigin : undefined,
         novaPlayback,
         novaTime: session.run?.novaRing,
+        novaCharge: session.run?.nova,
+        hull: session.run?.hull,
         player: session.run ? [session.run.x, session.run.y] : undefined,
         calm: session.settings.reducedMotion,
         screen: session.screen,
@@ -237,9 +242,21 @@ try {
         },
         stageIndex,
     );
-    if (manual)
-        await app.start(await app.game.prepare(actual, { key: `manual-stage-${stageIndex + 1}` }));
-    else {
+    if (manual) {
+        const definition = emptyNova
+            ? {
+                  ...actual,
+                  setup(scene: Parameters<typeof actual.setup>[0]) {
+                      actual.setup(scene);
+                      // Keep the test meter empty even on the tick production recharge runs.
+                      Object.defineProperty(session.run!, "nova", { get: () => 0, set() {} });
+                  },
+              }
+            : actual;
+        await app.start(
+            await app.game.prepare(definition, { key: `manual-stage-${stageIndex + 1}` }),
+        );
+    } else {
         const preset = presentationStage(actual, session, {
             scenario,
             pose,

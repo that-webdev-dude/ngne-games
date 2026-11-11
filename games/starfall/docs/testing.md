@@ -5,9 +5,9 @@
 Use Node.js 24 or newer, from the repository root:
 
 ```powershell
-npm.cmd test
-npm.cmd run build
-node --experimental-strip-types tests/run-campaign-bot.ts
+npm.cmd run test --workspace=starfall
+npm.cmd run build --workspace=starfall
+npm.cmd run check:campaign
 ```
 
 The build checks source/test types and builds the production Vite entry. The campaign bot defaults to seeds 17, 41 and 83 and writes `.test-output/campaign-bot.json`; an output path followed by seeds can be supplied explicitly. Check every stage and campaign result, not just the exit code. The bot uses ordinary movement/fire/Nova inputs with exact entity observations and prediction. It demonstrates reachability, not human difficulty, audible balance or browser/GPU performance.
@@ -16,7 +16,7 @@ Generated test output belongs in gitignored `.test-output/`. Build output belong
 
 ## Browser fixtures
 
-Start `npm.cmd run dev -- --port 5173 --strictPort`. Open the routes below at `http://127.0.0.1:5173/`. These fixtures are excluded from the production entry/build.
+From the repository root, start `npm.cmd run dev --workspace=starfall -- --port 5173 --strictPort`. Open the routes below at `http://127.0.0.1:5173/`. These fixtures are excluded from the production entry/build.
 
 | Route                                                                    | Purpose                                                                                 |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
@@ -31,6 +31,7 @@ Integration route options:
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
 | `stage`    | `1`, `2`, `3`: Breakwater, Furnace, Citadel.                                                                  |
 | `manual`   | `1` starts ordinary play; PLAY STAGE does the same. LOAD PRESET seeds presentation state instead.             |
+| `emptyNova` | `1` with `stage=1&manual=1` holds the Nova meter empty from launch for opening-wave review. |
 | `calm`     | `0` normal motion; `1` reduced motion. Manual play also permits changing it in Settings.                      |
 | `scenario` | `card`, `play`, `boss`, `pause`, `result`, `settings`, `controls`, `death`, `loss`, `nova`, `dense`, `title`. |
 | `capture`  | `1` hides fixture controls and freezes presentation presets. Manual play still advances normally.             |
@@ -53,6 +54,17 @@ H toggles diagnostics. O or SAVE FRAME exports the next rendered GPU canvas as a
 For production smoke, run `npm.cmd run build`, then `npm.cmd run preview -- --port 4173 --strictPort`. Check title → launch → held fire → pause → return to title, and inspect the error overlay/browser console. A brief smoke does not establish a full rendered campaign clear.
 
 ## Manual checks
+
+### Orbital Breakwater banking passes
+
+1. Open `/tests/browser-integration.html?stage=1&manual=1&calm=0&emptyNova=1`. Confirm `READY`, `EMPTY NOVA / ordinary stage beginning`, and `novaCharge: 0` in diagnostics. Press H to hide the panel. The stage runs at normal speed and uses ordinary steering, fire, and collision. Reload to replay from launch.
+2. Start near the middle at the default height. Around 4–5 seconds, look for the left formation banking inward and the amber muzzle cues before it straightens and fires. Hold Space after the volley so all four ships can show the cue, then steer right across the lower field as the shots approach. Watch the surviving interceptors peel back out through the left edge.
+3. Return to the middle by 8 seconds. Around 9–11 seconds, watch the left gunship's glowing vents and fan while the mirrored interceptor formation banks in from the right. Hold Space after the interceptor volley. Compare a long left dodge with a shorter move left followed by a climb into the gap. Return toward the middle after the leading fan passes so the gunship's next volley does not catch you waiting there. Watch the surviving interceptors leave on the right.
+4. Record the cue you saw before each volley, your route and hull change, and how the gunship affected your second crossing. Confirm the muzzle flash and projectile origins on both passes. Use the ordinary manual route to continue to Gatebreaker's warning at 86 seconds and arrival at 90 seconds. Record campaign-bot outcomes separately.
+
+For a timed replay from the default position, hold D for about 0.6 seconds at 5.55, then A for about 0.6 seconds at 7.00 to recenter. Compare holding A for 0.6 seconds at 11.55 with tapping A for about 0.3 seconds at 11.25, W for 0.3 seconds at 11.85, and D for 0.45 seconds at 12.55. Use the diagnostics clock if you need fractional seconds.
+
+### Full-stage review
 
 For each stage, play at scales 2 and 3 with reduced motion both off and on. Use the manual route above with the corresponding stage number. Target browser content areas of 1280×720 or 1920×1080 **device pixels**; Windows scaling changes CSS pixels, so verify DPR and reported `k`. Smaller than 640×360 device pixels clips the centred 1× canvas.
 

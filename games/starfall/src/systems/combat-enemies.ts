@@ -4,6 +4,12 @@ import { COMBAT } from "../config/encounters.ts";
 import { Kind } from "../config/enemies.ts";
 import { fromLegacy as w } from "../config/view.ts";
 import { spawnEnemy, spawnRepair } from "../entities/combat.ts";
+import {
+    INTERCEPTOR_PASS,
+    InterceptorPattern,
+    interceptorPass,
+    interceptorPassDirection,
+} from "../world/interceptor-pass.ts";
 import { fan } from "../world/patterns.ts";
 import type { CombatContext } from "./combat-context.ts";
 
@@ -21,6 +27,13 @@ export const ENEMY_MUZZLES = {
     dart: specSocket("dart", "muzzle"),
     gunship: [specSocket("gunship", "leftMuzzle"), specSocket("gunship", "rightMuzzle")],
 } as const;
+
+export function interceptorMuzzle(rotation: number) {
+    const [x, y] = ENEMY_MUZZLES.interceptor,
+        cos = Math.cos(rotation),
+        sin = Math.sin(rotation);
+    return [x * cos - y * sin, x * sin + y * cos] as const;
+}
 
 export function installCombatEnemies({
     scene,
@@ -64,17 +77,30 @@ export function installCombatEnemies({
                 continue;
             }
             for (let i = 0; i < event.count; i++) {
-                if (event.kind === "interceptor")
+                if (event.kind === "interceptor") {
+                    const pattern =
+                        event.bankFrom === "left"
+                            ? InterceptorPattern.FromLeft
+                            : event.bankFrom === "right"
+                              ? InterceptorPattern.FromRight
+                              : InterceptorPattern.Aimed;
+                    const slot = i - (event.count - 1) / 2;
                     spawnEnemy(
                         scene.world,
                         run,
                         Kind.Interceptor,
-                        event.side + (i - (event.count - 1) / 2) * w(27),
-                        w(-22) - Math.abs(i - (event.count - 1) / 2) * w(14),
-                        { pattern: event.quiet ? 1 : 0, cooldown: 1.8 + i * 0.13 },
+                        event.side + slot * w(27),
+                        w(-22) - Math.abs(slot) * w(14),
+                        {
+                            pattern,
+                            cooldown: event.bankFrom ? INTERCEPTOR_PASS.fireAt : 1.8 + i * 0.13,
+                        },
                     );
+                }
                 if (event.kind === "gunship")
-                    spawnEnemy(scene.world, run, Kind.Gunship, event.side, w(-25));
+                    spawnEnemy(scene.world, run, Kind.Gunship, event.side, w(-25), {
+                        cooldown: event.firstVolley,
+                    });
                 if (event.kind === "sweeper")
                     spawnEnemy(
                         scene.world,
@@ -107,18 +133,26 @@ export function installCombatEnemies({
                 const kind = e.kind[row],
                     age = e.age[row];
                 if (kind === Kind.Interceptor) {
-                    p.x[row] = e.originX[row] + Math.sin(age * 1.6) * w(19);
-                    p.y[row] += dt * w(40);
-                    if (e.pattern[row] === 0) {
+                    const direction = interceptorPassDirection(e.pattern[row]);
+                    if (direction && age >= INTERCEPTOR_PASS.exitAt) {
+                        e.active[row] = 0;
+                        scene.world.despawn(chunk.entityAt(row));
+                        continue;
+                    }
+                    const bank = direction ? interceptorPass(age, direction) : undefined;
+                    p.x[row] = e.originX[row] + (bank?.x ?? Math.sin(age * 1.6) * w(19));
+                    p.y[row] += dt * (bank ? INTERCEPTOR_PASS.descent : w(40));
+                    if (bank || e.pattern[row] === InterceptorPattern.Aimed) {
+                        const cueLead = bank ? INTERCEPTOR_PASS.cue : INTERCEPTOR_TIMING.cue;
                         // The clock keeps running after the single shot (fireIndex 1) so the renderer can time the fire frame.
                         e.cooldown[row] -= dt;
                         if (e.fireIndex[row] === 0) {
-                            if (e.cooldown[row] < INTERCEPTOR_TIMING.cue && !e.cue[row]) {
+                            if (e.cooldown[row] < cueLead && !e.cue[row]) {
                                 e.cue[row] = 1;
                                 e.targetAngle[row] = Math.atan2(run.y - p.y[row], run.x - p.x[row]);
                             }
                             if (e.cooldown[row] <= 0) {
-                                const [mx, my] = ENEMY_MUZZLES.interceptor;
+                                const [mx, my] = interceptorMuzzle(bank?.rotation ?? 0);
                                 emit(
                                     p.x[row] + mx,
                                     p.y[row] + my,

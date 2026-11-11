@@ -4,8 +4,9 @@ import { drawAttackCue, hitColor } from "../bosses/boss.ts";
 import { Kind } from "../config/enemies.ts";
 import { LAYER } from "../config/layers.ts";
 import { rev01Sprite, type NativeSprite } from "../services/rev01-assets.ts";
-import { ENEMY_MUZZLES } from "../systems/combat-enemies.ts";
+import { interceptorMuzzle } from "../systems/combat-enemies.ts";
 import { drawNative } from "../ui/sprite.ts";
+import { interceptorPass, interceptorPassDirection } from "../world/interceptor-pass.ts";
 import { ORDINARY_SPRITES, ordinaryFrame } from "./enemy-frames.ts";
 import type { RenderPassFactory } from "./pass.ts";
 import { drawMine } from "./player-fx.ts";
@@ -46,19 +47,25 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                     },
                     reduced,
                 );
+                const direction =
+                    kind === Kind.Interceptor ? interceptorPassDirection(e.pattern[row]) : 0;
+                const bank = direction ? interceptorPass(e.age[row], direction).rotation : 0;
                 drawNative(frame, sprite.frame(name), x, y, {
                     layer: LAYER.enemy,
                     color: hitColor(e.flash[row], reduced),
+                    bank,
                 });
                 // The interceptor's aim telegraph has no frame in the art: keep the code cue, now at its spec muzzle.
-                if (kind === Kind.Interceptor && e.cue[row])
+                if (kind === Kind.Interceptor && e.cue[row]) {
+                    const [mx, my] = interceptorMuzzle(bank);
                     drawAttackCue(
                         legacy,
-                        x + ENEMY_MUZZLES.interceptor[0],
-                        y + ENEMY_MUZZLES.interceptor[1],
+                        (bank ? Math.floor(x) : x) + mx,
+                        (bank ? Math.floor(y) : y) + my,
                         run.effectClock,
                         reduced,
                     );
+                }
             }
         });
         boss.render(frame, alpha, legacy);
