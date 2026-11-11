@@ -18,7 +18,7 @@ Real gameplay captured in Chrome/WebGPU, with the campaign bot using normal move
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [<img src="docs/screenshots/orbital-breakwater-combat.png" width="320" alt="Enemy formations and crossfire over Orbital Breakwater">](docs/screenshots/orbital-breakwater-combat.png) | [<img src="docs/screenshots/orbital-breakwater-gatebreaker.png" width="320" alt="Fighting Gatebreaker through rings of violet projectiles">](docs/screenshots/orbital-breakwater-gatebreaker.png) |
 | **Kiln Serpent · Furnace Belt**                                                                                                                                                       | **Nova · Midnight Citadel**                                                                                                                                                                       |
-| [<img src="docs/screenshots/furnace-belt-kiln-serpent.png" width="320" alt="The segmented Kiln Serpent firing across Furnace Belt">](docs/screenshots/furnace-belt-kiln-serpent.png)  | [<img src="docs/screenshots/midnight-citadel-nova.png" width="320" alt="A Nova blast destroying enemy formations in Midnight Citadel">](docs/screenshots/midnight-citadel-nova.png)               |
+| [<img src="docs/screenshots/furnace-belt-kiln-serpent.png" width="320" alt="The segmented Kiln Serpent firing across Furnace Belt">](docs/screenshots/furnace-belt-kiln-serpent.png)  | [<img src="docs/screenshots/midnight-citadel-nova.png" width="320" alt="The Nova ring expanding in Midnight Citadel">](docs/screenshots/midnight-citadel-nova.png)                                |
 
 ## Run
 
@@ -49,7 +49,7 @@ Starfall is deployed by this collection at `/ngne-games/starfall/`. Publication 
 | Fullscreen            | F                        | —                        |
 | Menu navigation       | Arrows, Enter or click   | D-pad, A                 |
 
-Holding both fire inputs keeps one firing cadence. Nova clears hostile projectiles and beams, damages enemies, and recharges in 15 seconds. The bright center dot marks the player's small hitbox. Movement accelerates and coasts on release; the ship banks with horizontal input.
+Holding both fire inputs keeps one firing cadence. Nova is a defensive blast that clears hostile projectiles and beams, briefly suppresses enemy fire, and grants at least half a second of protection. Enemies and mines keep their health. Mines still expire on their usual fuse, and their bursts are suppressed if they detonate during the clear. Nova recharges in 15 seconds. The bright center dot marks the player's small hitbox. Movement accelerates and coasts on release; the ship banks with horizontal input.
 
 Each sector begins with full hull and Nova. Retry restores that sector's entry score, preventing repeated attempts from accumulating score. Clear all three sectors to finish the campaign. Best score and settings are stored locally in the browser. Music, effects, mute and reduced motion are available in Settings. Touch controls are not included; physical gamepad support still needs device testing.
 

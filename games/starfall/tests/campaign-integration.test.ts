@@ -357,19 +357,18 @@ test("later enemy families differ: delayed mine versus charged lane, with delaye
     }
 });
 
-test("mines damage on contact, can be shot down, and Nova suppresses a due detonation", async () => {
-    for (const mode of ["contact", "shoot", "nova"]) {
+test("mines damage on contact and can be shot down", async () => {
+    for (const mode of ["contact", "shoot"]) {
         const h = await campaignFixture(1, 0, (scene, run) => {
             run.invulnerable = 0;
             const x = mode === "contact" ? run.x : w(100),
                 y = mode === "contact" ? run.y : w(140);
-            spawnEnemy(scene.world, run, Kind.Mine, x, y, { cooldown: mode === "nova" ? 0 : 1.8 });
+            spawnEnemy(scene.world, run, Kind.Mine, x, y, { cooldown: 1.8 });
             if (mode === "shoot")
                 for (let i = 0; i < 2; i++) spawnBullet(scene.world, x, y, 0, 0, 0);
         });
         try {
-            if (mode === "nova") h.press("KeyB");
-            else h.ticks(1);
+            h.ticks(1);
             if (mode === "contact") {
                 assert.equal(h.session.run!.hull, 4);
                 assert.equal(h.calls.damage, 1);
@@ -381,6 +380,33 @@ test("mines damage on contact, can be shot down, and Nova suppresses a due deton
         } finally {
             h.game.dispose();
         }
+    }
+});
+
+test("Nova suppresses a mine burst on the detonation tick and preserves mines still on a fuse", async () => {
+    const h = await campaignFixture(1, 0, (scene, run) => {
+        spawnEnemy(scene.world, run, Kind.Mine, w(100), w(140), { cooldown: 0 });
+        spawnEnemy(scene.world, run, Kind.Mine, w(200), w(140), { cooldown: 0.25 });
+    });
+    try {
+        h.press("KeyB");
+        assert.equal(h.calls.nova, 1);
+        assert.equal(h.world.query(Enemy).size, 1, "only the mine due to detonate expires");
+        h.world.query(Enemy).eachChunk(({ views: { enemy } }) => {
+            assert.equal(enemy.hp[0], enemySpec(Kind.Mine).hp);
+            assert.ok(enemy.cooldown[0] > 0);
+        });
+        assert.equal(hostileCount(h.world), 0, "the due burst is suppressed");
+        assert.equal(h.calls.enemyShot ?? 0, 0);
+
+        h.ticks(24);
+        assert.equal(h.world.query(Enemy).size, 0, "the surviving mine expires on its fuse");
+        assert.equal(hostileCount(h.world), 8, "its burst fires once suppression has ended");
+        assert.equal(h.session.run!.kills, 0);
+        assert.equal(h.session.run!.score, 0);
+        assert.equal(h.calls.kill ?? 0, 0);
+    } finally {
+        h.game.dispose();
     }
 });
 

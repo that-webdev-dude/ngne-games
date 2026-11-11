@@ -1,7 +1,5 @@
 import { clamp, down, pressed } from "@ngne/core";
 import { Flight } from "../components/flight.ts";
-import { Enemy, Pose } from "../components/combat.ts";
-import { isBoss } from "../config/enemies.ts";
 import { COMBAT } from "../config/encounters.ts";
 import { FLIGHT, PLAYER_BOUNDS, fromLegacy as w } from "../config/view.ts";
 import { spawnBullet } from "../entities/combat.ts";
@@ -14,7 +12,6 @@ import { playerFxState, startNovaFx } from "./player-fx-state.ts";
 export function installCombatPlayer(context: CombatContext): void {
     const { scene, run, session, sound, burst, hostiles } = context;
     const players = scene.world.query(Flight),
-        enemies = scene.world.query(Pose, Enemy),
         fx = playerFxState(run);
     const { minX, maxX, minY, maxY } = PLAYER_BOUNDS;
     scene.system(({ dt, input }) => {
@@ -82,14 +79,6 @@ export function installCombatPlayer(context: CombatContext): void {
             hostiles.clear({
                 onHostileBullet: (x, y) =>
                     burst(x, y, 0x83f1e1, 2, false, session.settings.reducedMotion),
-            });
-            enemies.eachChunk((chunk) => {
-                const e = chunk.views.enemy;
-                for (let row = 0; row < chunk.count; row++)
-                    if (e.active[row]) {
-                        e.hp[row] -= isBoss(e.kind[row]) ? 28 : 12;
-                        e.flash[row] = 0.14;
-                    }
             });
             burst(run.x, run.y, 0x93f5ff, 60);
         }

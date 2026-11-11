@@ -8,14 +8,14 @@ import {
     type SceneSetup,
     type WorldAccess,
 } from "@ngne/core";
-import { Bullet, Enemy, Pose } from "../src/components/combat.ts";
+import { Beam, Bullet, Enemy, Pickup, Pose } from "../src/components/combat.ts";
 import { Flight } from "../src/components/flight.ts";
 import { TURRET_SOCKETS } from "../src/bosses/gatebreaker.ts";
 import { COMBAT, ENCOUNTERS } from "../src/config/encounters.ts";
 import { Kind, enemySpec } from "../src/config/enemies.ts";
 import { fromLegacy as w } from "../src/config/view.ts";
 import { STAGES } from "../src/config/stages.ts";
-import { spawnBullet, spawnEnemy } from "../src/entities/combat.ts";
+import { spawnBeam, spawnBullet, spawnEnemy } from "../src/entities/combat.ts";
 import { stageScene } from "../src/scenes/stage.ts";
 import { menuScene } from "../src/scenes/menu.ts";
 import type { CombatSound } from "../src/systems/combat-context.ts";
@@ -176,13 +176,16 @@ test("actual collision system applies one hit for simultaneous bullets and resto
     }
 });
 
-test("Nova clears hostile shots, preserves friendly shots, suppresses due enemy fire, and respects recharge", async () => {
+test("Nova clears hostile shots and beams, preserves friendly shots, and suppresses due fire", async () => {
     const h = await boot((scene, run) => {
-        run.shotTimer = 100;
+        run.invulnerable = 0;
         spawnBullet(scene.world, w(10), w(220), 0, 0, 0);
         spawnBullet(scene.world, w(70), w(170), 0, 0, 1);
         spawnBullet(scene.world, w(80), w(170), 0, 0, 1);
+        spawnBeam(scene.world, run.x, 15, 0);
+        spawnBeam(scene.world, w(80), 15, 0.9);
         spawnEnemy(scene.world, run, Kind.Gunship, w(130), w(67), { hp: 20, cooldown: 0 });
+        spawnEnemy(scene.world, run, Kind.Interceptor, run.x, run.y);
     });
     try {
         h.press("KeyB");
@@ -193,19 +196,43 @@ test("Nova clears hostile shots, preserves friendly shots, suppresses due enemy 
             "due gunship shot must not survive Nova's clear",
         );
         assert.equal(bullets(h.world).filter((b) => !b.team).length, 1);
-        h.world.query(Enemy).eachChunk(({ views }) => assert.equal(views.enemy.hp[0], 8));
-        h.ticks(7);
+        assert.equal(h.world.query(Beam).size, 0, "both active and charging lanes clear");
+        assert.equal(h.calls.enemyShot ?? 0, 0, "the due gunship shot is suppressed");
+        assert.equal(h.session.run!.hull, 5, "Nova protects the player on contact");
+        assert.equal(h.session.run!.invulnerable, 0.5);
+        assert.equal(h.world.query(Enemy).size, 2, "both ordinary enemies survive");
+        h.world.query(Enemy).eachChunk(({ views: { enemy }, count }) => {
+            for (let row = 0; row < count; row++) assert.equal(enemy.hp[row], enemy.maxHp[row]);
+        });
+        assert.equal(h.session.run!.kills, 0);
+        assert.equal(h.session.run!.score, 0);
+        assert.equal(h.session.run!.combo, 1);
+        assert.deepEqual(h.session.run!.scorePops, []);
+        assert.equal(h.world.query(Pickup).size, 0);
+        assert.equal(h.calls.kill ?? 0, 0);
+    } finally {
+        h.game.dispose();
+    }
+});
+
+test("Nova leaves the boss and an attached turret at their pre-activation HP", async () => {
+    const h = await boot((scene, run) => {
+        run.phase = "boss";
+        spawnEnemy(scene.world, run, Kind.Gatebreaker, w(240), w(65), { hp: 25 });
+        spawnEnemy(scene.world, run, Kind.GatebreakerTurret, w(202), w(65), { hp: 10 });
+    });
+    try {
         h.press("KeyB");
         assert.equal(h.calls.nova, 1);
-        h.queue.push((scene) =>
-            scene.world.query(Enemy).eachChunk((chunk) => {
-                for (let i = 0; i < chunk.count; i++) scene.world.despawn(chunk.entityAt(i));
-            }),
-        );
-        h.ticks(910);
-        assert.equal(h.session.run!.nova, 1);
-        h.press("KeyB");
-        assert.equal(h.calls.nova, 2);
+        assert.equal(h.session.run!.phase, "boss");
+        assert.equal(h.session.run!.bossHealth, 25);
+        assert.equal(h.world.query(Enemy).size, 2);
+        h.world.query(Enemy).eachChunk(({ views: { enemy }, count }) => {
+            for (let row = 0; row < count; row++) assert.equal(enemy.hp[row], enemy.maxHp[row]);
+        });
+        assert.equal(h.session.run!.kills, 0);
+        assert.equal(h.session.run!.score, 0);
+        assert.equal(h.calls.kill ?? 0, 0);
     } finally {
         h.game.dispose();
     }
@@ -570,7 +597,7 @@ test("long idle does not accumulate cooldown debt or produce a catch-up burst", 
     }
 });
 
-test("B and Pad0 trigger Nova independently without firing a normal volley", async () => {
+test("B and Pad0 trigger Nova without firing a volley and respect the 15-second recharge", async () => {
     for (const key of ["KeyB", "Pad0"]) {
         const h = await boot();
         try {
@@ -579,6 +606,17 @@ test("B and Pad0 trigger Nova independently without firing a normal volley", asy
             assert.equal(h.calls.shoot ?? 0, 0);
             assert.equal(h.session.run!.nova, 0);
             assert.equal(bullets(h.world).filter((bullet) => !bullet.team).length, 0);
+            h.ticks(5); // Nova hit-stop pauses recharge.
+            h.queue.push((scene) => spawnBullet(scene.world, w(70), w(170), 0, 0));
+            h.ticks(1);
+            h.press(key);
+            assert.equal(h.calls.nova, 1, "an uncharged Nova does not activate");
+            assert.equal(bullets(h.world).filter((bullet) => bullet.team).length, 1);
+            h.ticks(896);
+            h.press(key);
+            assert.equal(h.calls.nova, 1, "one tick short of 15 seconds is still uncharged");
+            h.press(key);
+            assert.equal(h.calls.nova, 2, "Nova is ready at 15 seconds");
         } finally {
             h.game.dispose();
         }
