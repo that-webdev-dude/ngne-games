@@ -38,6 +38,12 @@ Install dependencies once from the collection root. Run commands in the game-loc
 
 Starfall is deployed by this collection at `/ngne-games/starfall/`. Publication uses the collection's manual Pages workflow on `main`. Source and playable-game links should point to this repository and its collection deployment.
 
+## Install on Windows
+
+Open Starfall in desktop Chrome with WebGPU support. In Chrome's menu, choose **Cast, save, and share → Install Starfall**, then select **Install**. Open **Starfall** from the Windows Start menu to play in its own window.
+
+The installed app needs an internet connection to load the published game. In the same Chrome profile, it uses the settings and best score saved on that site's origin. The launcher icons use the neutral pose from the game's player sprite.
+
 ## Controls
 
 | Action                | Keyboard / mouse         | Standard gamepad mapping |
