@@ -18,12 +18,15 @@ export const ENCOUNTERS: Encounter[] = (
         // Give the gunship time to clear the top HUD before its vents telegraph the fan.
         { at: 7.1, kind: "gunship", count: 1, side: fromLegacy(130), firstVolley: 2.8 },
         { at: 8, kind: "interceptor", count: 4, side: 592, bankFrom: "right" },
-        ...[13, 18, 23, 29, 35, 41, 46, 50, 55, 60, 65, 70, 76, 81].map((at, index) => ({
-            at,
-            kind: "interceptor" as const,
-            count: index > 8 ? 6 : 4,
-            side: fromLegacy(index % 2 ? 320 : 160),
-        })),
+        // The left pair locks its aim after the player has had time to react to the right pair.
+        { at: 41, kind: "interceptor", count: 2, side: 592, bankFrom: "right" },
+        { at: 42.8, kind: "interceptor", count: 2, side: 48, bankFrom: "left" },
+        ...[
+            { side: fromLegacy(160), times: [13, 23, 35, 46, 55, 65, 76] },
+            { side: fromLegacy(320), times: [18, 29, 50, 60, 70, 81] },
+        ].flatMap(({ side, times }) =>
+            times.map((at) => ({ at, kind: "interceptor" as const, count: at < 60 ? 4 : 6, side })),
+        ),
         ...[23, 44, 48, 64, 77, 80].map((at, index) => ({
             at,
             kind: "gunship" as const,

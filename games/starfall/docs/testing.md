@@ -70,6 +70,12 @@ For a timed replay from the default position, hold D for about 0.6 seconds at 5.
 2. Watch the gunship's vents and the lower sweeper's first spreads. From near the lower middle, compare crossing right around 31 seconds with waiting until around 32 seconds, after those spreads have moved farther down. Hold Space as you cross and aim up the right-hand lane. Adjust for the bullets you see if your starting position changes.
 3. Record which shot or ship made you wait or change course, and whether the gap was readable in time to use it. Note any hull change during the crossing.
 
+### Orbital Breakwater staggered interceptor pairs
+
+1. Use the empty-Nova route and approach 43 seconds near the lower middle. The right pair banks in first and fires around 43.6 seconds. Watch for the second pair entering from the left before the first finishes peeling away.
+2. From the default height and near centre, try a short move left after the right pair fires. The left pair locks its aim around 44.9 seconds and fires around 45.4. Compare waiting in the new position with moving back right after the second volley. Keep an eye on any remaining sweeper shots and the gunship entering from the left.
+3. For a timed comparison, hold A for about 0.2 seconds at 44.1, then hold D for about 0.47 seconds at 45.65 on the return attempt. Record whether you read both muzzle cues and whether the second pair made you move again.
+
 ### Full-stage review
 
 For each stage, play at scales 2 and 3 with reduced motion both off and on. Use the manual route above with the corresponding stage number. Target browser content areas of 1280×720 or 1920×1080 **device pixels**; Windows scaling changes CSS pixels, so verify DPR and reported `k`. Smaller than 640×360 device pixels clips the centred 1× canvas.

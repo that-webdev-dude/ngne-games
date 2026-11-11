@@ -299,6 +299,39 @@ test("Breakwater's mirrored banks cue before a straight volley and leave past th
     }
 });
 
+test("Breakwater's staggered left pair locks onto the player's position after the first dodge", async () => {
+    const h = await stage(0, (_scene, run) => {
+        run.seconds = 40;
+        run.waveIndex = STAGES[0].encounters.findIndex((event) => event.at === 41);
+    });
+    const pair = (pattern: number) =>
+        enemyRows(h.world, Kind.Interceptor).filter((row) => row.pattern === pattern);
+    try {
+        while (h.run.seconds < 44.1) h.tick();
+        const right = pair(InterceptorPattern.FromRight);
+        assert.equal(right.length, 2);
+        assert.ok(right.every((row) => row.fireIndex === 1));
+        assert.ok(pair(InterceptorPattern.FromLeft).every((row) => !row.cue));
+
+        const beforeDodge = h.run.x;
+        for (let i = 0; i < 12; i++) h.game.tick({ ...emptyInput(), held: ["KeyA"] });
+        let left = pair(InterceptorPattern.FromLeft);
+        while (h.run.seconds < 45 && left.every((row) => !row.cue)) {
+            h.tick();
+            left = pair(InterceptorPattern.FromLeft);
+        }
+        assert.ok(h.run.x < beforeDodge - 40);
+        assert.equal(left.length, 2);
+        for (const row of left) {
+            assert.equal(row.cue, 1);
+            assert.equal(row.fireIndex, 0);
+            assert.ok(near(row.targetAngle, Math.atan2(h.run.y - row.y, h.run.x - row.x)));
+        }
+    } finally {
+        h.game.dispose();
+    }
+});
+
 /** A boss row with a preset clock (setup-time queries cannot see uncommitted spawns). */
 function spawnBoss(
     scene: Setup,
