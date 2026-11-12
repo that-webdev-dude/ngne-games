@@ -12,6 +12,21 @@ export const INTERCEPTOR_RIPPLE = {
     speed: 1.4,
 } as const;
 
+const CROSS_SPEED = 182,
+    CROSS_TIME = 3.15,
+    TURN_RADIUS = 45,
+    RETURN_ANGLE = (17 * Math.PI) / 180,
+    TURN_ANGLE = Math.PI - RETURN_ANGLE,
+    RETURN_AT = CROSS_TIME + (TURN_RADIUS * TURN_ANGLE) / CROSS_SPEED;
+
+export const INTERCEPTOR_RETURN = {
+    returnAt: RETURN_AT,
+    fireAt: RETURN_AT + 0.57,
+    cue: 0.55,
+    heading: RETURN_ANGLE,
+    shotSpeed: 205,
+} as const;
+
 export const InterceptorPattern = {
     Aimed: 0,
     Quiet: 1,
@@ -20,6 +35,7 @@ export const InterceptorPattern = {
     ForwardFromLeft: 4,
     ForwardFromRight: 5,
     RippleFromRight: 6,
+    CrossAndReturn: 7,
 } as const;
 
 export function interceptorPassDirection(pattern: number): number {
@@ -59,4 +75,19 @@ export function interceptorPass(age: number, direction: number) {
         vx = (-2 * peel * progress) / duration;
     }
     return { x: direction * offset, rotation: Math.atan2(-direction * vx, descent) };
+}
+
+/** Offsets from the entry point. The circular hook is tangent to both straight legs. */
+export function interceptorReturnPass(age: number) {
+    if (age <= CROSS_TIME) return { x: -CROSS_SPEED * age, y: 0, rotation: Math.PI / 2 };
+    const turn = Math.min(TURN_ANGLE, ((age - CROSS_TIME) * CROSS_SPEED) / TURN_RADIUS),
+        distance = Math.max(0, age - RETURN_AT) * CROSS_SPEED;
+    return {
+        x:
+            -CROSS_SPEED * CROSS_TIME -
+            TURN_RADIUS * Math.sin(turn) +
+            distance * Math.cos(RETURN_ANGLE),
+        y: TURN_RADIUS * (1 - Math.cos(turn)) + distance * Math.sin(RETURN_ANGLE),
+        rotation: Math.PI / 2 - turn,
+    };
 }

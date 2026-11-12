@@ -6,11 +6,13 @@ import { VIEW, fromLegacy as w } from "../config/view.ts";
 import { spawnEnemy, spawnRepair } from "../entities/combat.ts";
 import {
     INTERCEPTOR_PASS,
+    INTERCEPTOR_RETURN,
     INTERCEPTOR_RIPPLE,
     InterceptorPattern,
     interceptorPass,
     interceptorPassAge,
     interceptorPassDirection,
+    interceptorReturnPass,
 } from "../world/interceptor-pass.ts";
 import { fan } from "../world/patterns.ts";
 import type { CombatContext } from "./combat-context.ts";
@@ -49,6 +51,7 @@ export function installCombatEnemies({
         { emit } = hostiles;
     function spawnInterceptors(count: number, x: number, pattern: number) {
         const banking = interceptorPassDirection(pattern) !== 0,
+            returning = pattern === InterceptorPattern.CrossAndReturn,
             ripple = pattern === InterceptorPattern.RippleFromRight;
         for (let i = 0; i < count; i++) {
             const slot = i - (count - 1) / 2,
@@ -56,12 +59,15 @@ export function installCombatEnemies({
             let cooldown = 1.8 + i * 0.13;
             if (banking) cooldown = INTERCEPTOR_PASS.fireAt;
             if (ripple) cooldown = INTERCEPTOR_PASS.fireAt / INTERCEPTOR_RIPPLE.speed + delay;
+            if (returning) cooldown = INTERCEPTOR_RETURN.fireAt;
             spawnEnemy(
                 scene.world,
                 run,
                 Kind.Interceptor,
-                x + slot * w(27),
-                w(-22) - (ripple ? i * INTERCEPTOR_RIPPLE.spacingY : Math.abs(slot) * w(14)),
+                x + slot * (returning ? 32 : w(27)),
+                returning
+                    ? 59 - slot * 6
+                    : w(-22) - (ripple ? i * INTERCEPTOR_RIPPLE.spacingY : Math.abs(slot) * w(14)),
                 { pattern, cooldown, age: -delay },
             );
         }
@@ -112,6 +118,7 @@ export function installCombatEnemies({
                               left: InterceptorPattern.FromLeft,
                               right: InterceptorPattern.FromRight,
                               "right-ripple": InterceptorPattern.RippleFromRight,
+                              "right-return": InterceptorPattern.CrossAndReturn,
                           }[event.bankFrom]
                         : InterceptorPattern.Aimed;
                     spawnInterceptors(event.count, event.side, pattern);
@@ -156,6 +163,7 @@ export function installCombatEnemies({
                     age = e.age[row];
                 if (kind === Kind.Interceptor) {
                     const pattern = e.pattern[row],
+                        returning = pattern === InterceptorPattern.CrossAndReturn,
                         direction = interceptorPassDirection(pattern),
                         passAge = interceptorPassAge(age, pattern);
                     if (direction && passAge >= INTERCEPTOR_PASS.exitAt) {
@@ -163,15 +171,32 @@ export function installCombatEnemies({
                         scene.world.despawn(chunk.entityAt(row));
                         continue;
                     }
-                    const bank = direction ? interceptorPass(passAge, direction) : undefined,
-                        travelTime =
+                    const bank = direction ? interceptorPass(passAge, direction) : undefined;
+                    let rotation = bank?.rotation ?? 0;
+                    if (returning) {
+                        const pass = interceptorReturnPass(age);
+                        p.x[row] = e.originX[row] + pass.x;
+                        p.y[row] += pass.y - interceptorReturnPass(age - dt).y;
+                        rotation = pass.rotation;
+                        if (age >= INTERCEPTOR_RETURN.returnAt && p.x[row] > VIEW.width + 24) {
+                            e.active[row] = 0;
+                            scene.world.despawn(chunk.entityAt(row));
+                            continue;
+                        }
+                    } else {
+                        const travelTime =
                             pattern === InterceptorPattern.RippleFromRight
                                 ? Math.min(dt, Math.max(0, age)) * INTERCEPTOR_RIPPLE.speed
                                 : dt;
-                    p.x[row] = e.originX[row] + (bank?.x ?? Math.sin(age * 1.6) * w(19));
-                    p.y[row] += travelTime * (bank ? INTERCEPTOR_PASS.descent : w(40));
-                    if (bank || pattern === InterceptorPattern.Aimed) {
-                        const cueLead = bank ? INTERCEPTOR_PASS.cue : INTERCEPTOR_TIMING.cue;
+                        p.x[row] = e.originX[row] + (bank?.x ?? Math.sin(age * 1.6) * w(19));
+                        p.y[row] += travelTime * (bank ? INTERCEPTOR_PASS.descent : w(40));
+                    }
+                    if (returning || bank || pattern === InterceptorPattern.Aimed) {
+                        const cueLead = returning
+                            ? INTERCEPTOR_RETURN.cue
+                            : bank
+                              ? INTERCEPTOR_PASS.cue
+                              : INTERCEPTOR_TIMING.cue;
                         // The clock keeps running after the single shot (fireIndex 1) so the renderer can time the fire frame.
                         e.cooldown[row] -= dt;
                         if (e.fireIndex[row] === 0) {
@@ -181,16 +206,23 @@ export function installCombatEnemies({
                                     pattern === InterceptorPattern.ForwardFromLeft ||
                                     pattern === InterceptorPattern.ForwardFromRight ||
                                     pattern === InterceptorPattern.RippleFromRight;
-                                e.targetAngle[row] = forward
-                                    ? Math.PI / 2
-                                    : Math.atan2(run.y - p.y[row], run.x - p.x[row]);
+                                e.targetAngle[row] = returning
+                                    ? INTERCEPTOR_RETURN.heading
+                                    : forward
+                                      ? Math.PI / 2
+                                      : Math.atan2(run.y - p.y[row], run.x - p.x[row]);
                             }
                             if (e.cooldown[row] <= 0) {
-                                const [mx, my] = interceptorMuzzle(bank?.rotation ?? 0);
+                                const [mx, my] = interceptorMuzzle(rotation);
                                 emit(
                                     p.x[row] + mx,
                                     p.y[row] + my,
-                                    fan(e.targetAngle[row], 1, 0, w(62)),
+                                    fan(
+                                        e.targetAngle[row],
+                                        1,
+                                        0,
+                                        returning ? INTERCEPTOR_RETURN.shotSpeed : w(62),
+                                    ),
                                     0xff747d,
                                 );
                                 e.fireIndex[row]++;
@@ -198,6 +230,7 @@ export function installCombatEnemies({
                             }
                         }
                     }
+                    if (returning) continue;
                 } else if (kind === Kind.Gunship) {
                     p.y[row] += dt * w(p.y[row] < w(67) ? 28 : age > 12 ? 38 : 5);
                     p.x[row] = e.originX[row] + Math.sin(age * 0.8) * w(24);

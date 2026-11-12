@@ -8,9 +8,11 @@ import { ENEMY_MUZZLES, interceptorMuzzle } from "../systems/combat-enemies.ts";
 import { PRESENTATION } from "../ui/presentation.ts";
 import { drawNative } from "../ui/sprite.ts";
 import {
+    InterceptorPattern,
     interceptorPass,
     interceptorPassAge,
     interceptorPassDirection,
+    interceptorReturnPass,
 } from "../world/interceptor-pass.ts";
 import { ORDINARY_SPRITES, ordinaryFrame } from "./enemy-frames.ts";
 import type { RenderPassFactory } from "./pass.ts";
@@ -54,12 +56,19 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                     },
                     reduced,
                 );
-                const direction =
-                    kind === Kind.Interceptor ? interceptorPassDirection(e.pattern[row]) : 0;
-                const bank = direction
-                    ? interceptorPass(interceptorPassAge(e.age[row], e.pattern[row]), direction)
-                          .rotation
-                    : 0;
+                let bank = 0;
+                if (kind === Kind.Interceptor) {
+                    const pattern = e.pattern[row],
+                        age = e.age[row],
+                        direction = interceptorPassDirection(pattern);
+                    if (pattern === InterceptorPattern.CrossAndReturn)
+                        bank = interceptorReturnPass(age).rotation;
+                    else if (direction)
+                        bank = interceptorPass(
+                            interceptorPassAge(age, pattern),
+                            direction,
+                        ).rotation;
+                }
                 const art = sprite.frame(name);
                 drawNative(frame, art, x, y, {
                     layer: LAYER.enemy,

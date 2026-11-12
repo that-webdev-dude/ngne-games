@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { Frame, Game, emptyInput, type SceneSetup, type WorldAccess } from "@ngne/core";
-import { Bullet, Enemy, Pose } from "../src/components/combat.ts";
+import { Beam, Bullet, Enemy, Pose } from "../src/components/combat.ts";
 import {
     TELEGRAPH_CORE,
     TURRET_MUZZLES,
@@ -414,6 +414,145 @@ test("Breakwater's final bank ripples six shots and leaves before Gatebreaker's 
         while (h.run.seconds < 90) h.tick();
         assert.equal(h.run.phase, "boss");
         assert.equal(enemyRows(h.world, Kind.Gatebreaker).length, 1);
+    } finally {
+        h.game.dispose();
+    }
+});
+
+test("Furnace Belt's five interceptors hook left, cue and fire down-right once, then exit right", async () => {
+    const h = await stage(1, (_scene, run) => {
+        run.seconds = 50.9;
+        run.waveIndex = STAGES[1].encounters.findIndex((event) => event.at === 51);
+    });
+    const formation = () =>
+        enemyRows(h.world, Kind.Interceptor).filter(
+            ({ pattern }) => pattern === InterceptorPattern.CrossAndReturn,
+        );
+    const sprite = rev01Sprite("interceptor");
+    try {
+        while (h.run.seconds < 51.1) h.tick();
+        const entering = formation();
+        assert.equal(entering.length, 5);
+        assert.ok(entering.every(({ x }) => x > 640));
+
+        while (h.run.seconds < 53) h.tick();
+        const crossing = formation();
+        assert.ok(crossing.every((row, i) => row.x < entering[i].x && row.y === entering[i].y));
+        assert.ok(crossing.every(({ cue, fireIndex }) => !cue && !fireIndex));
+
+        while (h.run.seconds < 54.65) h.tick();
+        const hook = formation();
+        assert.ok(hook.every((row, i) => row.x < crossing[i].x && row.y > crossing[i].y));
+        assert.ok(hook.every(({ cue, fireIndex }) => !cue && !fireIndex));
+
+        while (h.run.seconds < 55.05) h.tick();
+        const cued = formation();
+        assert.ok(cued.every((row, i) => row.x > hook[i].x && row.y > hook[i].y));
+        assert.ok(cued.every(({ cue, fireIndex }) => cue === 1 && fireIndex === 0));
+        assert.equal(enemyRows(h.world, Kind.Mine).length, 1, "52-second minelayer is active");
+        const cueFrame = h.render(),
+            cues = cueFrame.filter((quad) => quad.layer === LAYER.enemyCue);
+        assert.equal(cues.length, 5);
+        for (const quad of byTexture(cueFrame, "interceptor")) {
+            const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+            assert.ok(
+                cues.some(
+                    ({ d }) =>
+                        Math.abs(d[0] + d[2] / 2 - x) <= 1 && Math.abs(d[1] + d[5] / 2 - y) <= 1,
+                ),
+            );
+        }
+
+        while (h.run.seconds < 55.6 && formation().every(({ fireIndex }) => !fireIndex)) h.tick();
+        const shots = freshShots(h.world),
+            flashes = byTexture(h.render(), "interceptor");
+        assert.equal(shots.length, 5);
+        assert.equal(flashes.length, 5);
+        for (const quad of flashes) {
+            assert.equal(frameOf(quad, sprite)?.name, "fire");
+            const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+            const shot = shots.find(
+                (shot) => Math.abs(shot.x - x) <= 1 && Math.abs(shot.y - y) <= 1,
+            );
+            assert.ok(shot, "shot originates at the rotated muzzle");
+            assert.ok(shot.vx > 0 && shot.vy > 0);
+            const nose = [quad.d[4], quad.d[5]];
+            assert.ok(near(Math.atan2(shot.vy, shot.vx), Math.atan2(nose[1], nose[0]), 1e-6));
+        }
+
+        const lastX = new Map<number, number>();
+        while (h.run.seconds < 59 && formation().length) {
+            for (const { y, x, fireIndex } of formation()) {
+                assert.equal(fireIndex, 1);
+                // Each ship keeps its x/y offset from the others along the return leg.
+                const lane = Math.round(y - x * (shots[0].vy / shots[0].vx));
+                lastX.set(lane, x);
+            }
+            h.tick();
+        }
+        assert.equal(formation().length, 0);
+        assert.equal(lastX.size, 5);
+        assert.ok(
+            [...lastX.values()].every((x) => x > 656),
+            "ships clear the right edge",
+        );
+
+        while (h.run.seconds < 96) h.tick();
+        assert.equal(h.run.banner, "WARNING / KILN SERPENT");
+        assert.equal(h.run.phase, "waves");
+        while (h.run.seconds < 100) h.tick();
+        assert.equal(h.run.phase, "boss");
+        assert.equal(enemyRows(h.world, Kind.KilnHead).length, 1);
+    } finally {
+        h.game.dispose();
+    }
+});
+
+test("Furnace Belt launches every wave on schedule and the Warden interrupts the synchronized centre gap", async () => {
+    const h = await stage(1, (_scene, run) => {
+        run.waveIndex = 0;
+    });
+    const encounters = STAGES[1].encounters;
+    try {
+        encounters.forEach(({ at }, index) => {
+            while (h.run.seconds < at) h.tick();
+            assert.equal(h.run.waveIndex, index + 1, `encounter at ${at}s was delayed`);
+            if (at !== 66.5) return;
+
+            while (h.run.seconds < 70.85) h.tick();
+            const lanes: number[] = [];
+            h.world.query(Pose, Bullet).eachChunk(({ views, count }) => {
+                for (let i = 0; i < count; i++) {
+                    const { bullet, pose } = views;
+                    if (
+                        bullet.active[i] &&
+                        bullet.team[i] &&
+                        bullet.color[i] === 0xff747d &&
+                        near(bullet.vx[i], 0) &&
+                        Math.abs(pose.y[i] - h.run.y) < 28
+                    )
+                        lanes.push(Math.round(pose.x[i]));
+                }
+            });
+            assert.deepEqual(
+                lanes.sort((a, b) => a - b),
+                [182, 218, 254, 290, 350, 386, 422, 458],
+            );
+            let centreBeam = false;
+            h.world.query(Pose, Beam).eachChunk(({ views, count }) => {
+                for (let i = 0; i < count; i++)
+                    if (
+                        views.beam.active[i] &&
+                        views.beam.age[i] >= views.beam.charge[i] &&
+                        views.pose.x[i] === h.run.x
+                    )
+                        centreBeam = true;
+            });
+            assert.ok(
+                centreBeam,
+                "a stationary player cannot wait out the synchronized volley in the centre",
+            );
+        });
     } finally {
         h.game.dispose();
     }

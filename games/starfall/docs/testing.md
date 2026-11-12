@@ -31,7 +31,8 @@ Integration route options:
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
 | `stage`    | `1`, `2`, `3`: Breakwater, Furnace, Citadel.                                                                  |
 | `manual`   | `1` starts ordinary play; PLAY STAGE does the same. LOAD PRESET seeds presentation state instead.             |
-| `emptyNova` | `1` with `stage=1&manual=1` holds the Nova meter empty from launch for Breakwater encounter review. |
+| `emptyNova` | `1` with `manual=1` holds the Nova meter empty for encounter review. |
+| `furnacePass` | With `stage=2&manual=1`, `1` starts at 43 seconds and `finale` starts at 73 seconds, with a fresh hull. |
 | `calm`     | `0` normal motion; `1` reduced motion. Manual play also permits changing it in Settings.                      |
 | `scenario` | `card`, `play`, `boss`, `pause`, `result`, `settings`, `controls`, `death`, `loss`, `nova`, `dense`, `title`. |
 | `capture`  | `1` hides fixture controls and freezes presentation presets. Manual play still advances normally.             |
@@ -93,6 +94,23 @@ For a timed replay from the default position, hold D for about 0.6 seconds at 5.
 1. Use the ordinary Sector 1 manual route. Around 24.5 seconds, watch the gunship entering on the right. Two amber muzzle glows should be visible below the top HUD before its first fan. The opening gunship still cues with its visible vents.
 2. Around 79–86 seconds, check whether the single sweeper leaves enough room to read the final interceptor ripple while both gunships are active. The warning still clears the field at 86 seconds.
 3. At Gatebreaker's first curtain cue, around 96.6 seconds, look for two thin lines framing the safe lane. Check whether you can read the edges while watching the player ship. If you clear the boss, note the time from Gatebreaker's entry to defeat and from the second turret's destruction to defeat.
+
+### Furnace Belt encounter sequence
+
+1. Start at `/tests/browser-integration.html?stage=2&manual=1&calm=0`. Play from launch with normal Nova. The first aimed bank comes from the right at 2 seconds. The left mine starts bursting around 8 seconds, before a lower sweeper from the right and a bank from the left close in. Check whether you can keep firing while changing sides.
+2. At 18 and 19.8 seconds, watch the right pair and then the left pair lock their shots. Move after the first lock and adjust again when the Warden marks a lane. The pairs shoot around 20.6 and 22.4 seconds. Note whether the beam changes your second dodge.
+3. At 29 seconds, let the crossing ships hook and fire around 33.4 seconds. The first right-side mine bursts around 32.3, while the gunship continues firing from the left. Compare that escape route with the 51-second pass, where the new mine is on the left.
+4. At 66.5 seconds, watch for two groups of four banking inward. They fire straight down together around 69.1. If you wait in the centre gap, the Warden can charge a beam through it as the volley reaches the lower field. Leave the marked lane before it goes live and look for room between the parallel shots. Note whether the right mine changes your choice.
+5. For a quick replay of the ending, open `/tests/browser-integration.html?stage=2&manual=1&calm=0&emptyNova=1&furnacePass=finale` and confirm the 73-second checkpoint. The final ripple starts its approach at 88 seconds and fires from the inside out around 89.9–90.9. Try moving left of the first shot while watching the left mine ring and the right gunship's fan. Verify the last ships exit before the 96-second warning and Kiln Serpent enters at 100.
+
+Record which overlaps made you change direction, where you spent Nova, and which cues you could read while dodging. Record the full run and the checkpoint attempts separately.
+
+### Furnace Belt 51-second crossing and return
+
+1. Open `/tests/browser-integration.html?stage=2&manual=1&calm=0&emptyNova=1&furnacePass=1`. Confirm `READY`, the 43-second checkpoint, and `novaCharge: 0`. Press H to hide diagnostics for the visual check. Reload to repeat. The checkpoint includes the 44-second interceptors and 45-second sweepers. Omit `furnacePass=1` to play from launch.
+2. Stay centred and hold Space until about 50.25 seconds, then release it to see all five ships. Watch them cross from the right at 51 seconds. Around 54–55 seconds, watch the noses rotate through a down-facing turn at the left edge, then look for the amber muzzle cues on the descending return. The five shots should leave the muzzles diagonally down-right together around 55.4 seconds. Watch the ships leave through the right edge by 58.5 seconds.
+3. For a timed dodge, hold W for about 0.35 seconds at 52.65 to move up beneath the crossing. As the ships turn, hold S for about 0.25 seconds at 54.3, then hold A for about 0.73 seconds at 54.85. Stay low on the left through the first mine burst around 56.5. On a second attempt, shorten the A hold to 0.5 seconds, then hold W for 0.25 seconds at about 57.0 to try climbing under the mine. Watch where the ring crosses that route.
+4. Record pass or fail for the turn cue, muzzle alignment, clean exit, and escape route. Note hull at 51 and 59 seconds, whether the mine changed where you could climb, and what hit you if you took damage. To check the end of the sector, continue to the warning at 96 seconds and Kiln Serpent's arrival at 100 seconds.
 
 ### Full-stage review
 

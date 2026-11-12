@@ -15,7 +15,7 @@ import type { Progress, ProgressCommand, RunState, Session } from "../src/world/
 import spec from "../src/assets/spec.json" with { type: "json" };
 
 /**
- * Timing evidence for ordinary waves and bosses. Outside the authored Breakwater sequences, schedules,
+ * Timing evidence for ordinary waves and bosses. Outside the authored interceptor and sweeper sequences, schedules,
  * counts, HP, scores and cadences keep their pre-migration values. Legacy trajectories equal the
  * 480x270 formulas x 4/3 tick by tick,
  * so every position-driven event (entry, crossing, exit) happens on the same tick as before. Real interceptor rows hit
@@ -60,34 +60,38 @@ const SCHEDULES: Record<string, string[]> = {
         "81:interceptor:6:px624:right-ripple",
     ],
     "furnace-belt": [
-        "2:interceptor:4:160",
-        "8:minelayer:1:145",
-        "9:interceptor:4:320",
-        "13:sweeper:2:flag0",
-        "16:interceptor:5:160",
-        "23:interceptor:5:320",
-        "26:gunship:1:165",
-        "29:sweeper:2:flag1",
-        "30:interceptor:5:160",
-        "30:minelayer:1:335",
+        "2:interceptor:4:px592:right",
+        "3.5:minelayer:1:130",
+        "8.75:sweeper:1:flag1:::168",
+        "10.5:interceptor:4:px48:left",
+        "15.5:warden:1:345",
+        "18:interceptor:2:px592:right",
+        "19.8:interceptor:2:px48:left",
+        "23.5:gunship:1:130::2.8",
+        "24.25:sweeper:1:flag1",
+        "27.75:minelayer:1:335",
+        "29:interceptor:5:px725:right-return",
         "34:warden:1:345",
-        "37:interceptor:5:320",
+        "36.5:sweeper:1:flag1:::168",
+        "36.7:interceptor:4:px48:left",
         "44:interceptor:5:160",
         "45:sweeper:2:flag0",
-        "51:interceptor:5:320",
+        "51:interceptor:5:px725:right-return",
         "52:minelayer:1:145",
         "55:repair:1:240",
         "56:gunship:1:165",
-        "58:interceptor:5:160",
-        "61:sweeper:2:flag1",
+        "59.5:interceptor:4:px592:right",
+        "62:sweeper:1:flag1",
+        "62.9:sweeper:1:flag0:::184",
         "64:warden:1:135",
-        "65:interceptor:5:320",
-        "72:interceptor:5:160",
-        "74:minelayer:1:335",
-        "77:sweeper:2:flag0",
-        "78:gunship:1:165",
-        "79:interceptor:5:320",
-        "86:interceptor:5:160",
+        "65.25:minelayer:1:335",
+        "66.5:interceptor:8:px16:both",
+        "73.6:interceptor:4:px48:left",
+        "76.25:sweeper:1:flag1",
+        "78.2:gunship:1:355::2.8",
+        "81.5:sweeper:1:flag0:::152",
+        "83.5:minelayer:1:145",
+        "88:interceptor:6:px624:right-ripple",
     ],
     "midnight-citadel": [
         "2:interceptor:4:160",
@@ -129,7 +133,7 @@ const SCHEDULES: Record<string, string[]> = {
     ],
 };
 
-test("the Breakwater sequences and every remaining encounter keep their scheduled spawn data", () => {
+test("all sectors keep their scheduled encounter data and boss entry times", () => {
     for (const stage of STAGES) {
         const expected = SCHEDULES[stage.id].map((row) => row.split(":"));
         assert.equal(stage.encounters.length, expected.length, stage.id);

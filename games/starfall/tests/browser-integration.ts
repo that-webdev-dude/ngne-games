@@ -22,7 +22,9 @@ const params = new URLSearchParams(location.search);
 const stageIndex = Math.max(0, Math.min(2, Number(params.get("stage") || 1) - 1));
 const manual = params.get("manual") === "1",
     capture = params.get("capture") === "1";
-const emptyNova = manual && stageIndex === 0 && params.get("emptyNova") === "1";
+const emptyNova = manual && params.get("emptyNova") === "1";
+const furnacePass = manual && stageIndex === 1 ? params.get("furnacePass") : null;
+const furnaceStart = furnacePass === "1" ? 43 : furnacePass === "finale" ? 73 : undefined;
 const requested = params.get("scenario") || "play";
 if (!Number.isInteger(stageIndex) || !SCENARIOS.includes(requested as IntegrationScenario))
     throw new Error("Invalid stage/scenario route");
@@ -127,9 +129,11 @@ function updateStatus() {
         stage: stageIndex + 1,
         scenario: manual ? "manual" : scenario,
         setup: manual
-            ? emptyNova
-                ? "EMPTY NOVA / ordinary stage beginning"
-                : "NORMAL RULES / ordinary stage beginning"
+            ? furnaceStart !== undefined
+                ? `${emptyNova ? "EMPTY NOVA / " : ""}Furnace Belt checkpoint at ${furnaceStart}s`
+                : emptyNova
+                  ? "EMPTY NOVA / ordinary stage beginning"
+                  : "NORMAL RULES / ordinary stage beginning"
             : "SEEDED PRESENTATION / not reachability evidence",
         frozen: !manual && !novaPlayback && (capture || scenario !== "title"),
         novaOrigin: scenario === "nova" ? novaOrigin : undefined,
@@ -243,16 +247,26 @@ try {
         stageIndex,
     );
     if (manual) {
-        const definition = emptyNova
-            ? {
-                  ...actual,
-                  setup(scene: Parameters<typeof actual.setup>[0]) {
-                      actual.setup(scene);
-                      // Keep the test meter empty even on the tick production recharge runs.
-                      Object.defineProperty(session.run!, "nova", { get: () => 0, set() {} });
-                  },
-              }
-            : actual;
+        const definition =
+            emptyNova || furnaceStart !== undefined
+                ? {
+                      ...actual,
+                      setup(scene: Parameters<typeof actual.setup>[0]) {
+                          actual.setup(scene);
+                          const run = session.run!;
+                          // Keep the test meter empty even on the tick production recharge runs.
+                          if (emptyNova)
+                              Object.defineProperty(run, "nova", { get: () => 0, set() {} });
+                          if (furnaceStart !== undefined) {
+                              // Start before the lead-in encounters that feed each checkpoint's overlap.
+                              run.seconds = furnaceStart;
+                              run.waveIndex = STAGES[stageIndex].encounters.findIndex(
+                                  ({ at }) => at >= furnaceStart,
+                              );
+                          }
+                      },
+                  }
+                : actual;
         await app.start(
             await app.game.prepare(definition, { key: `manual-stage-${stageIndex + 1}` }),
         );
