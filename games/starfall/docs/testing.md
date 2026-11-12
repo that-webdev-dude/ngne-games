@@ -33,6 +33,7 @@ Integration route options:
 | `manual`   | `1` starts ordinary play; PLAY STAGE does the same. LOAD PRESET seeds presentation state instead.             |
 | `emptyNova` | `1` with `manual=1` holds the Nova meter empty for encounter review. |
 | `furnacePass` | With `stage=2&manual=1`, `1` starts at 43 seconds and `finale` starts at 73 seconds, with a fresh hull. |
+| `citadelPass` | With `stage=3&manual=1`, `split` starts at 24.5 seconds and `finale` starts at 86.5 seconds, with a fresh hull. |
 | `calm`     | `0` normal motion; `1` reduced motion. Manual play also permits changing it in Settings.                      |
 | `scenario` | `card`, `play`, `boss`, `pause`, `result`, `settings`, `controls`, `death`, `loss`, `nova`, `dense`, `title`. |
 | `capture`  | `1` hides fixture controls and freezes presentation presets. Manual play still advances normally.             |
@@ -111,6 +112,29 @@ Record which overlaps made you change direction, where you spent Nova, and which
 2. Stay centred and hold Space until about 50.25 seconds, then release it to see all five ships. Watch them cross from the right at 51 seconds. Around 54–55 seconds, watch the noses rotate through a down-facing turn at the left edge, then look for the amber muzzle cues on the descending return. The five shots should leave the muzzles diagonally down-right together around 55.4 seconds. Watch the ships leave through the right edge by 58.5 seconds.
 3. For a timed dodge, hold W for about 0.35 seconds at 52.65 to move up beneath the crossing. As the ships turn, hold S for about 0.25 seconds at 54.3, then hold A for about 0.73 seconds at 54.85. Stay low on the left through the first mine burst around 56.5. On a second attempt, shorten the A hold to 0.5 seconds, then hold W for 0.25 seconds at about 57.0 to try climbing under the mine. Watch where the ring crosses that route.
 4. Record pass or fail for the turn cue, muzzle alignment, clean exit, and escape route. Note hull at 51 and 59 seconds, whether the mine changed where you could climb, and what hit you if you took damage. To check the end of the sector, continue to the warning at 96 seconds and Kiln Serpent's arrival at 100 seconds.
+
+### Midnight Citadel from launch
+
+1. Open `/tests/browser-integration.html?stage=3&manual=1&calm=0`. Confirm `READY` and `NORMAL RULES / ordinary stage beginning`. Use standard Nova (B) and ordinary steering and fire. Press H to hide diagnostics.
+2. Read the left bank around 4 seconds and the later right bank around 6.5. Try a right dodge, then move back left after the second lock. Watch the left mine ring and the low sweeper from the right before choosing where to hold. Around 17.6, look for the gap in the first synchronized volley and watch how the right gunship's fan cuts across that gap.
+3. Around 28.2, watch the split dive shoot outward. After a short lull, compare the return passes at 34.25 and 73. The first hooks below a Warden lock and fires around 38.7, while the second fires around 77.4 with a low sweeper and right-side mines in the way. Note which lanes the supports take away.
+4. Use the repair at 46 to regroup. Around 53–54, read the right ripple from inside to outside. At 64.6, compare the tighter centre seam with the first synchronized volley. Look for a seam between adjacent shots if the lower sweeper or the left gunship crosses your original route.
+5. Play through the six-ship split and Warden lock, then the right ripple and last aimed pair. Check that the 106-second warning clears the field and the Starfall Engine enters at 110.
+
+Record each cue you acted on, what made you change course, where you spent Nova, and the cause of each hull loss. Note any stretch where you could repeat the same dodge or where the pace sagged. Record browser observations separately from `check:campaign` results.
+
+### Midnight Citadel split dive with Nova empty
+
+1. Open `/tests/browser-integration.html?stage=3&manual=1&calm=0&emptyNova=1&citadelPass=split`. Confirm the 24.5-second checkpoint and `novaCharge: 0`. Leave Space released to see all four ships. This checkpoint omits earlier encounters.
+2. Stay at the default height. Hold A for about 0.65 seconds starting near 24.65 to set up left of centre. At 26, watch the ships enter in a compact formation. As they fan out, look for amber at the outward-facing muzzles around 27.5. Move right for about 0.6 seconds once you see it. Aim to be near centre when the shots pass through your former lane.
+3. Watch the four muzzle flashes around 28.2 and confirm the shots follow each nose. Follow the hulls until both wings clear the side edges around 30.6. On another attempt, stay in the left lane after the cue and record what happens.
+
+### Midnight Citadel finale with Nova empty
+
+1. Open `/tests/browser-integration.html?stage=3&manual=1&calm=0&emptyNova=1&citadelPass=finale`. Confirm the 86.5-second checkpoint and `novaCharge: 0`. This starts before the gunship, mine and sweeper that feed the overlap. Keep Space released to retain all three threats.
+2. Start at the default height near centre. Around 93.9, use a short A hold (about 0.23 seconds) to slip left of the low sweeper spread. Stay inside the split's two wings and watch the outward volley around 95.15.
+3. When the Warden's dashed lane appears around 96.15, move right for about 0.30 seconds, stopping just right of centre. For a timed check, start the move around 96.44. The beam goes live around 96.95. Around 99, move up-left as the right-hand ripple starts firing and the Warden prepares the next beam. Aim to get left of the first ripple column (x314 in the 640-pixel view). Check the gunship fan before crossing again. Continue through the last aimed pair and the warning.
+4. Compare with a run where you hold your lane through the beam warning. Record hull before the split, after the beam, after the ripple, and at Engine entry. For each hit, record whether it came from a ship, beam, mine ring, sweeper spread, gunship fan or interceptor shot.
 
 ### Full-stage review
 

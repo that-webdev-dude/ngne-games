@@ -8,11 +8,14 @@ import {
     INTERCEPTOR_PASS,
     INTERCEPTOR_RETURN,
     INTERCEPTOR_RIPPLE,
+    INTERCEPTOR_SPLIT,
     InterceptorPattern,
     interceptorPass,
     interceptorPassAge,
     interceptorPassDirection,
     interceptorReturnPass,
+    interceptorSplitDirection,
+    interceptorSplitDive,
 } from "../world/interceptor-pass.ts";
 import { fan } from "../world/patterns.ts";
 import type { CombatContext } from "./combat-context.ts";
@@ -112,6 +115,25 @@ export function installCombatEnemies({
                         VIEW.width - event.side,
                         InterceptorPattern.ForwardFromRight,
                     );
+                } else if (event.bankFrom === "split-dive") {
+                    for (let i = 0; i < event.count; i++) {
+                        const wing = i % 2 ? 1 : -1,
+                            rank = Math.floor(i / 2);
+                        spawnEnemy(
+                            scene.world,
+                            run,
+                            Kind.Interceptor,
+                            event.side + wing * (13 + rank * 9),
+                            -26 - rank * 18,
+                            {
+                                pattern:
+                                    wing < 0
+                                        ? InterceptorPattern.SplitLeft
+                                        : InterceptorPattern.SplitRight,
+                                cooldown: INTERCEPTOR_SPLIT.fireAt,
+                            },
+                        );
+                    }
                 } else {
                     const pattern = event.bankFrom
                         ? {
@@ -164,6 +186,7 @@ export function installCombatEnemies({
                 if (kind === Kind.Interceptor) {
                     const pattern = e.pattern[row],
                         returning = pattern === InterceptorPattern.CrossAndReturn,
+                        split = interceptorSplitDirection(pattern),
                         direction = interceptorPassDirection(pattern),
                         passAge = interceptorPassAge(age, pattern);
                     if (direction && passAge >= INTERCEPTOR_PASS.exitAt) {
@@ -173,12 +196,17 @@ export function installCombatEnemies({
                     }
                     const bank = direction ? interceptorPass(passAge, direction) : undefined;
                     let rotation = bank?.rotation ?? 0;
-                    if (returning) {
-                        const pass = interceptorReturnPass(age);
+                    if (returning || split) {
+                        const path = returning ? interceptorReturnPass : interceptorSplitDive;
+                        const pass = path(age, split);
                         p.x[row] = e.originX[row] + pass.x;
-                        p.y[row] += pass.y - interceptorReturnPass(age - dt).y;
+                        p.y[row] += pass.y - path(age - dt, split).y;
                         rotation = pass.rotation;
-                        if (age >= INTERCEPTOR_RETURN.returnAt && p.x[row] > VIEW.width + 24) {
+                        const pastLeft = split < 0 && p.x[row] < -24,
+                            pastRight =
+                                (split > 0 || (returning && age >= INTERCEPTOR_RETURN.returnAt)) &&
+                                p.x[row] > VIEW.width + 24;
+                        if (pastLeft || pastRight) {
                             e.active[row] = 0;
                             scene.world.despawn(chunk.entityAt(row));
                             continue;
@@ -191,26 +219,30 @@ export function installCombatEnemies({
                         p.x[row] = e.originX[row] + (bank?.x ?? Math.sin(age * 1.6) * w(19));
                         p.y[row] += travelTime * (bank ? INTERCEPTOR_PASS.descent : w(40));
                     }
-                    if (returning || bank || pattern === InterceptorPattern.Aimed) {
+                    if (returning || split || bank || pattern === InterceptorPattern.Aimed) {
                         const cueLead = returning
                             ? INTERCEPTOR_RETURN.cue
-                            : bank
-                              ? INTERCEPTOR_PASS.cue
-                              : INTERCEPTOR_TIMING.cue;
+                            : split
+                              ? INTERCEPTOR_SPLIT.cue
+                              : bank
+                                ? INTERCEPTOR_PASS.cue
+                                : INTERCEPTOR_TIMING.cue;
                         // The clock keeps running after the single shot (fireIndex 1) so the renderer can time the fire frame.
                         e.cooldown[row] -= dt;
                         if (e.fireIndex[row] === 0) {
                             if (e.cooldown[row] < cueLead && !e.cue[row]) {
                                 e.cue[row] = 1;
-                                const forward =
-                                    pattern === InterceptorPattern.ForwardFromLeft ||
-                                    pattern === InterceptorPattern.ForwardFromRight ||
-                                    pattern === InterceptorPattern.RippleFromRight;
-                                e.targetAngle[row] = returning
-                                    ? INTERCEPTOR_RETURN.heading
-                                    : forward
-                                      ? Math.PI / 2
-                                      : Math.atan2(run.y - p.y[row], run.x - p.x[row]);
+                                if (!split) {
+                                    const forward =
+                                        pattern === InterceptorPattern.ForwardFromLeft ||
+                                        pattern === InterceptorPattern.ForwardFromRight ||
+                                        pattern === InterceptorPattern.RippleFromRight;
+                                    e.targetAngle[row] = returning
+                                        ? INTERCEPTOR_RETURN.heading
+                                        : forward
+                                          ? Math.PI / 2
+                                          : Math.atan2(run.y - p.y[row], run.x - p.x[row]);
+                                }
                             }
                             if (e.cooldown[row] <= 0) {
                                 const [mx, my] = interceptorMuzzle(rotation);
@@ -218,10 +250,14 @@ export function installCombatEnemies({
                                     p.x[row] + mx,
                                     p.y[row] + my,
                                     fan(
-                                        e.targetAngle[row],
+                                        split ? rotation + Math.PI / 2 : e.targetAngle[row],
                                         1,
                                         0,
-                                        returning ? INTERCEPTOR_RETURN.shotSpeed : w(62),
+                                        returning
+                                            ? INTERCEPTOR_RETURN.shotSpeed
+                                            : split
+                                              ? INTERCEPTOR_SPLIT.shotSpeed
+                                              : w(62),
                                     ),
                                     0xff747d,
                                 );
@@ -230,7 +266,7 @@ export function installCombatEnemies({
                             }
                         }
                     }
-                    if (returning) continue;
+                    if (returning || split) continue;
                 } else if (kind === Kind.Gunship) {
                     p.y[row] += dt * w(p.y[row] < w(67) ? 28 : age > 12 ? 38 : 5);
                     p.x[row] = e.originX[row] + Math.sin(age * 0.8) * w(24);

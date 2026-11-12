@@ -1,5 +1,9 @@
-import { ENCOUNTERS, FURNACE_ENCOUNTERS, type Encounter } from "./encounters.ts";
-import { fromLegacy } from "./view.ts";
+import {
+    CITADEL_ENCOUNTERS,
+    ENCOUNTERS,
+    FURNACE_ENCOUNTERS,
+    type Encounter,
+} from "./encounters.ts";
 import type { BossDefinition } from "../bosses/boss.ts";
 import { gatebreaker } from "../bosses/gatebreaker.ts";
 import { kilnSerpent } from "../bosses/kiln-serpent.ts";
@@ -11,27 +15,6 @@ export interface StageConfig {
     bossAt: number;
     boss: BossDefinition;
     encounters: Encounter[];
-}
-function citadelEncounters(): Encounter[] {
-    const list: Encounter[] = [];
-    const end = 102;
-    for (let at = 2, index = 0; at < end; at += 6, index++)
-        list.push({
-            at,
-            kind: "interceptor",
-            count: index < 2 ? 4 : 5,
-            side: fromLegacy(index % 2 ? 320 : 160),
-        });
-    for (let at = 13, index = 0; at < end; at += 16, index++)
-        list.push({ at, kind: "sweeper", count: 2, side: index % 2 });
-    for (let at = 8, index = 0; at < end; at += 19, index++)
-        list.push({ at, kind: "minelayer", count: 1, side: fromLegacy(index % 2 ? 335 : 145) });
-    for (let at = 17, index = 0; at < end; at += 22, index++)
-        list.push({ at, kind: "warden", count: 1, side: fromLegacy(index % 2 ? 135 : 345) });
-    for (const at of [28, 58, 83])
-        list.push({ at, kind: "gunship", count: 1, side: fromLegacy(at % 2 ? 315 : 165) });
-    list.push({ at: 60, kind: "repair", count: 1, side: fromLegacy(240) });
-    return list.sort((a, b) => a.at - b.at);
 }
 export const STAGES: readonly StageConfig[] = [
     {
@@ -56,6 +39,6 @@ export const STAGES: readonly StageConfig[] = [
         name: "MIDNIGHT CITADEL",
         bossAt: 110,
         boss: starfallEngine,
-        encounters: citadelEncounters(),
+        encounters: CITADEL_ENCOUNTERS,
     },
 ];

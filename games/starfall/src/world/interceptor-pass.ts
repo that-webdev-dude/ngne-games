@@ -27,6 +27,17 @@ export const INTERCEPTOR_RETURN = {
     shotSpeed: 205,
 } as const;
 
+const SPLIT_SPEED = 108,
+    SPLIT_STRAIGHT_TIME = 0.92,
+    SPLIT_TURN_RADIUS = 162,
+    SPLIT_EXIT_TIME = SPLIT_STRAIGHT_TIME + ((Math.PI / 2) * SPLIT_TURN_RADIUS) / SPLIT_SPEED;
+
+export const INTERCEPTOR_SPLIT = {
+    fireAt: 2.15,
+    cue: 0.65,
+    shotSpeed: 155,
+} as const;
+
 export const InterceptorPattern = {
     Aimed: 0,
     Quiet: 1,
@@ -36,7 +47,15 @@ export const InterceptorPattern = {
     ForwardFromRight: 5,
     RippleFromRight: 6,
     CrossAndReturn: 7,
+    SplitLeft: 8,
+    SplitRight: 9,
 } as const;
+
+export function interceptorSplitDirection(pattern: number): number {
+    if (pattern === InterceptorPattern.SplitLeft) return -1;
+    if (pattern === InterceptorPattern.SplitRight) return 1;
+    return 0;
+}
 
 export function interceptorPassDirection(pattern: number): number {
     if (pattern === InterceptorPattern.FromLeft || pattern === InterceptorPattern.ForwardFromLeft)
@@ -89,5 +108,21 @@ export function interceptorReturnPass(age: number) {
             distance * Math.cos(RETURN_ANGLE),
         y: TURN_RADIUS * (1 - Math.cos(turn)) + distance * Math.sin(RETURN_ANGLE),
         rotation: Math.PI / 2 - turn,
+    };
+}
+
+/** Enter nose-down, then bank outward continuously until the nose is parallel to the exit. */
+export function interceptorSplitDive(age: number, direction: number) {
+    const turn = Math.min(
+        Math.PI / 2,
+        (Math.max(0, age - SPLIT_STRAIGHT_TIME) * SPLIT_SPEED) / SPLIT_TURN_RADIUS,
+    );
+    const exitAge = Math.max(0, age - SPLIT_EXIT_TIME);
+    return {
+        x:
+            direction *
+            (SPLIT_TURN_RADIUS * (1 - Math.cos(turn)) + SPLIT_SPEED * exitAge + 55 * exitAge ** 2),
+        y: SPLIT_SPEED * Math.min(age, SPLIT_STRAIGHT_TIME) + SPLIT_TURN_RADIUS * Math.sin(turn),
+        rotation: -direction * turn,
     };
 }

@@ -13,6 +13,8 @@ import {
     interceptorPassAge,
     interceptorPassDirection,
     interceptorReturnPass,
+    interceptorSplitDirection,
+    interceptorSplitDive,
 } from "../world/interceptor-pass.ts";
 import { ORDINARY_SPRITES, ordinaryFrame } from "./enemy-frames.ts";
 import type { RenderPassFactory } from "./pass.ts";
@@ -56,6 +58,8 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                     },
                     reduced,
                 );
+                const split =
+                    kind === Kind.Interceptor ? interceptorSplitDirection(e.pattern[row]) : 0;
                 let bank = 0;
                 if (kind === Kind.Interceptor) {
                     const pattern = e.pattern[row],
@@ -63,6 +67,7 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                         direction = interceptorPassDirection(pattern);
                     if (pattern === InterceptorPattern.CrossAndReturn)
                         bank = interceptorReturnPass(age).rotation;
+                    else if (split) bank = interceptorSplitDive(age, split).rotation;
                     else if (direction)
                         bank = interceptorPass(
                             interceptorPassAge(age, pattern),
@@ -84,6 +89,7 @@ export const createEnemyRender: RenderPassFactory = ({ scene, run, session, boss
                         (bank ? Math.floor(y) : y) + my,
                         run.effectClock,
                         reduced,
+                        split ? 1.45 : 1,
                     );
                 }
                 // The first vent cue can start behind the top HUD while the barrels are already visible.

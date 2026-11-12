@@ -15,11 +15,9 @@ import type { Progress, ProgressCommand, RunState, Session } from "../src/world/
 import spec from "../src/assets/spec.json" with { type: "json" };
 
 /**
- * Timing evidence for ordinary waves and bosses. Outside the authored interceptor and sweeper sequences, schedules,
- * counts, HP, scores and cadences keep their pre-migration values. Legacy trajectories equal the
- * 480x270 formulas x 4/3 tick by tick,
- * so every position-driven event (entry, crossing, exit) happens on the same tick as before. Real interceptor rows hit
- * the exit boundary exactly; their exit ticks are pinned against main's arithmetic (INTERCEPTOR_EXIT_TOLERANCE).
+ * Pin the authored encounter schedules and the unchanged shared enemy and boss timings.
+ * Legacy trajectories equal the 480x270 formulas x 4/3 tick by tick, including interceptor rows
+ * that land on the exit boundary (INTERCEPTOR_EXIT_TOLERANCE).
  */
 const dt = 1 / 60;
 
@@ -94,42 +92,39 @@ const SCHEDULES: Record<string, string[]> = {
         "88:interceptor:6:px624:right-ripple",
     ],
     "midnight-citadel": [
-        "2:interceptor:4:160",
-        "8:interceptor:4:320",
-        "8:minelayer:1:145",
-        "13:sweeper:2:flag0",
-        "14:interceptor:5:160",
-        "17:warden:1:345",
-        "20:interceptor:5:320",
-        "26:interceptor:5:160",
-        "27:minelayer:1:335",
-        "28:gunship:1:165",
-        "29:sweeper:2:flag1",
-        "32:interceptor:5:320",
-        "38:interceptor:5:160",
-        "39:warden:1:135",
-        "44:interceptor:5:320",
-        "45:sweeper:2:flag0",
-        "46:minelayer:1:145",
-        "50:interceptor:5:160",
-        "56:interceptor:5:320",
-        "58:gunship:1:165",
-        "60:repair:1:240",
-        "61:sweeper:2:flag1",
-        "61:warden:1:345",
-        "62:interceptor:5:160",
-        "65:minelayer:1:335",
-        "68:interceptor:5:320",
-        "74:interceptor:5:160",
-        "77:sweeper:2:flag0",
-        "80:interceptor:5:320",
-        "83:warden:1:135",
-        "83:gunship:1:315",
-        "84:minelayer:1:145",
-        "86:interceptor:5:160",
-        "92:interceptor:5:320",
-        "93:sweeper:2:flag1",
-        "98:interceptor:5:160",
+        "2:interceptor:4:px48:left",
+        "4.35:interceptor:2:px592:right",
+        "6:minelayer:1:145",
+        "9:sweeper:1:flag1:::174",
+        "13:gunship:1:350::2.8",
+        "15:interceptor:8:px20:both",
+        "20.25:sweeper:1:flag0:::114",
+        "26:interceptor:4:px320:split-dive",
+        "31.6:minelayer:1:335",
+        "33:warden:1:135",
+        "34.25:interceptor:5:px725:right-return",
+        "35.25:sweeper:1:flag0:::164",
+        "40:interceptor:2:px592:right",
+        "41.6:interceptor:2:px48:left",
+        "46:repair:1:210",
+        "47.5:sweeper:1:flag0:::132",
+        "51:interceptor:6:px624:right-ripple",
+        "55.4:minelayer:1:150",
+        "57.5:gunship:1:130::2.8",
+        "59.75:sweeper:1:flag1:::156",
+        "62:interceptor:8:px32:both",
+        "67:interceptor:4:px48:left",
+        "69.5:minelayer:1:330",
+        "72.4:sweeper:1:flag1:::176",
+        "73:interceptor:5:px725:right-return",
+        "80.2:sweeper:1:flag0:::118",
+        "86.75:gunship:1:365::2.8",
+        "88.5:minelayer:1:145",
+        "89.25:sweeper:1:flag1:::203",
+        "93:interceptor:6:px334:split-dive",
+        "93.45:warden:1:265",
+        "97.3:interceptor:6:px624:right-ripple",
+        "100.25:interceptor:2:px48:left",
     ],
 };
 
@@ -456,12 +451,12 @@ test("legacy interceptor waves (4/5/6 ships) leave on main's exact ticks, includ
         [0, 4],
         [0, 6],
         [1, 5],
-        [2, 5],
     ] as const) {
         const index = STAGES[stage].encounters.findIndex(
             (event) => event.kind === "interceptor" && event.count === count && !event.bankFrom,
         );
         const event = STAGES[stage].encounters[index];
+        assert.ok(event, `${STAGES[stage].id} has a legacy ${count}-ship wave`);
         const h = await harness(stage, (_scene, run) => {
             run.waveIndex = index;
             run.seconds = event.at;

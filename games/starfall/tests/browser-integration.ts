@@ -25,6 +25,9 @@ const manual = params.get("manual") === "1",
 const emptyNova = manual && params.get("emptyNova") === "1";
 const furnacePass = manual && stageIndex === 1 ? params.get("furnacePass") : null;
 const furnaceStart = furnacePass === "1" ? 43 : furnacePass === "finale" ? 73 : undefined;
+const citadelPass = manual && stageIndex === 2 ? params.get("citadelPass") : null;
+const citadelStart = citadelPass === "split" ? 24.5 : citadelPass === "finale" ? 86.5 : undefined;
+const checkpoint = furnaceStart ?? citadelStart;
 const requested = params.get("scenario") || "play";
 if (!Number.isInteger(stageIndex) || !SCENARIOS.includes(requested as IntegrationScenario))
     throw new Error("Invalid stage/scenario route");
@@ -129,8 +132,8 @@ function updateStatus() {
         stage: stageIndex + 1,
         scenario: manual ? "manual" : scenario,
         setup: manual
-            ? furnaceStart !== undefined
-                ? `${emptyNova ? "EMPTY NOVA / " : ""}Furnace Belt checkpoint at ${furnaceStart}s`
+            ? checkpoint !== undefined
+                ? `${emptyNova ? "EMPTY NOVA / " : ""}${furnaceStart !== undefined ? "Furnace Belt" : "Midnight Citadel"} checkpoint at ${checkpoint}s`
                 : emptyNova
                   ? "EMPTY NOVA / ordinary stage beginning"
                   : "NORMAL RULES / ordinary stage beginning"
@@ -248,7 +251,7 @@ try {
     );
     if (manual) {
         const definition =
-            emptyNova || furnaceStart !== undefined
+            emptyNova || checkpoint !== undefined
                 ? {
                       ...actual,
                       setup(scene: Parameters<typeof actual.setup>[0]) {
@@ -257,11 +260,11 @@ try {
                           // Keep the test meter empty even on the tick production recharge runs.
                           if (emptyNova)
                               Object.defineProperty(run, "nova", { get: () => 0, set() {} });
-                          if (furnaceStart !== undefined) {
+                          if (checkpoint !== undefined) {
                               // Start before the lead-in encounters that feed each checkpoint's overlap.
-                              run.seconds = furnaceStart;
+                              run.seconds = checkpoint;
                               run.waveIndex = STAGES[stageIndex].encounters.findIndex(
-                                  ({ at }) => at >= furnaceStart,
+                                  ({ at }) => at >= checkpoint,
                               );
                           }
                       },

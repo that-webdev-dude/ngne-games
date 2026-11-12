@@ -7,8 +7,9 @@ export interface Encounter {
     kind: "interceptor" | "gunship" | "sweeper" | "minelayer" | "warden" | "repair";
     count: number;
     side: number;
-    /** "both" mirrors the volley; "right-ripple" staggers it; "right-return" crosses before firing. */
-    bankFrom?: "left" | "right" | "both" | "right-ripple" | "right-return";
+    /** "both" mirrors the volley; "right-ripple" staggers it; "right-return" crosses before firing.
+     * "split-dive" uses side as the centre of the formation. */
+    bankFrom?: "left" | "right" | "both" | "right-ripple" | "right-return" | "split-dive";
     firstVolley?: number;
     /** Starting lane in logical pixels for a sweeper. */
     laneY?: number;
@@ -91,6 +92,50 @@ export const FURNACE_ENCOUNTERS: Encounter[] = [
     { at: 81.5, kind: "sweeper", count: 1, side: 0, laneY: fromLegacy(114) },
     { at: 83.5, kind: "minelayer", count: 1, side: fromLegacy(145) },
     { at: 88, kind: "interceptor", count: 6, side: 624, bankFrom: "right-ripple" },
+];
+
+export const CITADEL_ENCOUNTERS: Encounter[] = [
+    // The second lock follows the opening dodge. The mine and low sweeper make the edges costly.
+    { at: 2, kind: "interceptor", count: 4, side: 48, bankFrom: "left" },
+    { at: 4.35, kind: "interceptor", count: 2, side: 592, bankFrom: "right" },
+    { at: 6, kind: "minelayer", count: 1, side: fromLegacy(145) },
+    { at: 9, kind: "sweeper", count: 1, side: 1, laneY: 174 },
+    { at: 13, kind: "gunship", count: 1, side: fromLegacy(350), firstVolley: 2.8 },
+    { at: 15, kind: "interceptor", count: 8, side: 20, bankFrom: "both" },
+    { at: 20.25, kind: "sweeper", count: 1, side: 0, laneY: 114 },
+
+    // Teach the split's outward shots before the finale uses a beam to close its centre gap.
+    { at: 26, kind: "interceptor", count: 4, side: 320, bankFrom: "split-dive" },
+    { at: 31.6, kind: "minelayer", count: 1, side: fromLegacy(335) },
+    { at: 33, kind: "warden", count: 1, side: fromLegacy(135) },
+    { at: 34.25, kind: "interceptor", count: 5, side: VIEW.width + 85, bankFrom: "right-return" },
+    { at: 35.25, kind: "sweeper", count: 1, side: 0, laneY: 164 },
+    { at: 40, kind: "interceptor", count: 2, side: 592, bankFrom: "right" },
+    { at: 41.6, kind: "interceptor", count: 2, side: 48, bankFrom: "left" },
+
+    // Recover through the repair lane. The ripple then sweeps one side instead of aiming at the ship.
+    { at: 46, kind: "repair", count: 1, side: fromLegacy(210) },
+    { at: 47.5, kind: "sweeper", count: 1, side: 0, laneY: 132 },
+    { at: 51, kind: "interceptor", count: 6, side: 624, bankFrom: "right-ripple" },
+    { at: 55.4, kind: "minelayer", count: 1, side: fromLegacy(150) },
+    { at: 57.5, kind: "gunship", count: 1, side: fromLegacy(130), firstVolley: 2.8 },
+    { at: 59.75, kind: "sweeper", count: 1, side: 1, laneY: 156 },
+    // The tighter formation and low sweeper make the wide centre seam from the first volley unreliable.
+    { at: 62, kind: "interceptor", count: 8, side: 32, bankFrom: "both" },
+    { at: 67, kind: "interceptor", count: 4, side: 48, bankFrom: "left" },
+    { at: 69.5, kind: "minelayer", count: 1, side: fromLegacy(330) },
+    { at: 72.4, kind: "sweeper", count: 1, side: 1, laneY: 176 },
+    { at: 73, kind: "interceptor", count: 5, side: VIEW.width + 85, bankFrom: "right-return" },
+    { at: 80.2, kind: "sweeper", count: 1, side: 0, laneY: 118 },
+
+    // Enter through the split's centre pocket, step off the Warden lock, then read the right-hand ripple.
+    { at: 86.75, kind: "gunship", count: 1, side: fromLegacy(365), firstVolley: 2.8 },
+    { at: 88.5, kind: "minelayer", count: 1, side: fromLegacy(145) },
+    { at: 89.25, kind: "sweeper", count: 1, side: 1, laneY: 203 },
+    { at: 93, kind: "interceptor", count: 6, side: 334, bankFrom: "split-dive" },
+    { at: 93.45, kind: "warden", count: 1, side: fromLegacy(265) },
+    { at: 97.3, kind: "interceptor", count: 6, side: 624, bankFrom: "right-ripple" },
+    { at: 100.25, kind: "interceptor", count: 2, side: 48, bankFrom: "left" },
 ];
 
 /** Player and hostile bullet radii come from the rev01 spec; the player bolt has no spec radius and keeps 2 x 4/3. */

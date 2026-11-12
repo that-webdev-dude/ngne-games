@@ -108,8 +108,9 @@ export function drawAttackCue(
     y: number,
     clock: number,
     reducedMotion: boolean,
+    scale = 1,
 ): void {
-    const half = fromLegacy(2 + (reducedMotion ? 0 : Math.sin(clock * 36) * 0.7));
+    const half = fromLegacy(2 + (reducedMotion ? 0 : Math.sin(clock * 36) * 0.7)) * scale;
     legacy.rect(x, y, half * 2, half * 2, 0xffbb7c, 0.8, LAYER.enemyCue);
 }
 

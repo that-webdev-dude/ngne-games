@@ -419,6 +419,75 @@ test("Breakwater's final bank ripples six shots and leaves before Gatebreaker's 
     }
 });
 
+test("Citadel's split dive banks out, cues and fires from the rotated muzzles, then clears both edges", async () => {
+    const h = await stage(2, (_scene, run) => {
+        run.seconds = 25.9;
+        run.waveIndex = STAGES[2].encounters.findIndex(({ at }) => at === 26);
+    });
+    const formation = () => enemyRows(h.world, Kind.Interceptor);
+    const sprite = rev01Sprite("interceptor");
+    try {
+        while (h.run.seconds < 26.85) h.tick();
+        const entering = formation();
+        assert.equal(entering.length, 4);
+        assert.ok(entering.every(({ x, cue }) => Math.abs(x - 320) <= 22 && !cue));
+
+        while (h.run.seconds < 27.8) h.tick();
+        const fanning = formation();
+        assert.equal(fanning.length, entering.length);
+        assert.ok(
+            fanning.every(
+                ({ x, cue, fireIndex }, i) =>
+                    Math.abs(x - 320) > Math.abs(entering[i].x - 320) + 20 && cue && !fireIndex,
+            ),
+        );
+        const cued = h.render(),
+            cues = cued.filter((quad) => quad.layer === LAYER.enemyCue);
+        assert.equal(cues.length, 4);
+        for (const quad of byTexture(cued, "interceptor")) {
+            const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+            assert.ok(y > 80, "cue is below the top HUD");
+            assert.ok(
+                cues.some(
+                    ({ d }) =>
+                        Math.abs(d[0] + d[2] / 2 - x) <= 1 && Math.abs(d[1] + d[5] / 2 - y) <= 1,
+                ),
+            );
+        }
+
+        while (h.run.seconds < 28.4 && formation().every(({ fireIndex }) => !fireIndex)) h.tick();
+        const shots = freshShots(h.world),
+            flashes = byTexture(h.render(), "interceptor");
+        assert.equal(shots.length, 4);
+        assert.equal(flashes.length, 4);
+        for (const quad of flashes) {
+            assert.equal(frameOf(quad, sprite)?.name, "fire");
+            const [x, y] = socketPixel(quad, sprite, ENEMY_MUZZLES.interceptor);
+            // The sprite pivot and sampled texel are both snapped. The projectile keeps its subpixel origin.
+            const shot = shots.find((shot) => Math.abs(shot.x - x) < 2 && Math.abs(shot.y - y) < 2);
+            assert.ok(shot, "shot originates at the rotated muzzle");
+            assert.equal(Math.sign(shot.vx), Math.sign(x - 320));
+            assert.ok(shot.vy > 0);
+            assert.ok(near(Math.atan2(shot.vy, shot.vx), Math.atan2(quad.d[5], quad.d[4]), 1e-6));
+        }
+
+        const lastX = new Map<number, number>();
+        while (h.run.seconds < 31 && formation().length) {
+            for (const { x, y, fireIndex } of formation()) {
+                assert.equal(fireIndex, 1);
+                // Each rank reaches its own horizontal exit lane on each side.
+                lastX.set(Math.sign(x - 320) * Math.round(y), x);
+            }
+            h.tick();
+        }
+        assert.equal(formation().length, 0);
+        assert.equal([...lastX.values()].filter((x) => x < -16).length, 2);
+        assert.equal([...lastX.values()].filter((x) => x > 656).length, 2);
+    } finally {
+        await h.game.dispose();
+    }
+});
+
 test("Furnace Belt's five interceptors hook left, cue and fire down-right once, then exit right", async () => {
     const h = await stage(1, (_scene, run) => {
         run.seconds = 50.9;
