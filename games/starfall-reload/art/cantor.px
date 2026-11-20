@@ -1,0 +1,145 @@
+# cantor - Area 2 boss fortress-crawler, 160x120, 1 frame, faces down (prow at bottom)
+# light top-left, K outline, olive hull + rust armour, gold hazard marks, red core seams
+# turret sockets (engine): (36,36) (124,36) (36,90) (124,90); core hatch centre (80,60)
+palette
+. transparent
+K #0b0d1a outline shared dark
+g #1b2622 olive-0
+h #31443a olive-1
+j #4f6852 olive-2
+k #7e9a78 olive-3
+l #b9cfa2 olive-4
+B #92203a red-1
+C #da3d4f red-2
+D #ff8a86 red-3
+H #a87b22 gold-1
+I #e8c252 gold-2
+s #2a1a16 rust-0
+t #4d2e24 rust-1
+u #7a4a32 rust-2
+y #b0744a rust-3
+ramp olive g h j k l
+ramp red B C D
+ramp gold H I
+ramp rust s t u y
+frame cantor 100
+................................................................................................................................................................
+................................................................................................................................................................
+................................................................................................................................................................
+.............KKKKKKKKK.................................KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK.................................KKKKKKKKKK.............
+....KKKKKKKKKyyyyyyyyyK...............................KyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyK...............................KuuuuuuuuuuK.KKKKKKK....
+...KttttttttyuuuuuuuuuyK.............................KyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyK.............................KuttttttttttuKtttttttK...
+..KtttttttttyuuuuuuuuuuyK...........................KyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyK...........................KutttttttttttsKttttttttK..
+.KttttttttttyuuuuuuuuuuuyK...............KKKKKKKKKKKyuuuuuuuuuuuuuuuuuuuuuuuuuuytuuuuuuuuuuuuuuuuuuuuuuuuuyK.KKKKKKKKK................KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK..............KlllllllllllyuuuuuuuuuuuuuuuuuuuuuuuuuuytuuuuuuuuuuuuuuuuuuuuuuuuuuyKlllllllllK...............KutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuutK.............KllllllllllllyuuuuKKKKKKKKKKKKKKKKKKKuuuytuuuuKKKKKKKKKKKKKKKKKKKuuutKkllllllljjK..............KutttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK............KlllllllllllllyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKkllllllljjjK.............KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK...........KllllllllllllllyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKkllllllljjjjK............KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK..........KlllllllllllllllyuuuuKtttttttttttttttttKuuuytuuuuKtttttttttttttttttKuuutKklllllljjjjjjK...........KutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuutK.........KllllllljjjjjjjjjyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKhjjjjjjjjjjjjjK..........KutttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK........KllllllljjjjjjjjjjyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKhjjjjjjjjjjjjjjK.........KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK.......KllllllljjjjjjjjjjjyuuuuKtttttttttttttttttKuuuytuuuuKtttttttttttttttttKuuutKhjjjjjjjjjjjjjjjK........KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK......KllllllljjjjjjjjjjjjyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKhjjjjjjjjjjjjjjjjK.......KutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuutK.....KllllllljjjjjjjjjjjjjyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKhjjjjjjjjjjjjjjjjjK......KutttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK....KllllllljjjjjjjjjjjjjjyuuuuKtttttttttttttttttKuuuytuuuuKtttttttttttttttttKuuutKhjjjjjjjjjjjjjjjjjjK.....KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK...KllllllljjjjjjjjjjjjjjjyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKhjjjjjjjjjjjjjjjjjjjK....KutttttttttttsKtttttttttK.
+.KtsssssssssyssssssssssssK..KllllllljjjjjjjjjjjjjjjjyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKhjjjjjjjjjjjjjjjjjjjjK...KsssssssssssssKsssssssstK.
+.KtKKKKKKKKKyyyyyyyyyyyyuK.KllllllljjjjjjjjjjjjjjjjjyuuuuKtttttttttttttttttKuuuytuuuuKtttttttttttttttttKuuutKhjjjjjjjjjjjjjjjjjjjjjK..KuuuuuuuuuuuusKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutKKllllllllllllljjjjjjjjjjjjyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKhjjjjjjjjjjlllllllljjjjK.KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutKllllllllllllllljjjjjjjjjjjyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKhjjjjjjjjllllllllllljjjjKKutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuuulllllllllllllllllkjjjjjjjjjyuuuuKtttttttttttttttttKuuuytuuuuKtttttttttttttttttKuuutKhjjjjjjllllllllllllllkjjKKutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuullllllllllllllllllkkjjjjjjjjyuuuuKsssssssssssssssssKuuuytuuuuKsssssssssssssssssKuuutKhjjjjjlllllllllllllllkkjjKKtttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuullllllllllKKKKKKlllkkkjjjjjjjyuuuuKyyyyyyyyyyyyyyyyyKuuuytuuuuKuuuuuuuuuuuuuuuuuKuuutKhjjjjlllllllKKKKKKlllkkkjjKKttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuulllllllllKKggggggKKlkkkkjjjjjjyuuuuKKKKKKKKKKKKKKKKKKKuuuytuuuuKKKKKKKKKKKKKKKKKKKuuutKhjjjllllllKKggggggKKlkkkkjKKKtttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuulllllllKKggggggggggKKkkkkjKjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuytuuuuuuuuuuuuuuuuuuuuuuuuutKhhjjlllllKKggggggggggKKkkkkjKhKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuullllllKgggjjggggjjgggKkkkkKhjjKyuuuuuuuuuuuuuuuuuuuuuuuuuytuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjllllKgggjjggggjjgggKkkkkKhKttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllllKgggggggggggggggkkkkhKjjjKyuuuuuuuuuuuuuuuuuuuuuuuuytuuuuuuuuuuuuuuuuuuuuuuutKhhhjjlllllKgggggggggggggggkkkkhKKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuulllllKggggggggggggggggkkkkhKhjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjllllKggggggggggggggggkkkkhKKttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuulllllKgggggggggggggggggkkjjhKjjjjKyttttttttttttttttttttttttttttttttttttttttttttttKhhhjjjlllllKgggggggggggggggggkkjjhKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuullllKgjjggggggggggggjjgkkjjhKhjjjjKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKhhhjjjjllllKgjjggggggggggggjjgkkjjhKstttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllKggggggggKKgggggggghjjjhKhjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjllllKggggggggKKgggggggghjjjhKstttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllKgggggggKKKKggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggggggKKKKggggggghjjjhKstttttttsKtttttttttK.
+.KtsssssssssysssssssssllllKgggggggKKKKggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggggggKKKKggggggghjjjhKsssssssssKsssssssstK.
+.KtKKKKKKKKKyyyyyyyyyyllllKggggggggKKgggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKggggggggKKgggggggghjjjhKsuuuuuuusKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllKgjjggggggggggggjjghjjjgKhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjllllKgjjggggggggggggjjghjjjgKstttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuulllllKgggggggggggggggghjjjjgKhkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjllllKgggggggggggggggghjjjjgKstttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuukkllKgggggggggggggggghjjjgKhhjjjjjjjjjjjjjjyyyyyyyyyyyyyyyyyyyyyyyyyyyKjjjjjjjjjjjjjjjjjkkllKgggggggggggggggghjjjgKKstttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuulkkkkkKgggggggggggggghjjjjgKhhjjjjjjjjjjjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuuyKjjjjjjjjjjjjjjjjjkkkkKgggggggggggggghjjjjgKKstttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullkkkkKgggjjggggjjggghjjjgKhhjjjjjjjjjjjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyKjjjjjjjjjjjjjjjjkkkkKgggjjggggjjggghjjjgKgKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuulljkkkkKggggggggggghhjjjhgKhhjjjjjjjjjjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyKjjjjjjjjjjjjjjjjkkkkKggggggggggghhjjjhgKgKttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuullKjkkkkkkggggggghhjjjjhgKhhjjjjjjjjjjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyKjjjjjjjjjjjjjjjjkkkkkkggggggghhjjjjhggggKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuulllKjkkkkkkjhhhhhjjjjjhgKhhhjjjjjjjjjjjyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuyKjjjjjjjjjjjjjjjjkkkkkkjhhhhhjjjjjhgggggKttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllKhkkkjjjjjjjjjjjjhgKhhhjjjjjjjjjjjyuuuuuuuuuKKKKKKKKKKKKKKKKKKKuuuuuuuuuyKjjjjjjjjjjjjjjKhkkkjjjjjjjjjjjjhggggghKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuljjjjKhhjjjjjjjjjjjjggKhhhjjjjjjjjjjjjyuuuuuuuuKkkkkkkkkKBBKkkkkkkkKuuuuuuuuuyKjjjjjjjjjjjjjjKhhjjjjjjjjjjjjgggggghhKttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuujjjjjjKKhhjjjjjjjjggKKhhhjjjjjjjjjjjjjyuuuuuuuKkjjjjjjjjKBBKkjjjjjjkKuuuuuuuutKhjjjjjjjjjjjjjjKKhhjjjjjjjjggKKggghhKtttttttttsKsssssssstK.
+..KKKKKKKKKKyuuuuuuuuuKjjjjjjhKKhhhhggggKKhhhhjjjjjjjjjjjjjjyuuuuuuKkjjjjjjjjjKBBKkjjjjjjjkKuuuuuuutKhjjjjjjjjjjjjjjjhKKhhhhggggKKgggghhKttttttttttsKKKKKKKKKK..
+...KttttttttyuuuuuuuuutKjjjjjjjhKKKKKKKKhhhhjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKBBKkjjjjjjjjkKuuuuuutKhjjjjjjjjjjjjjjjjjhKKKKKKKKgggghhhKuttttttttttsKtttttttK...
+....KKKKKKKKKyttttttttK.KjjjjjjjjhhhhhhhhhjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjkKuuuuutKhjjjjjjjjjjjjjjjjjjjhhhhhhggghhhhK.KusssssssssK.KKKKKKK....
+.............KKKKKKKKK...KjjjjjjljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhhK...KKKKKKKKKK.............
+..........................KjjlllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjhhhhhhhjKCCKkhhhhhhhhjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjkkkkkkkjKCCKkkkkkkkkkjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjKKKKKKKKKKjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjKKKKKKKKKKjjjjhhhhhK...........................
+...........................KllllljjjjkkkkkkkkkkjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKDDKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKDDKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjKKKKKKKKKKjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKDDKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjKKKKKKKKKKjjjjhhhhhK...........................
+...........................KllllljjjjkkkkkkkkkkjjjjjjjjjjjjjyuuuuuKkjjhhhhhhhjKDDKkhhhhhhhhjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjkkkkkkkjKDDKkkkkkkkkkjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjKKKKKKKKKKjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKDDKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjKKKKKKKKKKjjjjhhhhhK...........................
+...........................KllllljjjjkkkkkkkkkkjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhK...........................
+...........................KllllljjjjKKKKKKKKKKjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjKKKKKKKKKKjjjjhhhhhK...........................
+..........................KlllllljjjjkkkkkkkkkkjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKCCKkjjjjjjjjjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhhhhjK...........................
+.............KKKKKKKKK...KllllllljjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjhhhhhhhjKCCKkhhhhhhhhjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjhjjjjjK...KKKKKKKKKK.............
+....KKKKKKKKKyyyyyyyyyK.KllllllljjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjkkkkkkkjKCCKkkkkkkkkkjjjuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjK.KuuuuuuuuuuK.KKKKKKK....
+...KttttttttyuuuuuuuuuyKllllllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuKkjjjjjjjjjjKBBKkjjjjjjjjjjuuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKuttttttttttuKtttttttK...
+..KtttttttttyuuuuuuuuuullllllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuuKkjjjjjjjjjKBBKkjjjjjjjjjuuuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKttttttttttsKttttttttK..
+.KttttttttttyuuuuuuuuullllllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuuuKkjjjjjjjjKBBKkjjjjjjjjuuuuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKtttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuulllllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuuuuKkjjjjjjjKBBKkjjjjjjjuuuuuuuuutKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjhKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuullllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjyuuuuuuuuuKjjjjjjjjjjjjjjjjjjuuuuuuuuutKhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjhhhhKttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjhhhhhKttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuullllljjjjjlllllllljjjjjjjjjjjjjjjjjjjjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjjjjjjjjjjjjjjjjjjlllllllljjjjjhhhhhKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuullllljjjllllllllllljjjjjjjjjjjjjjjjjjjjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjjjjjjjjjjjjjjjjjllllllllllljjjjhhhhhKttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllljllllllllllllllkjjjjjjjjjjjjjjjjjjjjjKyuuuuuuuuuuuuuuuuuuuuuuuuuuutKhhhjjjjjjjjjjjjjjjjjjllllllllllllllkjKhhhhhKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllllllllllllllllllkkjjjjjjjjjjjjjjjjjjjjjKyttttttttttttttttttttttttttKhhhjjjjjjjjjjjjjjjjjjlllllllllllllllkkjKhhhhKttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuulllllllllllKKKKKKlllkkkjjjjjjjjjjjjjjjjjjjjjKKKKKKKKKKKKKKKKKKKKKKKKKKKhhhjjjjjjjjjjjjjjjjjjlllllllKKKKKKlllkkkjKhhhKttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuulllllllllKKggggggKKlkkkkjjjjjjjjjjjjjjjjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjllllllKKggggggKKlkkkkjKhhKttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuulllllllKKggggggggggKKkkkkjKjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjlllllKKggggggggggKKkkkkhKhKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllllKgggjjggggjjgggKkkkkKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggjjggggjjgggKkkkkKhKttttttttsKtttttttttK.
+.KtsssssssssysssssssssllllllKgggggggggggggggkkkkhKjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjlllllKgggggggggggggggkkkkhKKsssssssssKsssssssstK.
+.KtKKKKKKKKKyyyyyyyyyylllllKggggggggggggggggkkkkhKhjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjllllKggggggggggggggggkkkkhKKuuuuuuuusKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuulllllKgggggggggggggggggkkjjhKjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjlllllKgggggggggggggggggkkjjhKttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllKgjjggggggggggggjjgkkjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgjjggggggggggggjjgkkjjhKstttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuullllKggggggggKKgggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKggggggggKKgggggggghjjjhKstttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuullllKgggggggKKKKggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggggggKKKKggggggghjjjhKstttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuullllKgggggggKKKKggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggggggKKKKggggggghjjjhKstttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuullllKggggggggKKgggggggghjjjhKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKggggggggKKgggggggghjjjhKstttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuullllKgjjggggggggggggjjghjjjgKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgjjggggggggggggjjghjjjgKstttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuulllllKgggggggggggggggghjjjjgKhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjllllKgggggggggggggggghjjjjgKstttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuukkllKgggggggggggggggghjjjgKhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkkllKgggggggggggggggghjjjgKsstttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuukkkkkKgggggggggggggghjjjjgKhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkkkkKgggggggggggggghjjjjgKsstttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuukkkkKgggjjggggjjggghjjjgKhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkkkkKgggjjggggjjggghjjjgKssttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuujkkkkKggggggggggghhjjjhgKhhjjjllllllllllllllllllllllllllkkkkkkkkkkkkkkkkkkkkkkkkkkKjjjjjjkkkkKggggggggggghhjjjhgKssttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuuKjkkkkkkggggggghhjjjjhgKhhjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjkKjjjjjjkkkkkkggggggghhjjjjhgKsstttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuuuKjkkkkkkjhhhhhjjjjjhgKhhhjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjkKjjjjjjkkkkkkjhhhhhjjjjjhgKssstttttttttsKtttttttttK.
+.KtsssssssssyssssssssssssKKhkkkjjjjjjjjjjjjhgKhhhjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjjKjjjjjKhkkkjjjjjjjjjjjjhgKKsssssssssssssKsssssssstK.
+.KtKKKKKKKKKyyyyyyyyyyyyuK.KhhjjjjjjjjjjjjggKhhhjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKjjjjjKhhjjjjjjjjjjjjggK.KutuuuuuuuuuusKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK..KKhhjjjjjjjjggKKhhhjjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjKjjjjjjKKhhjjjjjjjjggKK..KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK....KKhhhhggggKKhhhhjjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkKjjjjjjhKKhhhhggggKK....KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK......KKKKKKKKhhhhjjjjjlkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkKjjjjjhhhKKKKKKKK......KutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuutK.........KhhhhhhjjjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhgKhjjjhhhhhgggK.........KutttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK..........KjjjjjjjjjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhgKhhjjhhhhhhhhK..........KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK...........KjjjjjjjjhhhhjggIIIIggggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHgggggKgghhhhhhhhKK...........KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK............KKjjjjjhhhhhgjIIIIggggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHgggggKgghhhhhhhhK.............KutttttttttttsKsssssssstK.
+.KtKKKKKKKKKyuuuuuuuuuuutK..............KjjjjhhhhhgjIIIggggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggggKgghhhhhhhK..............KutttttttttttsKKKKKKKKKtK.
+.KtuuuuuuuuuyuuuuuuuuuuutK...............KjjjhhhhhIIjIggggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHgKgghhhhhhhK...............KutttttttttttsKtttttttttK.
+.KttttttttttyuuuuuuuuuuutK................KjhhhhhhIIjggggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHHgKgghhhhhhK................KutttttttttttsKtttttttttK.
+.KtsssssssssyuuuuuuuuuuutK.................KKKKKKKKKKjggIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHHgK.KKKKKKKK.................KutttttttttttsKsssssssstK.
+..KKKKKKKKKKyuuuuuuuuuutK...........................KjgIIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHHHgK..........................KutttttttttttsKKKKKKKKKK..
+...KttttttttyuuuuuuuuutK.............................KjIIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHHHgK............................KuttttttttttsKtttttttK...
+....KKKKKKKKKyttttttttK..............................KjIIggggIIIIggggIIIIggggHHHHggggHHHHggggHHHHggggHHHHgK.............................KusssssssssK.KKKKKKK....
+.............KKKKKKKKK................................KjgggggggggggggggggggggggggggggggggggggggggggggggggK...............................KKKKKKKKKK.............
+.......................................................KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK.......................................................
+................................................................................................................................................................
+................................................................................................................................................................

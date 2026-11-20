@@ -1,0 +1,69 @@
+# skiff - capsule carrier (drops a weapon capsule when destroyed). 28x20, 2 frames, straight top-down, faces DOWN.
+# light: top-left. K exterior outline; seams where the engine pods meet the hull.
+# Bulky olive transport: 18px hull, two rear-thrust engine pods (nozzles at the top = rear),
+# recessed cargo bay (dark walls up-left, lit walls down-right) carrying a gold capsule (the cargo marking),
+# red 2x2 sensor/cockpit in the blunt nose (bottom).
+# Palette: olive a b c d e, steel 2, red n r, gold Y G L, fire O Q, K (14 colours).
+# Frames: 0 nozzle fire O, 1 nozzle fire Q (flicker pair, 100 ms each, loop). Only 4 nozzle pixels change.
+palette
+. transparent
+K #0b0d1a  outline
+a #1b2622  olive-0
+b #31443a  olive-1
+c #4f6852  olive-2
+d #7e9a78  olive-3
+e #b9cfa2  olive-4
+2 #2f3a5a  steel-1
+n #92203a  red-1
+r #da3d4f  red-2
+Y #a87b22  gold-1
+G #e8c252  gold-2
+L #fff2a8  gold-3 glint
+O #ec7424  fire-2
+Q #ffb347  fire-3
+ramp olive a b c d e
+ramp red n r
+ramp fire O Q
+ramp gold Y G L
+frame f0 100
+............................
+.KKKK.KKKKKKKKKKKKKKKK.KKKK.
+.KOOKKeedddddddddddddcKKOOK.
+K2222KdccccccccccccccbK2222K
+KddccKdccccccccccccccbKddccK
+KdccbKdccaaaaaaaaaaccbKdccbK
+KdccbKdccabbbbbbbbcccbKdccbK
+KdccbKdccabbGGGGbbcccbKdccbK
+KdccbKdccabGLGGGYbcccbKdccbK
+KdccbKdccabGGGGYYbcccbKdccbK
+KdccbKdccabbYYYYbbcccbKdccbK
+KcccbKdccabbbbbbbbcccbKcccbK
+KcbbbKdcccdddddddddccbKcbbbK
+.KKKKKdccccccKKccccccbKKKKK.
+.....KdcccccKrrKcccccbK.....
+.....KdcccccKnnKcccccbK.....
+......KccccccKKbbbbbbK......
+.......KccccccbbbbbbK.......
+........KKKKKKKKKKKK........
+............................
+frame f1 100
+............................
+.KKKK.KKKKKKKKKKKKKKKK.KKKK.
+.KQQKKeedddddddddddddcKKQQK.
+K2222KdccccccccccccccbK2222K
+KddccKdccccccccccccccbKddccK
+KdccbKdccaaaaaaaaaaccbKdccbK
+KdccbKdccabbbbbbbbcccbKdccbK
+KdccbKdccabbGGGGbbcccbKdccbK
+KdccbKdccabGLGGGYbcccbKdccbK
+KdccbKdccabGGGGYYbcccbKdccbK
+KdccbKdccabbYYYYbbcccbKdccbK
+KcccbKdccabbbbbbbbcccbKcccbK
+KcbbbKdcccdddddddddccbKcbbbK
+.KKKKKdccccccKKccccccbKKKKK.
+.....KdcccccKrrKcccccbK.....
+.....KdcccccKnnKcccccbK.....
+......KccccccKKbbbbbbK......
+.......KccccccbbbbbbK.......
+........KKKKKKKKKKKK........
+............................

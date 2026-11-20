@@ -7,5 +7,14 @@
         "requirements": "Desktop browser with WebGPU support.",
         "screenshot": "games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png",
         "screenshotAlt": "Starfall in Midnight Citadel: the player faces the Starfall Engine amid enemy projectiles, with the score and hull visible."
+    },
+    {
+        "slug": "starfall-reload",
+        "directory": "games/starfall-reload",
+        "title": "Starfall Reload",
+        "description": "Thread dense bullet storms across three areas of a full-screen vertical shooter. Reshape four weapon families with Shot Control, graze bullets to reload bombs, and break multi-phase bosses.",
+        "requirements": "Desktop browser with WebGPU support. Keyboard or standard gamepad.",
+        "screenshot": "games/starfall-reload/docs/screenshots/cirrus-line-halberd.png",
+        "screenshotAlt": "Starfall Reload in Cirrus Line: the player's fighter fires a spread at the Halberd flying wing above a dawn cloud deck, with the cabinet side panels showing score, bombs and weapons."
     }
 ]

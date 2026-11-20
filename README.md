@@ -14,6 +14,14 @@ A full-window arcade shoot-em-up with three sectors, sector bosses, and a rechar
 
 [Open the gallery](https://that-webdev-dude.github.io/ngne-games/) or [play Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/). This collection is Starfall's deployment home. Build and preview locally with the commands below.
 
+### Starfall Reload
+
+A full-screen vertical arcade shooter in a cabinet layout: three areas, four weapon families with Shot Control, power-as-armour, graze-reloaded bombs and multi-phase bosses. Requires a WebGPU-capable desktop browser; plays with a keyboard or a standard gamepad.
+
+[![Starfall Reload facing the Halberd above the cloud deck](games/starfall-reload/docs/screenshots/cirrus-line-halberd.png)](games/starfall-reload/docs/screenshots/cirrus-line-halberd.png)
+
+[Gameplay and controls](games/starfall-reload/README.md) · [Source](games/starfall-reload/) · [Screenshot provenance](games/starfall-reload/docs/screenshots/README.md)
+
 ## Requirements
 
 - Node.js 24 or newer
@@ -64,6 +72,7 @@ Open the printed local URL for the gallery, or `/starfall/` on that origin for t
 
 ```text
 games/starfall/       Game source, assets, tests, configuration, documentation, legal notices
+games/starfall-reload/ Second game: source, sprites and .px sources, tests, documentation, notices
 site/                Static gallery template, stylesheet, and catalog
 tooling/             Site assembly, campaign assertions, and tooling tests
 docs/                Contributor and deployment guides
