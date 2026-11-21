@@ -2,10 +2,18 @@ import type { Audio } from "@ngne/core";
 import { MUSIC_IDS, SFX_IDS, renderSfx, type MusicId, type Rendered, type SfxId } from "../audio/synth.ts";
 
 type Scope = ReturnType<Audio["scene"]>;
+/**
+ * What the game mode means for music: `paused` silences it; `pausable` (play that auto-pauses when
+ * the tab is hidden) silences it while the tab is hidden; `none` leaves it alone.
+ */
+export type MusicPause = "paused" | "pausable" | "none";
 
 const SAMPLE_RATE = 44100;
 const MUSIC_VOLUME = 0.42;
 const SFX_VOLUME = 0.85;
+/** Music fades (seconds) on silencing and restoring; the track keeps running underneath. */
+const PAUSE_FADE_OUT = 0.15;
+const PAUSE_FADE_IN = 0.4;
 /** Minimum spacing between repeats of rapid cues (seconds) so the mix never smears. */
 const THROTTLE: Partial<Record<SfxId, number>> = {
     shot: 0.06,
@@ -39,12 +47,15 @@ export class Sound {
     private musicScope: Scope | null = null;
     private wanted: MusicId | null = null;
     private playing: MusicId | null = null;
+    private pause: MusicPause = "none";
+    private silenced = false;
     private counter = 0;
     private clock = 0;
     private readonly audio: Audio;
 
     constructor(audio: Audio) {
         this.audio = audio;
+        document.addEventListener("visibilitychange", this.onVisibility);
         for (const id of SFX_IDS) this.sfx.set(id, toBuffer(renderSfx(id, SAMPLE_RATE)));
         try {
             const worker = new Worker(new URL("../audio/music-worker.ts", import.meta.url), { type: "module" });
@@ -60,9 +71,13 @@ export class Sound {
         }
     }
 
-    /** Called from a simulation system once per tick with that tick's requests. */
-    update(dt: number, cues: readonly SfxId[], music: MusicId | "stop" | null): void {
+    /** Called from a simulation system once per tick with that tick's requests and music pause state. */
+    update(dt: number, cues: readonly SfxId[], music: MusicId | "stop" | null, pause: MusicPause): void {
         this.clock += dt;
+        // Settle the state first: a track requested on the tick that leaves pause starts at full volume.
+        const wasSilenced = this.silenced;
+        this.pause = pause;
+        this.silenced = this.shouldSilence();
         this.sfxScope ??= this.audio.scene("starfall-reload-sfx");
         for (const id of cues) {
             const gap = THROTTLE[id] ?? 0;
@@ -82,6 +97,25 @@ export class Sound {
             if (this.music.has(music)) this.startMusic(music);
             else this.stopMusic(0.4);
         }
+        if (this.silenced !== wasSilenced) this.fadeMusic();
+    }
+
+    /**
+     * Frames stop while the tab is hidden, so play silences here instead of waiting for the auto-pause
+     * tick. Showing the tab restores nothing: the next tick pauses and the resume fade brings it back.
+     */
+    private readonly onVisibility = (): void => {
+        if (!document.hidden || this.silenced || !this.shouldSilence()) return;
+        this.silenced = true;
+        this.fadeMusic();
+    };
+
+    private shouldSilence(): boolean {
+        return this.pause === "paused" || (this.pause === "pausable" && document.hidden);
+    }
+
+    private fadeMusic(): void {
+        this.musicScope?.fadeTo(this.silenced ? 0 : 1, this.silenced ? PAUSE_FADE_OUT : PAUSE_FADE_IN);
     }
 
     private startMusic(id: MusicId): void {
@@ -89,6 +123,8 @@ export class Sound {
         if (!track) return;
         this.stopMusic(0.35);
         const scope = this.audio.scene(`starfall-reload-music-${++this.counter}`);
+        // A track that starts while silenced stays silent until the resume fade.
+        if (this.silenced) scope.volume(0);
         scope.play({ buffer: track.buffer, loop: track.loop, volume: MUSIC_VOLUME });
         this.musicScope = scope;
         this.playing = id;
@@ -104,6 +140,7 @@ export class Sound {
     }
 
     dispose(): void {
+        document.removeEventListener("visibilitychange", this.onVisibility);
         this.stopMusic(0.01);
         this.sfxScope?.dispose();
         this.sfxScope = null;

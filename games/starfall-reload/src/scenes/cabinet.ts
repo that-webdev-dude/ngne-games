@@ -9,11 +9,17 @@ import { backdropAssets } from "../render/backdrops.ts";
 import { drawFieldOverlays, drawPanels, drawScreens } from "../render/hud.ts";
 import { Painter } from "../render/painter.ts";
 import { drawBackdrop, drawWorld } from "../render/world.ts";
-import type { Sound } from "../services/sound.ts";
+import type { MusicPause, Sound } from "../services/sound.ts";
 import { loadScores, type Settings } from "../services/storage.ts";
 import { latchEdges, noActions, readActions } from "../sim/actions.ts";
 import { createQueries, newArea, newFeedback, newRun, type Sim } from "../sim/context.ts";
 import { updateFx } from "../sim/motion.ts";
+
+/** Music pause state for a flow; `pausable` mirrors the modes in which `flow.autoPause` takes effect. */
+function musicPause(flow: Flow): MusicPause {
+    if (flow.mode === "paused") return "paused";
+    return flow.mode === "play" && !flow.demo ? "pausable" : "none";
+}
 
 /** What the browser shell can observe (screen name, settings) without touching the world. */
 export interface CabinetView {
@@ -107,7 +113,7 @@ export function cabinetScene(options: CabinetOptions): SceneDefinition<CabinetSt
                     frozen = fb.hitstop;
                     fb.hitstop = 0;
                 }
-                options.sound?.update(ctx.dt, fb.cues, fb.music);
+                options.sound?.update(ctx.dt, fb.cues, fb.music, musicPause(flow));
                 fb.cues.length = 0;
                 fb.music = null;
             });
@@ -124,7 +130,7 @@ export function cabinetScene(options: CabinetOptions): SceneDefinition<CabinetSt
                     scene.camera.shakeX = amount > 0.2 ? Math.round((sim.fxRng.next() * 2 - 1) * amount) : 0;
                     scene.camera.shakeY = amount > 0.2 ? Math.round((sim.fxRng.next() * 2 - 1) * amount) : 0;
                     if (isFrozen && sim.feedback.cues.length) {
-                        options.sound?.update(ctx.dt, sim.feedback.cues, null);
+                        options.sound?.update(ctx.dt, sim.feedback.cues, null, musicPause(flow));
                         sim.feedback.cues.length = 0;
                     }
                 },
