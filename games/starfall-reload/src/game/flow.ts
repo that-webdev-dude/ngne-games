@@ -37,7 +37,7 @@ export interface Flow {
     demoCount: number;
     /** Set by the browser shell until a key or click has unlocked audio. */
     audioLocked: boolean;
-    /** Set by the browser shell when the window loses focus; pauses play. */
+    /** Set by the browser shell when the window loses focus; pauses play, dropped on other screens. */
     autoPause: boolean;
 }
 
@@ -149,6 +149,8 @@ export function updateFlow(sim: Sim, flow: Flow, dt: number): void {
         flow.settings.crt = !flow.settings.crt;
         saveSettings(flow.settings);
     }
+    // Only play in progress pauses; a blur on another screen would otherwise pause the next game.
+    if (flow.mode !== "play" || flow.demo) flow.autoPause = false;
 
     switch (flow.mode) {
         case "attract": {

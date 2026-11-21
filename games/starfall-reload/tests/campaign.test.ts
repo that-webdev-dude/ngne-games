@@ -64,3 +64,26 @@ test("an idle ship (no input) is eventually shot down and reaches the continue s
     }
     assert.equal(reached, true);
 });
+
+test("auto-pause pauses play in progress but a stale one from the title screen or demo does not", async () => {
+    const h = await cabinet("AUTO-PAUSE");
+    for (let i = 0; i < 40; i++) h.tick();
+    h.flow().autoPause = true; // window blurred on the title screen
+    h.tick();
+    h.tick(input([], ["Enter"]));
+    for (let i = 0; i < 5; i++) h.tick();
+    assert.equal(h.flow().mode, "play");
+
+    h.flow().autoPause = true; // window blurred during play
+    h.tick();
+    assert.equal(h.flow().mode, "paused");
+
+    const d = await cabinet("AUTO-PAUSE-DEMO");
+    while (!d.flow().demo) d.tick();
+    d.flow().autoPause = true; // window blurred while the demo flies
+    d.tick();
+    d.tick(input([], ["Enter"]));
+    for (let i = 0; i < 5; i++) d.tick();
+    assert.equal(d.flow().demo, false);
+    assert.equal(d.flow().mode, "play");
+});
