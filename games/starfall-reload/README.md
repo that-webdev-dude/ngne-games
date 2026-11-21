@@ -8,7 +8,7 @@ A full-screen vertical arcade shoot-'em-up built with **@ngne/core 0.3.0** and T
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [<img src="docs/screenshots/cirrus-line-halberd.png" width="320" alt="The Halberd flying wing over the dawn cloud deck">](docs/screenshots/cirrus-line-halberd.png) | [<img src="docs/screenshots/neon-grid-cantor.png" width="320" alt="The Cantor siege crawler on a night-city avenue">](docs/screenshots/neon-grid-cantor.png) |
 
-The logical view is 640×360: a 288-pixel vertical playfield framed by cabinet side panels that carry the whole HUD. It fills the window at an integer scale when that wastes less than 12 % of the screen, otherwise it fits exactly. A CRT treatment (scanlines and vignette) can be toggled with V.
+The logical view is 640×360: a 288-pixel vertical playfield framed by plain cabinet side panels. A minimal HUD sits in two thin rows inside the playfield: score and hi-score at the top (with the chain multiplier under them while it is live), and ships, bombs, the RELOAD gauge, weapon, Shot Control mode and power at the bottom. It fills the window at an integer scale when that wastes less than 12 % of the screen, otherwise it fits exactly. A CRT treatment (scanlines and vignette) can be toggled with V.
 
 ## How it plays
 
@@ -17,7 +17,7 @@ The logical view is 640×360: a 288-pixel vertical playfield framed by cabinet s
 - **Power is armour.** Power runs 0–4. A hit while powered costs two levels and triggers an armour-break pulse; a hit at level 0 destroys the ship. Power chips rebuild it.
 - **Graze to reload.** Bullets that pass close to the hitbox fill the RELOAD gauge; a full gauge adds a bomb. Bombs clear bullets and damage everything on screen.
 - **Chains.** Kills within 1.25 s of each other build a chain; every eight kills raises the score multiplier, up to x8.
-- **Danger.** A hidden rank (shown as DANGER 0–7) speeds up enemy fire as you power up and progress, and drops when you lose a ship.
+- **Danger.** A hidden rank (0–7) speeds up enemy fire as you power up and progress, and drops when you lose a ship.
 - **Credits.** Three ships per credit and three credits. A continue (START on the countdown) or RESTART AREA from the pause menu spends a credit, restarts the current area and resets the score. Extends at 60 000, 200 000 and 500 000. Area bosses that outlast their timer escape without a bonus; the final boss never retreats and must be destroyed.
 - **Arcade cabinet flow.** Attract screens with the high-score table and rules, a demo sortie after a short idle, area intro cards, boss WARNING overlays, clear tallies, an ending and three-letter name entry.
 

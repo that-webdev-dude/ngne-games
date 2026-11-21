@@ -1,4 +1,4 @@
-/** Logical canvas. The cabinet layout is a centred vertical playfield flanked by HUD panels. */
+/** Logical canvas. The cabinet layout is a centred vertical playfield flanked by plain bezel panels. */
 export const VIEW = { width: 640, height: 360 } as const;
 
 /** Playfield in world coordinates is (0,0)–(W,H); the camera offsets it to screen x = LEFT. */
@@ -6,6 +6,9 @@ export const FIELD = { left: 176, width: 288, height: 360 } as const;
 export const FIELD_W = FIELD.width;
 export const FIELD_H = FIELD.height;
 export const PANEL_W = FIELD.left;
+
+/** Heights of the two HUD rows drawn inside the playfield (top: score, bottom: run state). */
+export const HUD = { top: 12, bottom: 12 } as const;
 
 /** Render layers, sorted ascending by NGNE. */
 export const L = {

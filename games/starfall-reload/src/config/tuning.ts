@@ -1,4 +1,10 @@
+import { HUD } from "./view.ts";
+
 /** Gameplay tuning. All values are provisional slice values (contract P1). Units: px, seconds. */
+
+/** Half the player sprite's height (24×28 sheet): keeps its edges out of the HUD rows. */
+const SHIP_HALF_H = 14;
+
 export const PLAYER = {
     speed: 170,
     focusSpeed: 85,
@@ -6,8 +12,8 @@ export const PLAYER = {
     grazeRadius: 15,
     /** Body keeps this far inside the playfield edges. */
     marginX: 10,
-    marginTop: 14,
-    marginBottom: 12,
+    marginTop: HUD.top + SHIP_HALF_H,
+    marginBottom: HUD.bottom + SHIP_HALF_H,
     spawnX: 144,
     spawnY: 312,
     enterFromY: 400,

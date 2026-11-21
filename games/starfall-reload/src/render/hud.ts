@@ -1,151 +1,118 @@
 import { AREAS } from "../config/areas.ts";
-import { CREDITS, GRAZE, PLAYER, RANK } from "../config/tuning.ts";
+import { CHAIN, GRAZE, PLAYER } from "../config/tuning.ts";
 import { Ship } from "../ecs/components.ts";
-import { FIELD, FIELD_H, FIELD_W, L, VIEW } from "../config/view.ts";
+import { FIELD, FIELD_H, FIELD_W, HUD, L, VIEW } from "../config/view.ts";
 import { WEAPONS } from "../config/weapons.ts";
 import { ENTRY_CHARS, hiScore, pauseItems, type Flow } from "../game/flow.ts";
 import type { Sim } from "../sim/context.ts";
 import { chainMultiplier, chipsForNext } from "../sim/rules.ts";
-import { CHAIN } from "../config/tuning.ts";
+import { textWidth } from "./font.ts";
 import type { Painter } from "./painter.ts";
 
 const GOLD = 0xffc94a,
     CYAN = 0x46c8ee,
     DIM = 0x7184ad,
     RED = 0xff3d4f,
-    WHITE = 0xffffff;
+    WHITE = 0xffffff,
+    INK = 0x0b0d1a,
+    OFF = 0x1c2238;
 const CX = VIEW.width / 2;
 const LEFT_X = FIELD.left / 2;
 const RIGHT_X = FIELD.left + FIELD.width + FIELD.left / 2;
 
 const pad = (n: number, width: number) => String(Math.floor(n)).padStart(width, "0");
 
-/** Side panels: all session information lives here, outside the playfield. */
+/**
+ * Cabinet bezel and the minimal HUD. The side panels are plain plates with static neon frame
+ * lines; the only readouts are two thin outlined rows inside the playfield (see `drawHudRows`).
+ */
 export function drawPanels(p: Painter, sim: Sim, flow: Flow): void {
-    const t = sim.time;
-    const run = sim.run;
-    const playing = flow.mode !== "attract" && flow.mode !== "ending" && flow.mode !== "entry" && !flow.demo;
-    // Panel plates (texture holds both halves).
     p.frame.sprite({ x: LEFT_X, y: 180, width: 176, height: 360, texture: "panels", u: 0, v: 0, uw: 0.5, vh: 1, layer: L.panel, screen: true });
     p.frame.sprite({ x: RIGHT_X, y: 180, width: 176, height: 360, texture: "panels", u: 0.5, v: 0, uw: 0.5, vh: 1, layer: L.panel, screen: true });
-    // Neon playfield frame with a travelling glint.
     for (const x of [FIELD.left - 1, FIELD.left + FIELD.width]) {
         p.rect(x - 1, 0, 3, 360, CYAN, 0.18, L.panel, true);
         p.rect(x, 0, 1, 360, CYAN, 0.85, L.panel, true);
-        const gy = (t * 140 + (x > 300 ? 180 : 0)) % 420 - 30;
-        p.rect(x - 1, gy, 3, 26, WHITE, 0.6, L.panel, true);
     }
-
-    // Left: logo, score, ships, bombs, reload gauge, chain.
-    p.text("STARFALL", LEFT_X, 12, { scale: 2, color: GOLD, align: "center", layer: L.panelText, screen: true });
-    p.text("R E L O A D", LEFT_X, 32, { color: CYAN, align: "center", layer: L.panelText, screen: true });
-    divider(p, 46);
-    p.text("1UP", 16, 56, { color: Math.floor(t * 2) % 2 ? RED : 0xff8a86, layer: L.panelText, screen: true });
-    p.text(pad(run.score, 8), LEFT_X + 4, 66, { scale: 2, align: "center", layer: L.panelText, screen: true });
-    p.text("HI-SCORE", 16, 92, { color: DIM, layer: L.panelText, screen: true });
-    p.text(pad(hiScore(flow, sim), 8), 160, 92, { color: GOLD, align: "right", layer: L.panelText, screen: true });
-    divider(p, 106);
-    p.text("SHIPS", 16, 116, { color: DIM, layer: L.panelText, screen: true });
-    const shipOut = !!sim.player && sim.world.has(sim.player) && sim.world.read(sim.player, Ship, "alive") === 1;
-    const lives = playing ? Math.max(0, run.lives - (shipOut ? 1 : 0)) : PLAYER.lives - 1;
-    for (let i = 0; i < Math.min(lives, 8); i++) p.spr("icon-life", 0, 70 + i * 11, 120, { layer: L.panelText, screen: true });
-    p.text("BOMBS", 16, 134, { color: DIM, layer: L.panelText, screen: true });
-    for (let i = 0; i < PLAYER.maxBombs; i++)
-        p.spr("icon-bomb", 0, 70 + i * 11, 138, { layer: L.panelText, screen: true, alpha: i < run.bombs ? 1 : 0.18 });
-    // Reload gauge: graze fills it; a full gauge reloads one bomb.
-    p.text("RELOAD", 16, 154, { color: DIM, layer: L.panelText, screen: true });
-    const fill = run.grazeMeter / GRAZE.perBomb;
-    const barX = 16,
-        barY = 165,
-        barW = 144;
-    p.rect(barX - 1, barY - 1, barW + 2, 8, 0x05060c, 1, L.panelText, true);
-    const segs = 18;
-    for (let i = 0; i < segs; i++) {
-        const on = i / segs < fill;
-        p.rect(barX + i * 8, barY, 7, 6, on ? (fill > 0.8 && Math.floor(t * 10) % 2 ? WHITE : CYAN) : 0x1c2238, 1, L.panelText, true);
-    }
-    p.text("GRAZE " + pad(run.grazeTotal, 4), 160, 154, { color: 0x7fe0ff, align: "right", layer: L.panelText, screen: true });
-    // Chain.
-    divider(p, 180);
-    const mult = chainMultiplier(run.chain);
-    p.text("CHAIN", 16, 190, { color: DIM, layer: L.panelText, screen: true });
-    p.text(String(run.chain), 70, 186, { scale: 2, color: run.chain > 0 ? WHITE : 0x2f3a5a, layer: L.panelText, screen: true });
-    p.text("x" + mult, 160, 186, { scale: 2, color: mult > 1 ? GOLD : 0x2f3a5a, align: "right", layer: L.panelText, screen: true });
-    p.rect(16, 204, 144 * Math.max(0, run.chainT / CHAIN.window), 2, mult > 1 ? GOLD : DIM, 0.9, L.panelText, true);
-    // Credits and controls.
-    divider(p, 216);
-    const pad1 = sim.input.usingPad;
-    const lines = pad1
-        ? ["A  FIRE", "X  SHOT CONTROL", "B  BOMB", "LB FOCUS", "START  PAUSE"]
-        : ["Z  FIRE", "X  SHOT CONTROL", "C  BOMB", "SHIFT  FOCUS", "ESC  PAUSE"];
-    lines.forEach((line, i) => p.text(line, 16, 226 + i * 11, { color: 0x4a5a82, layer: L.panelText, screen: true }));
-    p.text(playing ? `CONTINUES ${run.credits}` : `${CREDITS} CREDITS`, LEFT_X, 300, { color: Math.floor(t * 1.5) % 2 ? GOLD : 0xa87b22, align: "center", layer: L.panelText, screen: true });
-
-    // Right: weapon roster.
-    const rx = FIELD.left + FIELD.width + 14;
-    p.text("WEAPON", rx, 12, { color: DIM, layer: L.panelText, screen: true });
-    p.text(flow.settings.muted ? "MUTE" : "", 626, 12, { color: RED, align: "right", layer: L.panelText, screen: true });
-    WEAPONS.forEach((w, i) => {
-        const y = 26 + i * 22;
-        const active = i === run.weapon;
-        if (active) {
-            p.rect(rx - 4, y - 3, 152, 20, w.color, 0.16, L.panelText, true);
-            p.rect(rx - 4, y - 3, 2, 20, w.color, 1, L.panelText, true);
-        }
-        p.spr("capsule", i, rx + 8, y + 7, { layer: L.panelText, screen: true, alpha: active ? 1 : 0.45 });
-        p.text(w.name, rx + 22, y + 1, { color: active ? WHITE : 0x4a5a82, layer: L.panelText, screen: true });
-        if (active) p.text(`${run.mode === 0 ? "A" : "B"} ${w.modes[run.mode]}`, rx + 22, y + 9, { color: w.color, layer: L.panelText, screen: true });
-    });
-    divider(p, 116, rx - 6);
-    p.text("POWER", rx, 124, { color: DIM, layer: L.panelText, screen: true });
-    for (let i = 0; i < PLAYER.maxPower; i++) {
-        const on = i < run.power;
-        p.rect(rx + 44 + i * 24, 123, 20, 9, on ? CYAN : 0x1c2238, 1, L.panelText, true);
-        if (on) p.rect(rx + 44 + i * 24, 123, 20, 2, 0xb2f4ff, 1, L.panelText, true);
-    }
-    const need = chipsForNext(run.power);
-    p.rect(rx + 44, 135, 92 * (Number.isFinite(need) ? run.chips / need : 1), 2, Number.isFinite(need) ? 0x7fe0ff : GOLD, 1, L.panelText, true);
-    p.text(run.power >= PLAYER.maxPower ? "MAX" : `LV${run.power}`, rx, 134, { color: run.power >= PLAYER.maxPower ? GOLD : 0x4a5a82, layer: L.panelText, screen: true });
-    // Danger (rank) meter.
-    p.text("DANGER", rx, 148, { color: DIM, layer: L.panelText, screen: true });
-    const danger = Math.floor(run.rank);
-    for (let i = 0; i <= RANK.max; i++) {
-        const on = i <= danger && playing;
-        p.rect(rx + 44 + i * 12, 147, 9, 8, on ? (i >= 5 ? RED : i >= 3 ? 0xffb347 : 0xe8c252) : 0x1c2238, 1, L.panelText, true);
-    }
-    // Area progress track.
-    divider(p, 164, rx - 6);
-    const area = AREAS[sim.area.index]!;
-    p.text(playing ? area.number : "AREA -", rx, 172, { color: DIM, layer: L.panelText, screen: true });
-    p.text(playing ? area.name : "STANDBY", rx, 182, { color: WHITE, layer: L.panelText, screen: true });
-    const lastEvent = area.events[area.events.length - 1]!.at;
-    const progress = playing ? Math.min(1, sim.area.t / lastEvent) : 0;
-    p.rect(rx, 196, 144, 3, 0x1c2238, 1, L.panelText, true);
-    p.rect(rx, 196, 144 * progress, 3, CYAN, 1, L.panelText, true);
-    p.rect(rx + 142, 193, 3, 9, RED, Math.floor(t * 4) % 2 ? 1 : 0.4, L.panelText, true);
-    for (let i = 0; i < AREAS.length; i++)
-        p.rect(rx + i * 50, 206, 44, 4, i < sim.area.index ? GOLD : i === sim.area.index && playing ? CYAN : 0x1c2238, 1, L.panelText, true);
-
-    // Boss telemetry.
-    divider(p, 218, rx - 6);
-    if (sim.boss && !sim.boss.entering) {
-        p.text("TARGET", rx, 226, { color: RED, layer: L.panelText, screen: true });
-        p.text(sim.boss.name, rx, 236, { color: WHITE, layer: L.panelText, screen: true });
-        p.text(`PHASE ${sim.boss.phase + 1}`, rx, 246, { color: 0xff8a86, layer: L.panelText, screen: true });
-        const left = Math.max(0, Math.ceil((sim.bossCtl?.limit ?? 0) + 4 - sim.boss.t));
-        const over = sim.boss.overtime;
-        p.text(over ? "NO RETREAT" : `TIME ${String(left).padStart(3, "0")}`, rx, 256, { color: over || left < 15 ? RED : GOLD, layer: L.panelText, screen: true });
-    } else {
-        p.text("SCANNING", rx, 226, { color: 0x2f3a5a, layer: L.panelText, screen: true });
-        for (let i = 0; i < 6; i++) p.rect(rx + ((t * 60 + i * 25) % 144), 238, 1, 10, CYAN, 0.25, L.panelText, true);
-    }
-    p.text(flow.settings.crt ? "V CRT ON" : "V CRT OFF", rx, 300, { color: 0x2f3a5a, layer: L.panelText, screen: true });
-    p.text("M SOUND", rx + 72, 300, { color: 0x2f3a5a, layer: L.panelText, screen: true });
+    drawHudRows(p, sim, flow);
 }
 
-function divider(p: Painter, y: number, x = 10): void {
-    p.rect(x, y, 156, 1, 0x2a3354, 1, L.panelText, true);
-    p.rect(x, y + 1, 156, 1, 0x05060c, 1, L.panelText, true);
+// HUD row geometry in playfield x. Text sits 2 px into a row so its baked outline stays inside.
+const hud = { layer: L.fieldText, screen: true } as const;
+const EDGE = 4;
+const TOP_Y = 2;
+const BOT_ROW = FIELD_H - HUD.bottom;
+const BOT_Y = BOT_ROW + 2;
+const ICON_STEP = 10;
+const SHIP_SLOTS = 4;
+const BOMB_X = EDGE + SHIP_SLOTS * ICON_STEP + 6;
+const PIP_W = 5,
+    PIP_GAP = 2;
+const PIPS_W = PLAYER.maxPower * (PIP_W + PIP_GAP) - PIP_GAP;
+const PIPS_X = FIELD_W - EDGE - PIPS_W;
+const GAUGE_SEGS = 15,
+    GAUGE_W = GAUGE_SEGS * 6 - 1;
+/** Centred in the gap between the bomb slots and the widest weapon block (letter + 6-letter mode). */
+const GAUGE_X = Math.round((BOMB_X + PLAYER.maxBombs * ICON_STEP + (PIPS_X - 5 - textWidth("XXXXXX") - 4 - 5) - GAUGE_W) / 2);
+
+/** Top row (score, hi-score; hi-score only on the title and in demo), chain line, bottom row in a run. */
+function drawHudRows(p: Painter, sim: Sim, flow: Flow): void {
+    const run = sim.run;
+    const title = flow.mode === "attract" || flow.demo;
+    const playing = flow.mode !== "attract" && flow.mode !== "ending" && flow.mode !== "entry" && !flow.demo;
+    const hi = pad(hiScore(flow, sim), 8);
+    p.text(hi, fx(FIELD_W - EDGE), TOP_Y, { ...hud, color: GOLD, align: "right" });
+    p.text("HI", fx(FIELD_W - EDGE - textWidth(hi) - 6), TOP_Y, { ...hud, color: DIM, align: "right" });
+    if (!title) {
+        p.text("1UP", fx(EDGE), TOP_Y, { ...hud, color: RED });
+        p.text(pad(run.score, 8), fx(EDGE + 24), TOP_Y, hud);
+    }
+    // Chain: a second line only while the multiplier is live, with its window draining under it.
+    const mult = chainMultiplier(run.chain);
+    if (playing && mult > 1 && run.chainT > 0) {
+        const label = `CHAIN x${mult}`;
+        const w = textWidth(label);
+        p.text(label, fx(FIELD_W - EDGE), HUD.top + 1, { ...hud, color: GOLD, align: "right" });
+        const k = Math.min(1, run.chainT / CHAIN.window);
+        p.rect(fx(FIELD_W - EDGE - w) - 1, HUD.top + 9, w + 2, 3, INK, 0.9, L.fieldText, true);
+        p.rect(fx(FIELD_W - EDGE) - w * k, HUD.top + 10, w * k, 1, GOLD, 1, L.fieldText, true);
+    }
+    if (playing) drawBottomRow(p, sim);
+}
+
+/** Bottom row: ships and bombs (left), reload gauge (centre), weapon, mode and power (right). */
+function drawBottomRow(p: Painter, sim: Sim): void {
+    const t = sim.time;
+    const run = sim.run;
+    const iconY = BOT_ROW + 6;
+    // Ships in reserve: the ship in play is not counted.
+    const shipOut = !!sim.player && sim.world.has(sim.player) && sim.world.read(sim.player, Ship, "alive") === 1;
+    const lives = Math.max(0, run.lives - (shipOut ? 1 : 0));
+    if (lives > SHIP_SLOTS) {
+        p.spr("icon-life", 0, fx(EDGE + 4.5), iconY, hud);
+        p.text(`x${lives}`, fx(EDGE + ICON_STEP + 1), BOT_Y, hud);
+    } else for (let i = 0; i < lives; i++) p.spr("icon-life", 0, fx(EDGE + 4.5 + i * ICON_STEP), iconY, hud);
+    for (let i = 0; i < PLAYER.maxBombs; i++) p.spr("icon-bomb", 0, fx(BOMB_X + 4.5 + i * ICON_STEP), iconY, { ...hud, alpha: i < run.bombs ? 1 : 0.18 });
+    // Reload gauge: graze fills it; a full gauge reloads one bomb. Blinks when nearly full.
+    const fill = run.grazeMeter / GRAZE.perBomb;
+    const gy = BOT_ROW + 3;
+    p.rect(fx(GAUGE_X) - 1, gy - 1, GAUGE_W + 2, 7, INK, 0.9, L.fieldText, true);
+    const blink = fill > 0.8 && Math.floor(t * 10) % 2 === 1;
+    for (let i = 0; i < GAUGE_SEGS; i++) p.rect(fx(GAUGE_X + i * 6), gy, 5, 5, i / GAUGE_SEGS < fill ? (blink ? WHITE : CYAN) : OFF, 1, L.fieldText, true);
+    // Weapon letter, mode name, power pips with the chip progress line under them.
+    const w = WEAPONS[run.weapon]!;
+    const mode = w.modes[run.mode]!;
+    const modeRight = PIPS_X - 5;
+    p.text(mode, fx(modeRight), BOT_Y, { ...hud, color: 0xa7b8d8, align: "right" });
+    p.text(w.letter, fx(modeRight - textWidth(mode) - 4), BOT_Y, { ...hud, color: w.color, align: "right" });
+    p.rect(fx(PIPS_X) - 1, gy - 1, PIPS_W + 2, 9, INK, 0.9, L.fieldText, true);
+    for (let i = 0; i < PLAYER.maxPower; i++) {
+        const on = i < run.power;
+        p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 5, on ? CYAN : OFF, 1, L.fieldText, true);
+        if (on) p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 1, 0xb2f4ff, 1, L.fieldText, true);
+    }
+    const need = chipsForNext(run.power);
+    const progress = Number.isFinite(need) ? run.chips / need : 1;
+    p.rect(fx(PIPS_X), gy + 6, PIPS_W * progress, 1, Number.isFinite(need) ? 0x7fe0ff : GOLD, 1, L.fieldText, true);
 }
 
 const FX0 = FIELD.left;
@@ -153,24 +120,10 @@ const CARD_TIME = 3.6;
 /** Screen x of a playfield x. */
 const fx = (x: number) => FX0 + x;
 
-/** In-playfield overlays: boss bar, banners, popups, flash, area card. Screen space. */
+/** In-playfield overlays: banners, popups, flash, area card. Screen space. */
 export function drawFieldOverlays(p: Painter, sim: Sim, flow: Flow): void {
     const t = sim.time;
     const fb = sim.feedback;
-    // Boss health bar.
-    const boss = sim.boss;
-    if (boss && !boss.escaped) {
-        const k = boss.maxHp > 0 ? Math.max(0, boss.hp / boss.maxHp) : 0;
-        const x = fx(12),
-            y = 8,
-            w = FIELD_W - 24;
-        p.text(boss.name, x, y, { color: 0xff8a86, layer: L.fieldText, screen: true });
-        p.rect(x, y + 10, w, 5, 0x05060c, 0.85, L.fieldText, true);
-        const barColor = boss.dying > 0 ? WHITE : boss.armoured ? 0x5a6a8a : k < 0.3 && Math.floor(t * 8) % 2 ? WHITE : RED;
-        p.rect(x + 1, y + 11, (w - 2) * k, 3, barColor, 1, L.fieldText, true);
-        if (boss.armoured && !boss.dying) p.text("ARMOURED", x + w, y, { color: 0x7184ad, align: "right", layer: L.fieldText, screen: true });
-        for (let i = 1; i < 10; i++) p.rect(x + (w * i) / 10, y + 11, 1, 3, 0x05060c, 0.8, L.fieldText, true);
-    }
     // Score popups.
     for (const pop of fb.popups) {
         const a = 1 - pop.t / 0.8;
@@ -263,7 +216,6 @@ export function drawScreens(p: Painter, sim: Sim, flow: Flow): void {
                 if (active) p.rect(CX - 70, 156 + i * 18, 140, 13, CYAN, 0.2, L.screen, true);
                 p.text((active ? "▶ " : "  ") + item, CX, 159 + i * 18, { color: active ? WHITE : DIM, align: "center", layer: L.screenText, screen: true });
             });
-            p.text("ESC / START TO RESUME", CX, 230, { color: 0x4a5a82, align: "center", layer: L.screenText, screen: true });
             return;
         }
         case "continue": {
