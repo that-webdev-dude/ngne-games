@@ -8,30 +8,39 @@ import { WEAPONS } from "../config/weapons.ts";
 import type { Sim } from "../sim/context.ts";
 import { FX } from "../sim/effects.ts";
 import { STYLE } from "../sim/weapons.ts";
-import { AVENUES, TILE_H, TILE_W } from "./backdrops.ts";
+import { AVENUES, PARALLAX, TILE_H, TILE_W, parallaxShift } from "./backdrops.ts";
 import type { Painter } from "./painter.ts";
 
 const BULLET_SPRITE = ["b-pink", "b-orange", "b-violet", "b-needle", "b-big", "b-gold"];
 const BULLET_GLOW = [0xff4fa0, 0xff8a2a, 0xb35cff, 0xff6fae, 0xff3355, 0xffd23a];
 const SHOT_SPRITE = ["s-vulcan", "s-rail", "s-seek", "s-bead", "s-shell", "s-frag", "s-twin"];
 
-/** Tiled, vertically scrolling backdrop layer in world coordinates. */
-function tile(p: Painter, texture: string, offset: number, layer: number, alpha = 1, color = 0xffffff): void {
+/**
+ * Tiled, vertically scrolling backdrop layer in world coordinates, shifted `dx` whole pixels sideways.
+ * A shifted tile leaves a gap on one side; a second copy fills it (the tiles wrap horizontally) and the
+ * opaque bezels hide what hangs past the field edges.
+ */
+function tile(p: Painter, texture: string, offset: number, layer: number, alpha = 1, color = 0xffffff, dx = 0): void {
     const o = ((offset % TILE_H) + TILE_H) % TILE_H;
+    const copies = dx === 0 ? [dx] : [dx, dx - Math.sign(dx) * TILE_W];
     for (let top = o - TILE_H; top < FIELD_H; top += TILE_H)
-        p.frame.sprite({ x: TILE_W / 2, y: Math.round(top) + TILE_H / 2, width: TILE_W, height: TILE_H, texture, layer, alpha, color });
+        for (const cx of copies) p.frame.sprite({ x: TILE_W / 2 + cx, y: Math.round(top) + TILE_H / 2, width: TILE_W, height: TILE_H, texture, layer, alpha, color });
 }
 
 export function drawBackdrop(p: Painter, sim: Sim, areaIndex: number, distance: number): void {
     const area = AREAS[areaIndex]!;
     const t = sim.time;
+    /** A layer scrolling at `factor` × distance, shifted sideways against the ship by the same factor. */
+    const layer = (texture: string, factor: number, at: number, alpha = 1, color = 0xffffff, phase = 0) =>
+        tile(p, texture, distance * factor + phase, at, alpha, color, parallaxShift(sim.feedback.parallaxX, factor, PARALLAX.strength, sim.calm));
     switch (area.backdrop) {
         case "cirrus":
-            tile(p, "bg-cirrus-far", distance * 0.3, L.sky);
-            tile(p, "bg-cirrus-clouds", distance, L.skyMid);
-            tile(p, "bg-cirrus-wisps", distance * 2.4 + 140, L.wisps, 0.55);
+            layer("bg-cirrus-far", 0.3, L.sky);
+            layer("bg-cirrus-clouds", 1, L.skyMid);
+            layer("bg-cirrus-wisps", 2.4, L.wisps, 0.55, 0xffffff, 140);
             break;
         case "grid": {
+            // Neon Grid has no sideways shift: ground units sit on the city.
             tile(p, "bg-grid-city", distance, L.sky);
             // Traffic: light pairs running along the avenues.
             for (let a = 0; a < AVENUES.length; a++) {
@@ -52,8 +61,8 @@ export function drawBackdrop(p: Painter, sim: Sim, areaIndex: number, distance: 
         case "aurora": {
             // The Earth falls away as the area climbs; stars take over near the engine.
             const climb = Math.min(1, sim.area.t / 80);
-            tile(p, "bg-aurora-stars", distance * 0.12, L.sky);
-            tile(p, "bg-aurora-earth", distance * 0.5, L.skyMid, 1 - climb * 0.85);
+            layer("bg-aurora-stars", 0.12, L.sky);
+            layer("bg-aurora-earth", 0.5, L.skyMid, 1 - climb * 0.85);
             break;
         }
     }

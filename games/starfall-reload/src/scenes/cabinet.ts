@@ -13,6 +13,7 @@ import type { MusicPause, Sound } from "../services/sound.ts";
 import { loadScores, type Settings } from "../services/storage.ts";
 import { latchEdges, noActions, readActions } from "../sim/actions.ts";
 import { createQueries, newArea, newFeedback, newRun, type Sim } from "../sim/context.ts";
+import { easeParallax } from "../sim/effects.ts";
 import { updateFx } from "../sim/motion.ts";
 
 /** Music pause state for a flow; `pausable` mirrors the modes in which `flow.autoPause` takes effect. */
@@ -126,6 +127,7 @@ export function cabinetScene(options: CabinetOptions): SceneDefinition<CabinetSt
                     if (isFrozen) latchEdges(latched, readActions(ctx.input, stick));
                     if (frozen > 0) frozen--;
                     updateFx(sim, ctx.dt, isFrozen);
+                    easeParallax(sim, ctx.dt);
                     const amount = sim.feedback.shake * (flow.settings.calm ? 0.35 : 1);
                     scene.camera.shakeX = amount > 0.2 ? Math.round((sim.fxRng.next() * 2 - 1) * amount) : 0;
                     scene.camera.shakeY = amount > 0.2 ? Math.round((sim.fxRng.next() * 2 - 1) * amount) : 0;

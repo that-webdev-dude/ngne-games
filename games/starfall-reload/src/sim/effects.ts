@@ -1,6 +1,6 @@
 import { spawnFx } from "../ecs/spawn.ts";
 import { FEEL } from "../config/tuning.ts";
-import { FIELD_H, HUD, L } from "../config/view.ts";
+import { FIELD_H, FIELD_W, HUD, L } from "../config/view.ts";
 import { cue, flash, hitstop, shake, type Sim } from "./context.ts";
 
 /** Fx.kind values. Rendering lives in render/world.ts. */
@@ -117,4 +117,14 @@ export function rearWarning(sim: Sim, x: number, life: number): void {
 
 export function twinkle(sim: Sim, x: number, y: number, color: number): void {
     spawnFx(sim.world, { kind: FX.twinkle, x, y, life: 0.3, size: 7, color, layer: L.fx, vy: -20 });
+}
+
+/** Seconds for the backdrop's sideways parallax to settle (~95%) on a new ship x. */
+const PARALLAX_SETTLE = 0.25;
+
+/** Eases the parallax anchor toward the live ship's x, or back to centre without one. Presentation only. */
+export function easeParallax(sim: Sim, dt: number): void {
+    const fb = sim.feedback;
+    const target = sim.player !== null && sim.playerAlive ? sim.px : FIELD_W / 2;
+    fb.parallaxX += (target - fb.parallaxX) * (1 - Math.exp((-3 * dt) / PARALLAX_SETTLE));
 }

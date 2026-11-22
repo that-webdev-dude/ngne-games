@@ -2,6 +2,7 @@ import type { Entity, Random, SchemaQuery, WorldAccess } from "@ngne/core";
 import { Bullet, Enemy, Fx, Halo, Item, Motion, Pose, Ship, Shot, Wall } from "../ecs/components.ts";
 import type { SfxId } from "../audio/synth.ts";
 import { CREDITS, PLAYER, RANK } from "../config/tuning.ts";
+import { FIELD_W } from "../config/view.ts";
 import type { Actions } from "./actions.ts";
 import type { BossController } from "./bosses/common.ts";
 import type { MusicId } from "../audio/synth.ts";
@@ -78,6 +79,8 @@ export interface Feedback {
     banners: Banner[];
     /** Short-lived popups (score numbers). */
     popups: { x: number; y: number; text: string; t: number; color: number }[];
+    /** Eased ship x that drives the backdrop's sideways parallax (centre with no live ship). */
+    parallaxX: number;
 }
 
 export interface AreaState {
@@ -179,7 +182,7 @@ export function createQueries(world: WorldAccess): Queries {
 }
 
 export function newFeedback(): Feedback {
-    return { shake: 0, flash: 0, flashColor: 0xffffff, hitstop: 0, cues: [], music: null, banners: [], popups: [] };
+    return { shake: 0, flash: 0, flashColor: 0xffffff, hitstop: 0, cues: [], music: null, banners: [], popups: [], parallaxX: FIELD_W / 2 };
 }
 
 export function newArea(index: number, scroll: number): AreaState {

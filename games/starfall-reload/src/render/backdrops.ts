@@ -1,4 +1,5 @@
 import type { ImageAsset } from "@ngne/core";
+import { FIELD_W } from "../config/view.ts";
 import { Pixels, bayer, makeNoise, mix, rampPick } from "./pixels.ts";
 
 /**
@@ -10,6 +11,19 @@ export const TILE_W = 288,
 
 /** Vertical avenue centres in the city layer (render draws traffic along them). */
 export const AVENUES = [47, 119, 175, 247] as const;
+
+/** Sideways parallax: px of layer shift per px of ship offset from centre, per unit of vertical factor. */
+export const PARALLAX = { strength: 0.05 } as const;
+
+/**
+ * Whole-pixel sideways shift of a backdrop layer whose vertical scroll factor is `factor`:
+ * `−(shipX − FIELD_W / 2) × strength × factor`, rounded symmetrically; none under reduced motion.
+ */
+export function parallaxShift(shipX: number, factor: number, strength: number, calm: boolean): number {
+    if (calm) return 0;
+    const v = -(shipX - FIELD_W / 2) * strength * factor;
+    return Math.sign(v) * Math.round(Math.abs(v)) + 0;
+}
 
 type Layer = () => Pixels;
 
