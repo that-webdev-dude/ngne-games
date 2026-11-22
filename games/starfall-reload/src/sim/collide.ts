@@ -209,7 +209,7 @@ function clearSmallBullets(sim: Sim, x: number, y: number, r: number): void {
         const pose = chunk.views.pose;
         const bullet = chunk.views.bullet;
         for (let row = 0, n = chunk.count; row < n; row++) {
-            if (bullet.kind[row] === B.big) continue;
+            if (bullet.kind[row] === B.big || bullet.kind[row] === B.shell) continue;
             const rr = r + bullet.radius[row]!;
             if ((pose.x[row]! - x) ** 2 + (pose.y[row]! - y) ** 2 < rr * rr) {
                 spawnFx(sim.world, { kind: FX.twinkle, x: pose.x[row]!, y: pose.y[row]!, life: 0.2, size: 5, color: 0x9bf27a, layer: L.fx });

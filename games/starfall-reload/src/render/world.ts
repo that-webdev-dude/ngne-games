@@ -11,8 +11,9 @@ import { STYLE } from "../sim/weapons.ts";
 import { AVENUES, PARALLAX, TILE_H, TILE_W, parallaxShift } from "./backdrops.ts";
 import type { Painter } from "./painter.ts";
 
-const BULLET_SPRITE = ["b-pink", "b-orange", "b-violet", "b-needle", "b-big", "b-gold"];
-const BULLET_GLOW = [0xff4fa0, 0xff8a2a, 0xb35cff, 0xff6fae, 0xff3355, 0xffd23a];
+const BULLET_SPRITE = ["b-pink", "b-orange", "b-violet", "b-needle", "b-big", "b-gold", "b-big"];
+const BULLET_GLOW = [0xff4fa0, 0xff8a2a, 0xb35cff, 0xff6fae, 0xff3355, 0xffd23a, 0xff8a2a];
+const SHELL_MARK = 0xff8a2a;
 const SHOT_SPRITE = ["s-vulcan", "s-rail", "s-seek", "s-bead", "s-shell", "s-frag", "s-twin"];
 
 /**
@@ -93,7 +94,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
             if (kind === K.rockL || kind === K.rockS) frame = e.frame[row]!;
             const flashing = e.flash[row]! > 0 && e.hp[row]! > 0;
             const dying = e.hp[row]! <= 0 && isBoss;
-            const rot = kind === K.rockL || kind === K.rockS ? e.rot[row]! : 0;
+            const rot = kind === K.rockL || kind === K.rockS ? e.rot[row]! : kind === K.interceptor ? facing(pose.x[row]! - pose.px[row]!, pose.y[row]! - pose.py[row]!, e.m0[row]!) : 0;
             const mirror = kind === K.seraphWing && e.part[row] === 2 ? -1 : 1;
             if (shadows && !ground && !isBoss) p.spr(s.sprite, frame, x + 9, y + 15, { layer: L.airShadow, flash: true, color: 0x000000, alpha: 0.32, rotation: rot });
             if (shadows && (kind === K.halberd || kind === K.lancer)) p.spr(s.sprite, frame, x + 16, y + 28, { layer: L.airShadow, flash: true, color: 0x000000, alpha: 0.3 });
@@ -224,13 +225,17 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
             const x = ip(pose.px[row]!, pose.x[row]!, alpha),
                 y = ip(pose.py[row]!, pose.y[row]!, alpha);
             const kind = bullet.kind[row]!;
-            const big = kind === B.big;
+            const big = kind === B.big || kind === B.shell;
             const age = bullet.age[row]!;
             const spawnScale = age < 0.08 ? 0.4 + age * 7.5 : 1;
             p.spr(big ? "glow" : "glow-s", 0, x, y, { layer: L.bulletGlow, color: BULLET_GLOW[kind]!, alpha: 0.45, sx: spawnScale, sy: spawnScale });
             const rot = kind === B.needle ? Math.atan2(-motion.vx[row]!, motion.vy[row]!) : 0;
             const pulse = big && bullet.split[row]! > 0 ? 1 + 0.15 * Math.sin(age * 30) : 1;
             p.spr(BULLET_SPRITE[kind]!, 0, x, y, { layer: L.bullet, rotation: rot, sx: spawnScale * pulse, sy: spawnScale * pulse });
+            if (kind === B.shell && bullet.delay[row]! > 0) {
+                const left = Math.max(0, bullet.delay[row]! - age);
+                shellMarker(p, pose.x[row]! + motion.vx[row]! * left, pose.y[row]! + motion.vy[row]! * left, left, t);
+            }
         }
     });
 
@@ -298,6 +303,26 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
         p.spr("ring", 0, run.bombX, run.bombY, { layer: L.overlay, color: 0xfff0b8, alpha: Math.min(1, run.bombT * 2), sx: s, sy: s });
         p.rect(0, 0, FIELD_W, FIELD_H, 0xffb347, Math.min(0.25, run.bombT * 0.3), L.overlay);
     }
+}
+
+/** Rotation that turns a nose-down sprite to its velocity; `side` (+1 from the left) before it moves. */
+function facing(vx: number, vy: number, side: number): number {
+    return vx === 0 && vy === 0 ? (-side * Math.PI) / 2 : Math.atan2(-vx, vy);
+}
+
+/** Mortar landing marker: corner brackets that close in on the point as the remaining flight `left` runs out. */
+function shellMarker(p: Painter, x: number, y: number, left: number, t: number): void {
+    const r = Math.round(5 + Math.min(1, left / 2) * 9);
+    const alpha = 0.7 + 0.3 * Math.sin(t * (left < 0.5 ? 40 : 12));
+    p.spr("glow-s", 0, x, y, { layer: L.fx, color: SHELL_MARK, alpha: 0.3, sx: 1.2, sy: 1.2 });
+    for (const sx of [-1, 1])
+        for (const sy of [-1, 1]) {
+            const cx = x + sx * r,
+                cy = y + sy * r;
+            p.line(cx, cy, cx - sx * 4, cy, 1, SHELL_MARK, alpha, L.fx);
+            p.line(cx, cy, cx, cy - sy * 4, 1, SHELL_MARK, alpha, L.fx);
+        }
+    p.rect(x - 1, y - 1, 2, 2, 0xffffff, alpha, L.fx);
 }
 
 function pxUv(p: Painter) {

@@ -1,11 +1,14 @@
 import { EF } from "../ecs/components.ts";
-import { spawnBullet } from "../ecs/spawn.ts";
-import { G, M, spec, type GunSpec } from "../config/enemies.ts";
+import { spawnBullet, spawnEnemy } from "../ecs/spawn.ts";
+import { G, K, LAUNCH, M, SHELL, spec, type GunSpec } from "../config/enemies.ts";
 import { FIELD_H, FIELD_W } from "../config/view.ts";
 import { cue, type Sim } from "./context.ts";
 import { rankScale } from "./rules.ts";
 
 const DEG = Math.PI / 180;
+
+/** Guns fire only inside the upper field and never at point blank. */
+const fairShot = (sim: Sim, y: number): boolean => y > 6 && y < FIELD_H * 0.7 && Math.abs(sim.py - y) > 48 && sim.playerAlive;
 
 /** Fires one volley of a gun spec from (x, y). `n` is the enemy's volley counter. */
 export function fireGun(sim: Sim, g: GunSpec, x: number, y: number, n: number): void {
@@ -16,7 +19,8 @@ export function fireGun(sim: Sim, g: GunSpec, x: number, y: number, n: number): 
     switch (g.gun) {
         case G.aimed:
         case G.burst:
-        case G.fan: {
+        case G.fan:
+        case G.once: {
             const count = g.count;
             const spread = g.spread * DEG;
             for (let i = 0; i < count; i++) {
@@ -33,6 +37,21 @@ export function fireGun(sim: Sim, g: GunSpec, x: number, y: number, n: number): 
         case G.spiral: {
             const a = n * g.spread * DEG;
             for (let i = 0; i < g.count; i++) spawnBullet(world, x, y, a + (i / g.count) * Math.PI * 2, speed, g.bullet);
+            break;
+        }
+        case G.launch: {
+            // Ordinary darts drop out of the bay side by side, then dive at the ship like any dive dart.
+            for (let i = 0; i < g.count; i++) {
+                const dx = (i - (g.count - 1) / 2) * LAUNCH.pitch;
+                spawnEnemy(world, { kind: K.dart, x: x + dx, y: y + 8, mover: M.dive, m1: y + 8 + LAUNCH.drop, m2: LAUNCH.hold, m3: g.speed });
+            }
+            break;
+        }
+        case G.shell: {
+            // Aimed at where the ship is now; the shell bursts there when its flight time ends.
+            const dist = Math.hypot(sim.px - x, sim.py - y);
+            const flight = Math.min(SHELL.maxFlight, Math.max(SHELL.minFlight, dist / speed));
+            spawnBullet(world, x, y, aim, dist / flight, g.bullet, { delay: flight, split: g.count, speed2: SHELL.ringSpeed * scale.speed });
             break;
         }
     }
@@ -52,6 +71,7 @@ export function updateEnemies(sim: Sim, dt: number): void {
             if (e.flash[row]! > 0) e.flash[row] = Math.max(0, e.flash[row]! - dt);
             let x = pose.x[row]!,
                 y = pose.y[row]!;
+            let turned = false;
             const m0 = e.m0[row]!,
                 m1 = e.m1[row]!,
                 m2 = e.m2[row]!,
@@ -110,6 +130,24 @@ export function updateEnemies(sim: Sim, dt: number): void {
                     y = e.oy[row]! + m3 * age - m1 * Math.cos(a);
                     break;
                 }
+                case M.intercept: {
+                    // oy: 0 while flying level, 1 once turning; ox: heading (0 = down).
+                    if (e.oy[row] === 0) {
+                        x += m0 * m2 * dt;
+                        if (m0 * (x - m1) >= 0) {
+                            e.oy[row] = 1;
+                            e.ox[row] = (m0 * Math.PI) / 2;
+                            turned = true;
+                        }
+                    } else {
+                        const h = e.ox[row]!;
+                        const heading = Math.sign(h) * Math.max(0, Math.abs(h) - m3 * dt);
+                        e.ox[row] = heading;
+                        x += Math.sin(heading) * m2 * dt;
+                        y += Math.cos(heading) * m2 * dt;
+                    }
+                    break;
+                }
                 default:
                     continue; // scripted: boss controllers move these.
             }
@@ -122,9 +160,17 @@ export function updateEnemies(sim: Sim, dt: number): void {
 
             const s = spec(e.kind[row]!);
             const g = s.gun;
-            if (g && e.gun[row] !== G.none && e.flags[row]! & EF.entered) {
+            const armed = g !== undefined && e.gun[row] !== G.none && (e.flags[row]! & EF.entered) !== 0;
+            if (armed && g.gun === G.once) {
+                // One volley at the mover's signal, and only if that moment is fair.
+                if (turned && e.fireN[row] === 0 && fairShot(sim, y)) {
+                    fireGun(sim, g, x, y, 0);
+                    e.fireN[row] = 1;
+                }
+            } else if (armed && !(g.gun === G.launch && e.mover[row] === M.hover && age >= m2)) {
+                // Launch guns work only while their carrier holds station.
                 e.fireT[row]! -= dt;
-                const fair = y > 6 && y < FIELD_H * 0.7 && Math.abs(sim.py - y) > 48 && sim.playerAlive;
+                const fair = fairShot(sim, y);
                 if (e.fireT[row]! <= 0) {
                     if (fair) {
                         const count = e.fireN[row]!;

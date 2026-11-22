@@ -2,7 +2,7 @@ import { FIELD_H, FIELD_W } from "../config/view.ts";
 import { spawnBullet, spawnFx } from "../ecs/spawn.ts";
 import { B } from "../config/enemies.ts";
 import { L } from "../config/view.ts";
-import type { Sim } from "./context.ts";
+import { cue, type Sim } from "./context.ts";
 import { FX } from "./effects.ts";
 import { addScore } from "./rules.ts";
 
@@ -11,7 +11,7 @@ const MARGIN = 24;
 /** Advances hostile bullets: delayed re-aim, homing turn, off-screen culling. Motion integrates position. */
 export function updateBullets(sim: Sim, dt: number): void {
     const { world } = sim;
-    const splits: { x: number; y: number; n: number; speed: number }[] = [];
+    const splits: { x: number; y: number; n: number; speed: number; shell: boolean }[] = [];
     sim.q.bullets.eachChunk((chunk) => {
         const pose = chunk.views.pose;
         const motion = chunk.views.motion;
@@ -20,7 +20,7 @@ export function updateBullets(sim: Sim, dt: number): void {
             bullet.age[row]! += dt;
             const delay = bullet.delay[row]!;
             if (delay > 0 && bullet.age[row]! >= delay && bullet.split[row]! > 0) {
-                splits.push({ x: pose.x[row]!, y: pose.y[row]!, n: bullet.split[row]!, speed: bullet.speed2[row]! });
+                splits.push({ x: pose.x[row]!, y: pose.y[row]!, n: bullet.split[row]!, speed: bullet.speed2[row]!, shell: bullet.kind[row] === B.shell });
                 world.despawn(chunk.entityAt(row));
                 continue;
             }
@@ -46,9 +46,16 @@ export function updateBullets(sim: Sim, dt: number): void {
         }
     });
     for (const s of splits) {
-        const offset = Math.atan2(sim.px - s.x, sim.py - s.y);
+        // Boss shells aim one pellet at the ship; a mortar ring turns half a step off that bearing, so it
+        // splashes the marked point instead of seeking the ship.
+        const offset = Math.atan2(sim.px - s.x, sim.py - s.y) + (s.shell ? Math.PI / s.n : 0);
         for (let i = 0; i < s.n; i++) spawnBullet(world, s.x, s.y, offset + (i / s.n) * Math.PI * 2, s.speed, B.pink);
         spawnFx(world, { kind: FX.ring, x: s.x, y: s.y, life: 0.2, size: 4, size2: 18, color: 0xff8a86, layer: L.fx });
+        // A mortar shell lands: a small blast where it was aimed.
+        if (s.shell) {
+            spawnFx(world, { kind: FX.glow, x: s.x, y: s.y, life: 0.15, size: 26, size2: 8, color: 0xffb347, layer: L.fx });
+            cue(sim, "explodeS");
+        }
     }
 }
 

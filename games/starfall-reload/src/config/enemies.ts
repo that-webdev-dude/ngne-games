@@ -21,6 +21,9 @@ export const K = {
     seraph: 16,
     seraphCore: 17,
     seraphWing: 18,
+    gunship: 19,
+    mortar: 20,
+    interceptor: 21,
 } as const;
 export type Kind = (typeof K)[keyof typeof K];
 
@@ -47,6 +50,11 @@ export const M = {
      * circle), m1 radius, m2 angular speed in rad/s (positive = clockwise on screen).
      */
     orbit: 8,
+    /**
+     * Side entry and one turn: fly level from the m0 side (+1 = from the left) at m2 px/s until
+     * x reaches m1, then turn at m3 rad/s to head straight down and leave through the bottom.
+     */
+    intercept: 9,
 } as const;
 
 /** Gun scripts (Enemy.gun). */
@@ -57,6 +65,12 @@ export const G = {
     ring: 3,
     burst: 4,
     spiral: 5,
+    /** Carrier launch: `count` ordinary darts dropped at `speed` px/s (see LAUNCH), only while holding station. */
+    launch: 6,
+    /** Mortar: one slow shell that lands where the ship is and bursts into a ring of `count` pellets (see SHELL). */
+    shell: 7,
+    /** One aimed volley fired by the mover at a set moment (the interceptor's turn), never on a timer. */
+    once: 8,
 } as const;
 
 /** Bullet visual/size kinds (Bullet.kind). */
@@ -67,8 +81,19 @@ export const B = {
     needle: 3,
     big: 4,
     gold: 5,
+    /** Mortar shell: looks like `big` and shows its landing point while in flight. */
+    shell: 6,
 } as const;
-export const BULLET_RADIUS: readonly number[] = [2.5, 2.5, 3.5, 2, 5.5, 3];
+export const BULLET_RADIUS: readonly number[] = [2.5, 2.5, 3.5, 2, 5.5, 3, 5.5];
+
+/** Gunship launch: darts leave the bay `pitch` px apart, drop `drop` px, hold `hold` s, then dive at the ship. */
+export const LAUNCH = { pitch: 20, drop: 24, hold: 0.25 } as const;
+
+/**
+ * Mortar shell flight. The shell flies at the gun's speed (rank-scaled) to the point where the ship
+ * was when it fired; its flight time is held to [minFlight, maxFlight] by adjusting that speed.
+ */
+export const SHELL = { minFlight: 1.2, maxFlight: 2.6, ringSpeed: 75 } as const;
 
 export const DROP = { none: 0, chip: 1, chips2: 2, capsule: 3, bomb: 4, oneup: 5, chips4: 6 } as const;
 
@@ -255,6 +280,45 @@ export const ENEMIES: readonly EnemySpec[] = [
     { name: "SERAPH", sprite: "seraph", frames: 1, frameTime: 1, hp: 1, radius: 1, score: 0, flags: EF.boss | EF.invulnerable | EF.noBodyHit, size: "boss", drop: DROP.none },
     { name: "SERAPH CORE", sprite: "seraph-core", frames: 2, frameTime: 0, hp: 1800, radius: 16, score: 120_000, flags: EF.boss, size: "boss", drop: DROP.none },
     { name: "SERAPH BLADE", sprite: "seraph-wing", frames: 1, frameTime: 1, hp: 290, radius: 16, score: 8_000, flags: EF.boss, size: "l", drop: DROP.chips2 },
+    {
+        name: "GUNSHIP",
+        sprite: "gunship",
+        frames: 2,
+        frameTime: 0.1,
+        hp: 34,
+        radius: 15,
+        score: 1_200,
+        flags: 0,
+        size: "m",
+        drop: DROP.capsule,
+        gun: gun({ gun: G.launch, every: 2.0, first: 0.8, speed: 140, count: 2 }),
+    },
+    {
+        name: "MORTAR",
+        sprite: "mortar",
+        frames: 2,
+        frameTime: 0.25,
+        hp: 22,
+        radius: 10,
+        score: 550,
+        flags: EF.ground,
+        size: "s",
+        drop: DROP.chip,
+        gun: gun({ gun: G.shell, every: 2.6, first: 0.9, speed: 85, count: 6, bullet: B.shell }),
+    },
+    {
+        name: "INTERCEPTOR",
+        sprite: "interceptor",
+        frames: 2,
+        frameTime: 0.067,
+        hp: 6,
+        radius: 7,
+        score: 250,
+        flags: 0,
+        size: "s",
+        drop: DROP.none,
+        gun: gun({ gun: G.once, speed: 140, count: 3, spread: 30, bullet: B.needle }),
+    },
 ];
 
 export const spec = (kind: number): EnemySpec => ENEMIES[kind]!;

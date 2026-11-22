@@ -61,6 +61,9 @@ const HORNET_LINE: readonly Point[] = [
     [248, 70],
 ];
 
+/** Interceptor flight: level speed (px/s) and turn rate (rad/s); the turn radius is speed / turn. */
+const INTERCEPT = { speed: 200, turn: 6, inset: 70 } as const;
+
 export class Script {
     readonly events: ScriptEvent[] = [];
     private waves = 0;
@@ -332,21 +335,38 @@ export class Script {
         });
     }
 
-    // Named slots. Each holds a stand-in until its own enemy or hazard exists.
+    // Named slots. Gunship, mortar and interceptor hold their own enemies; mines and fence hold
+    // stand-ins until their hazards exist.
 
-    /** Gunship slot (Area 1). Stand-in: a skiff station. */
+    /** Gunship slot (Area 1): a carrier takes station, launches dart pairs while it holds, then pulls back up. */
     gunship(at: number, x: number, y: number, hold: number, opts: { drop?: number } = {}): this {
-        return this.wave("station", "gunship", () => this.station(at, K.skiff, x, y, hold, opts));
+        return this.wave("station", "gunship", () => this.station(at, K.gunship, x, y, hold, { drop: opts.drop, leave: -50 }));
     }
 
-    /** Mortar slot (Area 2). Stand-in: a ground turret. */
+    /** Mortar slot (Area 2): a ground mortar scrolling with the terrain. */
     mortar(at: number, x: number, opts: { drop?: number } = {}): this {
-        return this.wave("ground", "mortar", () => this.ground(at, K.turret, [x], opts));
+        return this.wave("ground", "mortar", () => this.ground(at, K.mortar, [x], opts));
     }
 
-    /** Interceptor slot (Area 3). Stand-in: side-sweep darts. */
-    interceptor(at: number, side: 1 | -1, count: number, opts: { y?: number } = {}): this {
-        return this.wave("sideSweep", "interceptor", () => this.sideSweep(at, side, count, opts));
+    /**
+     * Interceptor slot (Area 3): craft entering one after another from the left (side +1) or right
+     * edge at height y. Each turns down into the next lane further from its edge, fires once at the
+     * turn and dives out through the bottom.
+     */
+    interceptor(at: number, side: 1 | -1, count: number, opts: { y?: number; gap?: number } = {}): this {
+        return this.wave("sideSweep", "interceptor", () => {
+            const { speed, turn, inset } = INTERCEPT;
+            const span = FIELD_W - inset * 2;
+            for (let i = 0; i < count; i++) {
+                const fromEdge = inset + (count > 1 ? (i * span) / (count - 1) : span / 2);
+                const lane = side > 0 ? fromEdge : FIELD_W - fromEdge;
+                this.enemy(
+                    at + i * (opts.gap ?? 0.35),
+                    { kind: K.interceptor, x: side > 0 ? -16 : FIELD_W + 16, y: opts.y ?? 50, mover: M.intercept, m0: side, m1: lane - (side * speed) / turn, m2: speed, m3: turn },
+                    side > 0 ? "left" : "right",
+                );
+            }
+        });
     }
 
     /** Mine-field slot (Area 3). Stand-in: small debris. */

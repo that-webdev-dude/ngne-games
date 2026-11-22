@@ -30,13 +30,13 @@ const GRID_BARRIERS: readonly (readonly [number, number])[] = [
     [144, 54],
 ];
 
-/** Allowed counts per area for each named slot, with its stand-in. */
-const SLOTS: Record<Slot, { area: number; min: number; max: number; standIn: number | "barrier" }> = {
-    gunship: { area: 0, min: 2, max: 3, standIn: K.skiff },
-    mortar: { area: 1, min: 4, max: 6, standIn: K.turret },
-    interceptor: { area: 2, min: 3, max: 4, standIn: K.dart },
-    mines: { area: 2, min: 2, max: 3, standIn: K.rockS },
-    fence: { area: 2, min: 2, max: 3, standIn: "barrier" },
+/** Allowed counts per area for each named slot, with the kind (new enemy or stand-in) it holds. */
+const SLOTS: Record<Slot, { area: number; min: number; max: number; holds: number | "barrier" }> = {
+    gunship: { area: 0, min: 2, max: 3, holds: K.gunship },
+    mortar: { area: 1, min: 4, max: 6, holds: K.mortar },
+    interceptor: { area: 2, min: 3, max: 4, holds: K.interceptor },
+    mines: { area: 2, min: 2, max: 3, holds: K.rockS },
+    fence: { area: 2, min: 2, max: 3, holds: "barrier" },
 };
 
 const DENSITY_WINDOW = 6;
@@ -159,7 +159,7 @@ test("challenge escalates: firing craft per minute and the densest window rise f
     }
 });
 
-test("named slots exist with their stand-ins in the agreed counts", () => {
+test("named slots exist with their enemies or stand-ins in the agreed counts", () => {
     for (const [slot, rule] of Object.entries(SLOTS) as [Slot, (typeof SLOTS)[Slot]][]) {
         for (const [index, area] of AREAS.entries()) {
             const slotted = waves(area.events).filter((w) => w.slot === slot);
@@ -170,8 +170,8 @@ test("named slots exist with their stand-ins in the agreed counts", () => {
             assert.ok(slotted.length >= rule.min && slotted.length <= rule.max, `${area.name} has ${slotted.length} ${slot} slots`);
             for (const w of slotted)
                 for (const e of w.events) {
-                    if (rule.standIn === "barrier") assert.equal(e.type, "barrier", `${slot} stand-in at ${e.at}s`);
-                    else assert.ok(e.type === "enemy" && e.init.kind === rule.standIn, `${slot} stand-in at ${e.at}s`);
+                    if (rule.holds === "barrier") assert.equal(e.type, "barrier", `${slot} barrier at ${e.at}s`);
+                    else assert.ok(e.type === "enemy" && e.init.kind === rule.holds, `${slot} holds ${spec(rule.holds).name} at ${e.at}s`);
                 }
         }
     }

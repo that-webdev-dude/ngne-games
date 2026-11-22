@@ -34,6 +34,9 @@ export const SHEETS: Record<string, { w: number; h: number; frames: number }> = 
     seraph: { w: 192, h: 128, frames: 1 },
     "seraph-core": { w: 40, h: 40, frames: 2 },
     "seraph-wing": { w: 48, h: 64, frames: 1 },
+    gunship: { w: 40, h: 32, frames: 2 },
+    mortar: { w: 24, h: 24, frames: 2 },
+    interceptor: { w: 20, h: 20, frames: 2 },
 };
 
 
