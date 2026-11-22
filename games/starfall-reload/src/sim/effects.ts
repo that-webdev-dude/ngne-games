@@ -1,6 +1,6 @@
 import { spawnFx } from "../ecs/spawn.ts";
 import { FEEL } from "../config/tuning.ts";
-import { L } from "../config/view.ts";
+import { FIELD_H, HUD, L } from "../config/view.ts";
 import { cue, flash, hitstop, shake, type Sim } from "./context.ts";
 
 /** Fx.kind values. Rendering lives in render/world.ts. */
@@ -106,6 +106,13 @@ export function muzzle(sim: Sim, x: number, y: number, color: number, size = 7):
 /** Expanding ring used for armour breaks, bombs and pickups. */
 export function ring(sim: Sim, x: number, y: number, from: number, to: number, life: number, color: number, layer: number = L.fx): void {
     spawnFx(sim.world, { kind: FX.ring, x, y, life, size: from, size2: to, color, layer });
+}
+
+/** Warning glow above the bottom HUD row where a rear-entry craft is about to rise into the field. */
+export function rearWarning(sim: Sim, x: number, life: number): void {
+    const y = FIELD_H - HUD.bottom - 6;
+    spawnFx(sim.world, { kind: FX.glow, x, y, life, size: 10, size2: 30, color: 0xff5a4a, layer: L.fx });
+    spawnFx(sim.world, { kind: FX.ring, x, y, life, size: 26, size2: 6, color: 0xffb347, layer: L.fx });
 }
 
 export function twinkle(sim: Sim, x: number, y: number, color: number): void {

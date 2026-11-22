@@ -2,9 +2,10 @@ import { Pose, Wall } from "../ecs/components.ts";
 import { spawnEnemy } from "../ecs/spawn.ts";
 import { AREAS } from "../config/areas.ts";
 import { DROP, K, M } from "../config/enemies.ts";
-import type { ScriptEvent } from "../config/script.ts";
+import { REAR_WARNING, type ScriptEvent } from "../config/script.ts";
 import { FIELD_W } from "../config/view.ts";
 import { banner, cue, type Sim } from "./context.ts";
+import { rearWarning } from "./effects.ts";
 import { runBoss, type BossController } from "./bosses/common.ts";
 import { halberd } from "./bosses/halberd.ts";
 import { cantor } from "./bosses/cantor.ts";
@@ -60,6 +61,9 @@ function execute(sim: Sim, e: ScriptEvent): void {
             return;
         case "barrier":
             spawnBarrier(sim, e.y, e.gapX, e.gapW);
+            return;
+        case "telegraph":
+            rearWarning(sim, e.x, REAR_WARNING);
             return;
         case "banner":
             banner(sim, e.text, e.sub, "warning", 2.4);

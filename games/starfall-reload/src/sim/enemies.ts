@@ -104,6 +104,12 @@ export function updateEnemies(sim: Sim, dt: number): void {
                     } else y += 140 * dt;
                     break;
                 }
+                case M.orbit: {
+                    const a = m0 + m2 * age;
+                    x = e.ox[row]! + m1 * Math.sin(a);
+                    y = e.oy[row]! + m3 * age - m1 * Math.cos(a);
+                    break;
+                }
                 default:
                     continue; // scripted: boss controllers move these.
             }

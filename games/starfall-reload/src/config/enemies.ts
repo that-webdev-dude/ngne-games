@@ -42,6 +42,11 @@ export const M = {
     arc: 6,
     /** Controlled by a boss controller. */
     scripted: 7,
+    /**
+     * Circle around a centre (ox, oy) that moves down at m3 px/s. m0 start angle (0 = top of the
+     * circle), m1 radius, m2 angular speed in rad/s (positive = clockwise on screen).
+     */
+    orbit: 8,
 } as const;
 
 /** Gun scripts (Enemy.gun). */
