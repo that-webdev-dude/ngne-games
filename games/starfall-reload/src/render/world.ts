@@ -139,7 +139,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
             p.spr(s.sprite, frame, x, y, { layer, rotation: rot, sx: mirror, flash: flashing || (dying && blink), color: dying && !blink ? 0xff9a8a : 0xffffff });
             if (kind === K.turret) p.spr("turret-barrel", 0, x, y, { layer: L.groundTop, rotation: Math.PI - e.rot[row]!, flash: flashing });
             if (kind === K.cantorTurret && e.frame[row] === 1) p.spr("glow", 0, x, y, { layer: L.bossPart, color: 0xff3d4f, alpha: 0.35 + 0.15 * Math.sin(t * 20), sx: 1.1, sy: 1.1 });
-            if (kind === K.seraphCore && e.frame[row] === 1) p.spr("glow", 0, x, y, { layer: L.bossPart, color: 0xe6a8ff, alpha: 0.4 + 0.2 * Math.sin(t * 9), sx: 1.8, sy: 1.8 });
+            if (kind === K.seraphCore && e.frame[row] === 1) p.spr("glow", 0, x, y, { layer: L.bossPart, color: 0xa8f030, alpha: 0.4 + 0.2 * Math.sin(t * 9), sx: 1.8, sy: 1.8 });
             if (kind === K.sentry) p.spr("glow-s", 0, x, y, { layer: L.enemy, color: 0xff3d4f, alpha: 0.3 + 0.25 * Math.sin(t * 8 + row) });
         }
     });
