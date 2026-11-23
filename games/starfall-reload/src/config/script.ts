@@ -1,5 +1,5 @@
 import type { EnemyInit } from "../ecs/spawn.ts";
-import { DROP, K, M } from "./enemies.ts";
+import { DROP, FENCE, K, M } from "./enemies.ts";
 import { FIELD_H, FIELD_W } from "./view.ts";
 
 /** The edge a craft enters from. */
@@ -45,11 +45,17 @@ export const REAR_WARNING = 0.5;
  */
 export type ScriptEvent =
     | { at: number; type: "enemy"; init: EnemyInit; tag: WaveTag }
-    | { at: number; type: "barrier"; y: number; gapX: number; gapW: number; tag: WaveTag }
+    | { at: number; type: "barrier"; y: number; gapX: number; gapW: number; fence?: FenceCycle; tag: WaveTag }
     | { at: number; type: "telegraph"; x: number; tag: WaveTag }
     | { at: number; type: "midboss"; id: "lancer" | "bastion" | "lantern" }
     | { at: number; type: "boss"; id: "halberd" | "cantor" | "seraph" }
     | { at: number; type: "banner"; text: string; sub: string };
+
+/** A fence's on/off phase lengths (s). A barrier event that carries one is a laser fence. */
+export interface FenceCycle {
+    readonly on: number;
+    readonly off: number;
+}
 
 type Point = readonly [x: number, y: number];
 
@@ -209,7 +215,11 @@ export class Script {
 
     /** An energy barrier with a gap. Pylons stand at the edges and at both gap sides. */
     barrier(at: number, gapX: number, gapW = 64): this {
-        return this.wave("barrier", undefined, () => this.events.push({ at, type: "barrier", y: -16, gapX, gapW, tag: this.tag("top") }));
+        return this.wave("barrier", undefined, () => this.wall(at, gapX, gapW));
+    }
+
+    private wall(at: number, gapX: number, gapW: number, fence?: FenceCycle): void {
+        this.events.push({ at, type: "barrier", y: -16, gapX, gapW, ...(fence ? { fence } : {}), tag: this.tag("top") });
     }
 
     /** V formation: a lead at x with ranks trailing up and out on both sides, flying straight down. */
@@ -335,8 +345,7 @@ export class Script {
         });
     }
 
-    // Named slots. Gunship, mortar and interceptor hold their own enemies; mines and fence hold
-    // stand-ins until their hazards exist.
+    // Named slots: each holds its own enemy or hazard.
 
     /** Gunship slot (Area 1): a carrier takes station, launches dart pairs while it holds, then pulls back up. */
     gunship(at: number, x: number, y: number, hold: number, opts: { drop?: number } = {}): this {
@@ -369,14 +378,23 @@ export class Script {
         });
     }
 
-    /** Mine-field slot (Area 3). Stand-in: small debris. */
+    /**
+     * Mine-field slot (Area 3): `count` mines entering over `duration` s, drifting down with the scroll
+     * and a little sideways. Laid out like debris; `seed` keeps the layout deterministic.
+     */
     mines(at: number, count: number, seed: number, opts: { duration?: number } = {}): this {
-        return this.wave("debris", "mines", () => this.debris(at, count, seed, { duration: opts.duration, small: 1 }));
+        return this.wave("debris", "mines", () => {
+            const duration = opts.duration ?? 6;
+            for (let i = 0; i < count; i++) {
+                const h = hash(seed * 131 + i * 17);
+                this.enemy(at + (i / count) * duration, { kind: K.mine, x: 20 + (h % (FIELD_W - 40)), y: -12, mover: M.ground, m0: ((h >>> 3) % 21) - 10 });
+            }
+        });
     }
 
-    /** Fence slot (Area 3). Stand-in: an Area 2 barrier. */
-    fence(at: number, gapX: number, gapW?: number): this {
-        return this.wave("barrier", "fence", () => this.barrier(at, gapX, gapW));
+    /** Fence slot (Area 3): a laser fence, an Area 2 barrier layout whose walls cycle off and on (FENCE). */
+    fence(at: number, gapX: number, gapW = 64): this {
+        return this.wave("barrier", "fence", () => this.wall(at, gapX, gapW, { on: FENCE.on, off: FENCE.off }));
     }
 
     midboss(at: number, id: "lancer" | "bastion" | "lantern"): this {

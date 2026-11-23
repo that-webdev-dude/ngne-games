@@ -91,8 +91,11 @@ export const Item = component("item", { kind: u8(), letter: u8(), age: f64(), ma
 /** Halo satellite orbiting the player. */
 export const Halo = component("halo", { index: u8(), angle: f64(), fireT: f64(), heldAngle: f64() });
 
-/** Energy barrier between two pylons. */
-export const Wall = component("wall", { left: entityRef(), right: entityRef(), warm: f32(), age: f64() });
+/**
+ * Energy barrier between two pylons. A fence (`on` > 0) cycles off/on instead of warming once:
+ * `on` and `off` are its phase lengths in seconds, `cycle` its clock (see sim/motion.ts fencePhase).
+ */
+export const Wall = component("wall", { left: entityRef(), right: entityRef(), warm: f32(), age: f64(), on: f32(), off: f32(), cycle: f64() });
 
 /** Visual-only particle. Simulated but never read by gameplay. */
 export const Fx = component("fx", {

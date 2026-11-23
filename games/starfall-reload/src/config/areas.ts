@@ -217,7 +217,7 @@ const aurora = new Script()
     .orbitRing(60.5, 198, 5, { spin: -1.3 })
     .dive(61.5, [40, 90, 144, 198, 248], { gap: 0.2 })
     .interceptor(62.5, -1, 3)
-    .mines(63.5, 14, 5, { duration: 6 })
+    .mines(63.5, 10, 5, { duration: 6 })
     .stations(64, K.hornet, [[100, 90], [188, 90]], 3, { drop: DROP.none })
     // Ease off, still pressing.
     .weave(66, 144, 8)

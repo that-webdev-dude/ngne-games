@@ -10,6 +10,7 @@ import { FX, impact, sparks } from "./effects.ts";
 import { clearBullets } from "./bullets.ts";
 import { collectItem, damageEnemy, grazeBullet, hurtPlayer } from "./rules.ts";
 import { burstShell, STYLE } from "./weapons.ts";
+import { FENCE_PHASE, fencePhase } from "./motion.ts";
 
 /** Per-tick snapshot of damageable enemies, rebuilt before probing (cheap: < 100 actors). */
 interface Target {
@@ -92,9 +93,9 @@ export function collide(sim: Sim, dt: number): void {
     });
     for (const b of bursts) burstShell(sim, b.x, b.y);
 
-    // Bomb: expanding ring clears bullets; everything on screen takes damage while it lasts.
+    // Bomb: expanding ring clears bullets; everything on screen takes damage while it lasts. The
+    // timer runs down after the damage, so kills see the bomb active (mines do not burst).
     if (run.bombT > 0) {
-        run.bombT = Math.max(0, run.bombT - dt);
         run.bombR += BOMB.ringSpeed * dt;
         clearBullets(sim, run.bombX, run.bombY, run.bombR, true);
         for (const t of targets) {
@@ -102,6 +103,7 @@ export function collide(sim: Sim, dt: number): void {
             const dps = t.flags & EF.boss ? BOMB.bossDamagePerSecond : BOMB.damagePerSecond;
             damageEnemy(sim, t.entity, dps * dt);
         }
+        run.bombT = Math.max(0, run.bombT - dt);
     }
 
     const ship = sim.player;
@@ -219,14 +221,14 @@ function clearSmallBullets(sim: Sim, x: number, y: number, r: number): void {
     });
 }
 
-/** Active barrier segments between pylon pairs. */
+/** Active barrier segments between pylon pairs: a warmed wall, or a fence in its on phase. */
 function touchesWall(sim: Sim, px: number, py: number): boolean {
     let hit = false;
     const { world } = sim;
     sim.q.walls.eachChunk((chunk) => {
         const wall = chunk.views.wall;
         for (let row = 0, n = chunk.count; row < n && !hit; row++) {
-            if (wall.warm[row]! < 1) continue;
+            if (wall.on[row]! > 0 ? fencePhase(wall.cycle[row]!, wall.on[row]!, wall.off[row]!) !== FENCE_PHASE.on : wall.warm[row]! < 1) continue;
             const left = wallEnd(world, chunk.entityAt(row), "left");
             const right = wallEnd(world, chunk.entityAt(row), "right");
             if (!left || !right) continue;

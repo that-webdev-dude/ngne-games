@@ -7,6 +7,7 @@ import { FIELD_H, FIELD_W, L } from "../config/view.ts";
 import { WEAPONS } from "../config/weapons.ts";
 import type { Sim } from "../sim/context.ts";
 import { FX } from "../sim/effects.ts";
+import { FENCE_PHASE, fencePhase } from "../sim/motion.ts";
 import { STYLE } from "../sim/weapons.ts";
 import { AVENUES, PARALLAX, TILE_H, TILE_W, parallaxShift } from "./backdrops.ts";
 import type { Painter } from "./painter.ts";
@@ -15,6 +16,41 @@ const BULLET_SPRITE = ["b-pink", "b-orange", "b-violet", "b-needle", "b-big", "b
 const BULLET_GLOW = [0xff4fa0, 0xff8a2a, 0xb35cff, 0xff6fae, 0xff3355, 0xffd23a, 0xff8a2a];
 const SHELL_MARK = 0xff8a2a;
 const SHOT_SPRITE = ["s-vulcan", "s-rail", "s-seek", "s-bead", "s-shell", "s-frag", "s-twin"];
+
+/** Mine beacon: frame 0 dim for `dim` s, frame 1 flash for `flash` s; each mine is offset so a field twinkles. */
+const MINE_BLINK = { dim: 0.333, flash: 0.167 } as const;
+
+/** Barrier wall colours: outer glow, core, hot line, crackle and telegraph dashes. */
+interface WallLook {
+    readonly glow: number;
+    readonly core: number;
+    readonly hot: number;
+    readonly crackle: number;
+    readonly dash: number;
+}
+/** Area 2 energy barrier (violet). */
+const BARRIER_LOOK: WallLook = { glow: 0x6f37a0, core: 0xa964d2, hot: 0xffffff, crackle: 0xe6a8ff, dash: 0xa964d2 };
+/** Area 3 laser fence (red). Drawn under the air layer so its pylons sit on top of the beam. */
+const FENCE_LOOK: WallLook = { glow: 0x92203a, core: 0xda3d4f, hot: 0xfff0b8, crackle: 0xffb347, dash: 0xff8a86 };
+
+/** Telegraph: blinking dashes between the emitters. */
+function wallDashes(p: Painter, lx: number, rx: number, ly: number, t: number, look: WallLook, layer: number): void {
+    if (Math.floor(t * 16) % 2 === 0) for (let x = lx + 8; x < rx - 8; x += 6) p.rect(x, ly - 0.5, 3, 1, look.dash, 0.8, layer);
+}
+
+/** A live beam with crackle. */
+function wallBeam(p: Painter, lx: number, rx: number, ly: number, t: number, row: number, look: WallLook, layer: number): void {
+    const pulse = 0.75 + 0.25 * Math.sin(t * 30 + row);
+    const w = rx - lx - 12;
+    p.rect(lx + 6, ly - 5, w, 10, look.glow, 0.3 * pulse, layer);
+    p.rect(lx + 6, ly - 2.5, w, 5, look.core, 0.8 * pulse, layer);
+    p.rect(lx + 6, ly - 1, w, 2, look.hot, 1, layer);
+    // Crackle: short bright arcs crawling along the beam.
+    for (let k = 0; k < 4; k++) {
+        const cx = lx + 6 + (((t * 90 + k * 37 + row * 13) % w) + w) % w;
+        p.rect(cx, ly - 3 + (k % 3), 3, 1, look.crackle, 1, layer);
+    }
+}
 
 /**
  * Tiled, vertically scrolling backdrop layer in world coordinates, shifted `dx` whole pixels sideways.
@@ -92,6 +128,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
             let frame = e.frame[row]!;
             if (s.frameTime > 0 && frames > 1) frame = Math.floor(e.age[row]! / s.frameTime + row) % frames;
             if (kind === K.rockL || kind === K.rockS) frame = e.frame[row]!;
+            if (kind === K.mine) frame = (e.age[row]! + chunk.entityAt(row).index * 0.137) % (MINE_BLINK.dim + MINE_BLINK.flash) < MINE_BLINK.dim ? 0 : 1;
             const flashing = e.flash[row]! > 0 && e.hp[row]! > 0;
             const dying = e.hp[row]! <= 0 && isBoss;
             const rot = kind === K.rockL || kind === K.rockS ? e.rot[row]! : kind === K.interceptor ? facing(pose.x[row]! - pose.px[row]!, pose.y[row]! - pose.py[row]!, e.m0[row]!) : 0;
@@ -106,7 +143,8 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
         }
     });
 
-    // Barrier walls: dotted telegraph while warming, then a live beam.
+    // Barrier walls: dotted telegraph while warming, then a live beam. A fence draws nothing while
+    // off, the telegraph while it flickers and the beam while on.
     sim.q.walls.eachChunk((chunk) => {
         const wall = chunk.views.wall;
         for (let row = 0, n = chunk.count; row < n; row++) {
@@ -117,21 +155,12 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
             const lx = sim.world.read(l, Pose, "x") ?? 0,
                 ly = sim.world.read(l, Pose, "y") ?? 0,
                 rx = sim.world.read(r, Pose, "x") ?? 0;
-            const warm = wall.warm[row]!;
-            if (warm < 1) {
-                if (Math.floor(t * 16) % 2 === 0) for (let x = lx + 8; x < rx - 8; x += 6) p.rect(x, ly - 0.5, 3, 1, 0xa964d2, 0.8, L.groundTop);
-            } else {
-                const pulse = 0.75 + 0.25 * Math.sin(t * 30 + row);
-                const w = rx - lx - 12;
-                p.rect(lx + 6, ly - 5, w, 10, 0x6f37a0, 0.3 * pulse, L.groundTop);
-                p.rect(lx + 6, ly - 2.5, w, 5, 0xa964d2, 0.8 * pulse, L.groundTop);
-                p.rect(lx + 6, ly - 1, w, 2, 0xffffff, 1, L.groundTop);
-                // Crackle: short bright arcs crawling along the beam.
-                for (let k = 0; k < 4; k++) {
-                    const cx = lx + 6 + (((t * 90 + k * 37 + row * 13) % w) + w) % w;
-                    p.rect(cx, ly - 3 + (k % 3), 3, 1, 0xe6a8ff, 1, L.groundTop);
-                }
-            }
+            if (wall.on[row]! > 0) {
+                const phase = fencePhase(wall.cycle[row]!, wall.on[row]!, wall.off[row]!);
+                if (phase === FENCE_PHASE.flicker) wallDashes(p, lx, rx, ly, t, FENCE_LOOK, L.airShadow);
+                else if (phase === FENCE_PHASE.on) wallBeam(p, lx, rx, ly, t, row, FENCE_LOOK, L.airShadow);
+            } else if (wall.warm[row]! < 1) wallDashes(p, lx, rx, ly, t, BARRIER_LOOK, L.groundTop);
+            else wallBeam(p, lx, rx, ly, t, row, BARRIER_LOOK, L.groundTop);
         }
     });
 

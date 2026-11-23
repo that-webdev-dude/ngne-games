@@ -2,7 +2,7 @@ import { Pose, Wall } from "../ecs/components.ts";
 import { spawnEnemy } from "../ecs/spawn.ts";
 import { AREAS } from "../config/areas.ts";
 import { DROP, K, M } from "../config/enemies.ts";
-import { REAR_WARNING, type ScriptEvent } from "../config/script.ts";
+import { REAR_WARNING, type FenceCycle, type ScriptEvent } from "../config/script.ts";
 import { FIELD_W } from "../config/view.ts";
 import { banner, cue, type Sim } from "./context.ts";
 import { rearWarning } from "./effects.ts";
@@ -60,7 +60,7 @@ function execute(sim: Sim, e: ScriptEvent): void {
             spawnEnemy(sim.world, e.init);
             return;
         case "barrier":
-            spawnBarrier(sim, e.y, e.gapX, e.gapW);
+            spawnBarrier(sim, e.y, e.gapX, e.gapW, e.fence);
             return;
         case "telegraph":
             rearWarning(sim, e.x, REAR_WARNING);
@@ -92,15 +92,17 @@ function startBoss(sim: Sim, id: string): void {
     if (ctl.music) sim.feedback.music = ctl.music;
 }
 
-function spawnBarrier(sim: Sim, y: number, gapX: number, gapW: number): void {
+/** Area 2 barrier, or with `fence` an Area 3 laser fence: fence pylons and walls that cycle off and on. */
+export function spawnBarrier(sim: Sim, y: number, gapX: number, gapW: number, fence?: FenceCycle): void {
     const left = gapX - gapW / 2,
         right = gapX + gapW / 2;
-    const pylon = (x: number) => spawnEnemy(sim.world, { kind: K.pylon, x, y, mover: M.ground, drop: DROP.chip });
+    const pylon = (x: number) => spawnEnemy(sim.world, { kind: fence ? K.fencePylon : K.pylon, x, y, mover: M.ground, drop: DROP.chip });
     const wall = (a: number, b: number) => {
         if (b - a < 24) return;
         const l = pylon(a),
             r = pylon(b);
-        sim.world.spawn(Pose.of({ x: (a + b) / 2, y, px: (a + b) / 2, py: y }), Wall.of({ left: l, right: r }));
+        const ends = fence ? { left: l, right: r, on: fence.on, off: fence.off } : { left: l, right: r };
+        sim.world.spawn(Pose.of({ x: (a + b) / 2, y, px: (a + b) / 2, py: y }), Wall.of(ends));
     };
     wall(8, left);
     wall(right, FIELD_W - 8);

@@ -30,13 +30,13 @@ const GRID_BARRIERS: readonly (readonly [number, number])[] = [
     [144, 54],
 ];
 
-/** Allowed counts per area for each named slot, with the kind (new enemy or stand-in) it holds. */
-const SLOTS: Record<Slot, { area: number; min: number; max: number; holds: number | "barrier" }> = {
+/** Allowed counts per area for each named slot, with the enemy kind it holds or "fence" (a fence barrier). */
+const SLOTS: Record<Slot, { area: number; min: number; max: number; holds: number | "fence" }> = {
     gunship: { area: 0, min: 2, max: 3, holds: K.gunship },
     mortar: { area: 1, min: 4, max: 6, holds: K.mortar },
     interceptor: { area: 2, min: 3, max: 4, holds: K.interceptor },
-    mines: { area: 2, min: 2, max: 3, holds: K.rockS },
-    fence: { area: 2, min: 2, max: 3, holds: "barrier" },
+    mines: { area: 2, min: 2, max: 3, holds: K.mine },
+    fence: { area: 2, min: 2, max: 3, holds: "fence" },
 };
 
 const DENSITY_WINDOW = 6;
@@ -170,7 +170,7 @@ test("named slots exist with their enemies or stand-ins in the agreed counts", (
             assert.ok(slotted.length >= rule.min && slotted.length <= rule.max, `${area.name} has ${slotted.length} ${slot} slots`);
             for (const w of slotted)
                 for (const e of w.events) {
-                    if (rule.holds === "barrier") assert.equal(e.type, "barrier", `${slot} barrier at ${e.at}s`);
+                    if (rule.holds === "fence") assert.ok(e.type === "barrier" && e.fence, `${slot} fence barrier at ${e.at}s`);
                     else assert.ok(e.type === "enemy" && e.init.kind === rule.holds, `${slot} holds ${spec(rule.holds).name} at ${e.at}s`);
                 }
         }

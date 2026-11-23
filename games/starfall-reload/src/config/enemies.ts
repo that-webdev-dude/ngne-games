@@ -24,6 +24,8 @@ export const K = {
     gunship: 19,
     mortar: 20,
     interceptor: 21,
+    mine: 22,
+    fencePylon: 23,
 } as const;
 export type Kind = (typeof K)[keyof typeof K];
 
@@ -94,6 +96,15 @@ export const LAUNCH = { pitch: 20, drop: 24, hold: 0.25 } as const;
  * was when it fired; its flight time is held to [minFlight, maxFlight] by adjusting that speed.
  */
 export const SHELL = { minFlight: 1.2, maxFlight: 2.6, ringSpeed: 75 } as const;
+
+/** Mine: on death (except during a bomb) it bursts into a ring of `count` slow bullets at `speed` px/s × rank. */
+export const MINE = { count: 6, speed: 55 } as const;
+
+/**
+ * Laser fence (Area 3 barrier variant): the wall is on for `on` s and off for `off` s, starting off; the
+ * last `flicker` s of each off phase flicker as a telegraph. Only the on phase hurts.
+ */
+export const FENCE = { on: 1.4, off: 1.0, flicker: 0.3 } as const;
 
 export const DROP = { none: 0, chip: 1, chips2: 2, capsule: 3, bomb: 4, oneup: 5, chips4: 6 } as const;
 
@@ -319,6 +330,10 @@ export const ENEMIES: readonly EnemySpec[] = [
         drop: DROP.none,
         gun: gun({ gun: G.once, speed: 140, count: 3, spread: 30, bullet: B.needle }),
     },
+    // Blink timing is drawn by render/world.ts (frame 0 dim, frame 1 flash).
+    { name: "MINE", sprite: "mine", frames: 2, frameTime: 0, hp: 3, radius: 5, score: 150, flags: 0, size: "s", drop: DROP.none },
+    // Frame set by sim/motion.ts from its wall: 0 idle while off, 1 pulse during flicker and on.
+    { name: "FENCE PYLON", sprite: "fence-pylon", frames: 2, frameTime: 0, hp: 20, radius: 7, score: 400, flags: EF.noBodyHit, size: "s", drop: DROP.chip },
 ];
 
 export const spec = (kind: number): EnemySpec => ENEMIES[kind]!;

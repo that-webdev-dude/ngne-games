@@ -1,7 +1,7 @@
 import type { Entity } from "@ngne/core";
 import { Enemy, Pose, Ship } from "../ecs/components.ts";
 import { ITEM, spawnBullet, spawnItem } from "../ecs/spawn.ts";
-import { B, DROP, spec } from "../config/enemies.ts";
+import { B, DROP, K, MINE, spec } from "../config/enemies.ts";
 import { BOMB, CHAIN, EXTENDS, GRAZE, PLAYER, POWER, RANK, SCORE } from "../config/tuning.ts";
 import { WEAPONS } from "../config/weapons.ts";
 import { banner, cue, flash, popup, shake, type Run, type Sim } from "./context.ts";
@@ -100,6 +100,7 @@ export function killEnemy(sim: Sim, entity: Entity): void {
     }
     const hull = flags & 1 ? 0x7a4a32 : 0x4f6852;
     explosion(sim, x, y, s.size, hull);
+    if (kind === K.mine && run.bombT <= 0) mineBurst(sim, x, y);
     // Revenge bullet at high rank keeps greed honest; never at point blank.
     if (s.size === "s" && run.rank >= RANK.revengeAt && sim.playerAlive && Math.abs(sim.py - y) > 70) {
         const a = Math.atan2(sim.px - x, sim.py - y);
@@ -107,6 +108,13 @@ export function killEnemy(sim: Sim, entity: Entity): void {
     }
     dropItems(sim, drop, x, y);
     world.despawn(entity);
+}
+
+/** A mine's ring of slow bullets, turned half a step off the ship's bearing so no bullet heads straight at it. */
+function mineBurst(sim: Sim, x: number, y: number): void {
+    const offset = Math.atan2(sim.px - x, sim.py - y) + Math.PI / MINE.count;
+    const speed = MINE.speed * rankScale(sim.run).speed;
+    for (let i = 0; i < MINE.count; i++) spawnBullet(sim.world, x, y, offset + (i / MINE.count) * Math.PI * 2, speed, B.orange);
 }
 
 export function dropItems(sim: Sim, drop: number, x: number, y: number): void {

@@ -1,4 +1,6 @@
+import type { Entity } from "@ngne/core";
 import { Enemy, Pose, Wall } from "../ecs/components.ts";
+import { FENCE } from "../config/enemies.ts";
 import { L } from "../config/view.ts";
 import type { Sim } from "./context.ts";
 
@@ -72,7 +74,23 @@ export function updateFx(sim: Sim, dt: number, frozen: boolean): void {
     fb.flash = Math.max(0, fb.flash - dt * 2.4);
 }
 
-/** Barrier walls warm up (telegraph) before they become solid; they die with either pylon. */
+/** A laser fence's phase: off (draws nothing, harmless), flicker (telegraph, harmless) or on (hurts). */
+export const FENCE_PHASE = { off: 0, flicker: 1, on: 2 } as const;
+
+/**
+ * Phase of a fence `cycle` s into its cycle. Each cycle starts with `off` s off, the last
+ * FENCE.flicker s of which flicker, then `on` s on.
+ */
+export function fencePhase(cycle: number, on: number, off: number): number {
+    const t = cycle % (on + off);
+    if (t >= off) return FENCE_PHASE.on;
+    return t >= off - FENCE.flicker ? FENCE_PHASE.flicker : FENCE_PHASE.off;
+}
+
+/**
+ * Barrier walls warm up (telegraph) before they become solid; they die with either pylon. A fence's
+ * clock starts when a plain wall would start warming; its pylons pulse while it flickers or is on.
+ */
 export function updateWalls(sim: Sim, dt: number): void {
     const { world } = sim;
     sim.q.walls.eachChunk((chunk) => {
@@ -84,7 +102,9 @@ export function updateWalls(sim: Sim, dt: number): void {
             const right = world.read(self, Wall, "right");
             const leftAlive = !!left && world.has(left) && (world.read(left, Enemy, "hp") ?? 0) > 0;
             const rightAlive = !!right && world.has(right) && (world.read(right, Enemy, "hp") ?? 0) > 0;
+            const fence = wall.on[row]! > 0;
             if (!leftAlive || !rightAlive) {
+                if (fence) for (const end of [left, right]) if (end && world.has(end)) world.write(end, Enemy, "frame", 0);
                 world.despawn(self);
                 continue;
             }
@@ -93,6 +113,16 @@ export function updateWalls(sim: Sim, dt: number): void {
             if (ly > 10) wall.warm[row] = Math.min(1, wall.warm[row]! + dt / 0.7);
             pose.y[row] = ly;
             pose.x[row] = ((world.read(left!, Pose, "x") ?? 0) + (world.read(right!, Pose, "x") ?? 0)) / 2;
+            if (fence) {
+                if (ly > 10) wall.cycle[row] = wall.cycle[row]! + dt;
+                pulsePylons(world, left!, right!, fencePhase(wall.cycle[row]!, wall.on[row]!, wall.off[row]!) !== FENCE_PHASE.off);
+            }
         }
     });
+}
+
+function pulsePylons(world: Sim["world"], left: Entity, right: Entity, live: boolean): void {
+    const frame = live ? 1 : 0;
+    world.write(left, Enemy, "frame", frame);
+    world.write(right, Enemy, "frame", frame);
 }
