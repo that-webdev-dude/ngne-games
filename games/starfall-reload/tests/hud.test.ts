@@ -4,14 +4,15 @@ import { cabinet, input } from "./helpers/harness.ts";
 import { Pose, Ship } from "../src/ecs/components.ts";
 import { PLAYER } from "../src/config/tuning.ts";
 import { FIELD_H, HUD } from "../src/config/view.ts";
-import { SHEETS } from "../src/render/atlas.ts";
 
 test("the ship's y clamp keeps its sprite clear of both in-field HUD rows", async () => {
     const h = await cabinet("HUD-CLAMP");
     for (let i = 0; i < 40; i++) h.tick();
     h.tick(input([], ["Enter"]));
     assert.equal(h.flow().mode, "play");
-    const half = SHEETS.player!.h / 2;
+    // The drawn ship spans rows 4-26 of its 24x32 frame (art/player.png), pivot at row 16.
+    const above = 12,
+        below = 11;
     let lo = Infinity,
         hi = -Infinity;
     for (const [key, ticks] of [
@@ -34,6 +35,6 @@ test("the ship's y clamp keeps its sprite clear of both in-field HUD rows", asyn
     assert.equal(lo, PLAYER.marginTop);
     assert.equal(hi, FIELD_H - PLAYER.marginBottom);
     // The sprite's edges stay outside the top row (y < HUD.top) and the bottom row (y >= FIELD_H - HUD.bottom).
-    assert.ok(lo - half >= HUD.top, `top edge ${lo - half} overlaps the top row`);
-    assert.ok(hi + half <= FIELD_H - HUD.bottom, `bottom edge ${hi + half} overlaps the bottom row`);
+    assert.ok(lo - above >= HUD.top, `top edge ${lo - above} overlaps the top row`);
+    assert.ok(hi + below <= FIELD_H - HUD.bottom, `bottom edge ${hi + below} overlaps the bottom row`);
 });

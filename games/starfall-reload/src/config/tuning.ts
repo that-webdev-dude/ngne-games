@@ -2,7 +2,7 @@ import { HUD } from "./view.ts";
 
 /** Gameplay tuning. All values are provisional slice values (contract P1). Units: px, seconds. */
 
-/** Half the player sprite's height (24×28 sheet): keeps its edges out of the HUD rows. */
+/** Covers the drawn ship (12 px above its pivot, 11 below): keeps its edges out of the HUD rows. */
 const SHIP_HALF_H = 14;
 
 export const PLAYER = {
@@ -27,7 +27,6 @@ export const PLAYER = {
     maxPower: 4,
     deadZone: 0.18,
     fullTilt: 0.9,
-    bankRate: 9,
 } as const;
 
 export const POWER = {

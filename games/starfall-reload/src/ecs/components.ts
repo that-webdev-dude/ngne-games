@@ -8,7 +8,6 @@ export const Motion = component("motion", { vx: f64(), vy: f64(), ax: f64(), ay:
 
 /** The player's ship. Session-level data (power, weapon, lives) lives in the Run resource. */
 export const Ship = component("ship", {
-    bank: f32(),
     invuln: f64(),
     fireT: f64(),
     altT: f64(),

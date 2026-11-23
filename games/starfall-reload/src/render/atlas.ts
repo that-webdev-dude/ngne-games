@@ -5,7 +5,6 @@ import { generateTextures } from "./textures.ts";
 
 /** Authored sprite sheets (horizontal strips) — sizes are the art specification's contract. */
 export const SHEETS: Record<string, { w: number; h: number; frames: number }> = {
-    player: { w: 24, h: 28, frames: 5 },
     "player-flame": { w: 8, h: 12, frames: 2 },
     halo: { w: 10, h: 10, frames: 2 },
     capsule: { w: 16, h: 16, frames: 4 },

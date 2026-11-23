@@ -65,12 +65,6 @@ export function updatePlayer(sim: Sim, dt: number, controllable: boolean): void 
         y = Math.max(PLAYER.marginTop, Math.min(FIELD_H - PLAYER.marginBottom, y));
     }
 
-    // Bank toward horizontal input; settles quickly for a snappy read.
-    let bank = world.read(ship, Ship, "bank") ?? 0;
-    const target = alive && controllable ? input.mx : 0;
-    bank += (target - bank) * Math.min(1, dt * PLAYER.bankRate);
-    world.write(ship, Ship, "bank", bank);
-
     world.write(ship, Pose, "x", x);
     world.write(ship, Pose, "y", y);
     world.write(ship, Ship, "invuln", invuln);
