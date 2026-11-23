@@ -4,7 +4,6 @@ import { FIELD } from "../config/view.ts";
 import { newFlow, startGame, updateFlow, type Flow } from "../game/flow.ts";
 import { skipTo } from "../sim/director.ts";
 import { createPilot } from "../game/autopilot.ts";
-import { playerImage } from "../../art/player.sprites.ts";
 import { Atlas } from "../render/atlas.ts";
 import { backdropAssets } from "../render/backdrops.ts";
 import { drawFieldOverlays, drawPanels, drawScreens } from "../render/hud.ts";
@@ -54,7 +53,7 @@ export function cabinetScene(options: CabinetOptions): SceneDefinition<CabinetSt
     const atlas = new Atlas();
     return {
         id: "starfall-reload-cabinet",
-        assets: options.headless ? [] : [atlas.asset(), playerImage, ...backdropAssets()],
+        assets: options.headless ? [] : [atlas.asset(), ...backdropAssets()],
         setup(scene) {
             const sim: Sim = {
                 world: scene.world,

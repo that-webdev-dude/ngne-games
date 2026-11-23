@@ -65,6 +65,6 @@ The tests cover rules (armour, chips, chains, extends, score table, display fit)
 
 ## Assets
 
-Sprites in `src/assets/sprites/` were drawn for this game as palette-index grids; their editable sources are in `art/*.px`. The player ship is an NGNE sprite-editor export in `art/` (`player.ngsprite` source, `player.png`, `player.atlas.json`, `player.sprites.ts`) and is drawn from its own texture. Effects, fonts, backdrops and cabinet panels are generated at load. Music and sound effects are original deterministic synthesis (`src/audio/synth.ts`) with no samples. Art direction drew on a study of 1990s arcade shooters; no third-party art, music or code is included.
+Sprites in `src/assets/sprites/` were drawn for this game as palette-index grids; their editable sources are in `art/*.px`. Effects, fonts, backdrops and cabinet panels are generated at load. Music and sound effects are original deterministic synthesis (`src/audio/synth.ts`) with no samples. Art direction drew on a study of 1990s arcade shooters; no third-party art, music or code is included.
 
 NGNE is used through the pinned published package. Its MIT licence is reproduced in [LICENSE-NGNE.txt](LICENSE-NGNE.txt).

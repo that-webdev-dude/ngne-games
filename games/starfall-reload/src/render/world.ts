@@ -1,5 +1,4 @@
 import { lerp } from "@ngne/core";
-import { drawPlayer } from "../../art/player.sprites.ts";
 import { EF, Pose, Wall } from "../ecs/components.ts";
 import { ITEM } from "../ecs/spawn.ts";
 import { AREAS } from "../config/areas.ts";
@@ -223,12 +222,12 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
                 const invuln = s.invuln[row]! > 0;
                 if (invuln && s.entering[row]! <= 0 && Math.floor(t * 20) % 3 === 0) continue;
                 const flame = Math.floor(t * 20) % 2;
-                if (shadows) drawPlayer(p.frame, "player-0", x + 10, y + 18, { layer: L.airShadow, color: 0x000000, alpha: 0.3 });
+                if (shadows) p.spr("player", 0, x + 10, y + 18, { layer: L.airShadow, color: 0x000000, alpha: 0.3 });
                 // Flames hang from the outer nacelle nozzles: x -5/+5, bottom edge at y + 11.
                 p.spr("player-flame", flame, x - 5, y + 17, { layer: L.player });
                 p.spr("player-flame", 1 - flame, x + 5, y + 17, { layer: L.player });
                 p.spr("glow-s", 0, x, y + 13, { layer: L.player, color: 0xffb347, alpha: 0.4 });
-                drawPlayer(p.frame, "player-0", x, y, { layer: L.player });
+                p.spr("player", 0, x, y, { layer: L.player });
                 if (sim.input.focus) {
                     p.spr("glow-s", 0, x, y, { layer: L.bullet, color: 0xff4fa0, alpha: 0.55, sx: 0.6, sy: 0.6 });
                     p.rect(x - 1.5, y - 1.5, 3, 3, 0xffffff, 1, L.bullet);

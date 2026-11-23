@@ -10,7 +10,7 @@ test("the ship's y clamp keeps its sprite clear of both in-field HUD rows", asyn
     for (let i = 0; i < 40; i++) h.tick();
     h.tick(input([], ["Enter"]));
     assert.equal(h.flow().mode, "play");
-    // The drawn ship spans rows 4-26 of its 24x32 frame (art/player.png), pivot at row 16.
+    // The drawn ship spans rows 4-26 of its 24x32 frame (src/assets/sprites/player.png), pivot at row 16.
     const above = 12,
         below = 11;
     let lo = Infinity,
