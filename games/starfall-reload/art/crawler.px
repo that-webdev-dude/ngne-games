@@ -1,79 +1,72 @@
-# crawler - tracked ground tank. 24x28, 2 frames, straight top-down, faces DOWN (gun toward the player).
-# light: top-left. K exterior outline; seams where hull meets treads and around the turret dome.
-# Treads cols 0-5 and 18-23 (4px links, period 4 rows); olive hull cols 6-17 with rear engine slats,
-# front glacis one step darker; olive dome turret (10px) with a 2x2 red sensor; steel gun to row 26.
-# Palette: olive a b c d e, steel 3 4, red n r, K (10 colours).
-# Frames: 0 tread phase 0, 1 tread phase +2 rows (half a link) - 120 ms each, loop. Only tread pixels change.
+# CRAWLER: relit from sketch/crawler.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-a #1b2622  olive-0
-b #31443a  olive-1
-c #4f6852  olive-2
-d #7e9a78  olive-3
-e #b9cfa2  olive-4
-n #92203a  red-1
-r #da3d4f  red-2
-ramp steel 3 4
-ramp olive a b c d e
-ramp red n r
-frame tread0 120
-.KKKK..............KKKK.
-KbbbaK............KbbbaK
-KaaaaKKKKKKKKKKKKKKaaaaK
-KbbbbKeeddddddddccKbbbbK
-KcccbKdcaaaaaaaacbKcccbK
-KbbbaKdccccccccccbKbbbaK
-KaaaaKdcaaaaaaaacbKaaaaK
-KbbbbKdcccKKKKcccbKbbbbK
-KcccbKdcKKeeddKKcbKcccbK
-KbbbaKdcKeddddcKcbKbbbaK
-KaaaaKdKedddccccKbKaaaaK
-KbbbbKdKddcrrcccKbKbbbbK
-KcccbKdKdccnnccbKbKcccbK
-KbbbaKdKccccccbbKbKbbbaK
-KaaaaKdcKccccbbKabKaaaaK
-KbbbbKdcKKcbbbKKabKbbbbK
-KcccbKdcccK43KaacbKcccbK
-KbbbaKdcccK43KbccbKbbbaK
-KaaaaKdcccK43KbccbKaaaaK
-KbbbbKdcccK43KbccbKbbbbK
-KcccbKdcccK43KbccbKcccbK
-KbbbaKcbbbK43KbbbbKbbbaK
-KaaaaKcbbbK43KbbbbKaaaaK
-KbbbbKcbbbK43KbbbbKbbbbK
-KcccbKcbbbK43KbbbbKcccbK
-KbbbaKKKKKK43KKKKKKbbbaK
-KaaaaK....K43K....KaaaaK
-.KKKK.....KKKK.....KKKK.
-frame tread1 120
-.KKKK..............KKKK.
-KbbbbK............KbbbbK
-KcccbKKKKKKKKKKKKKKcccbK
-KbbbaKeeddddddddccKbbbaK
-KaaaaKdcaaaaaaaacbKaaaaK
-KbbbbKdccccccccccbKbbbbK
-KcccbKdcaaaaaaaacbKcccbK
-KbbbaKdcccKKKKcccbKbbbaK
-KaaaaKdcKKeeddKKcbKaaaaK
-KbbbbKdcKeddddcKcbKbbbbK
-KcccbKdKedddccccKbKcccbK
-KbbbaKdKddcrrcccKbKbbbaK
-KaaaaKdKdccnnccbKbKaaaaK
-KbbbbKdKccccccbbKbKbbbbK
-KcccbKdcKccccbbKabKcccbK
-KbbbaKdcKKcbbbKKabKbbbaK
-KaaaaKdcccK43KaacbKaaaaK
-KbbbbKdcccK43KbccbKbbbbK
-KcccbKdcccK43KbccbKcccbK
-KbbbaKdcccK43KbccbKbbbaK
-KaaaaKdcccK43KbccbKaaaaK
-KbbbbKcbbbK43KbbbbKbbbbK
-KcccbKcbbbK43KbbbbKcccbK
-KbbbaKcbbbK43KbbbbKbbbaK
-KaaaaKcbbbK43KbbbbKaaaaK
-KbbbbKKKKKK43KKKKKKbbbbK
-KcccbK....K43K....KcccbK
-.KKKK.....KKKK.....KKKK.
+K #0b0d1a outline
+d #261a2e shared-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+b #665350 armour-mid
+m #998177 armour-light
+o #ecdcc4 bone
+g #4e9a1e core-dark
+G #a8f030 core
+w #f0ffb0 core-glint
+frame f1 100
+........................
+.......KKKK..KKKK....K..
+..K....KnnK..KddK...KmK.
+.KoK..KKddKKKKddKK..KmmK
+KomK.KoooooommmmmbK.KmmK
+KmmKKommmboommbmmmbKXXK.
+.KnXXoddmboommbmddbXXK..
+..KnXommbboommbbmmbXK...
+...KnoddbbommmbbddbK....
+....KodbbbmmmmbbbbbK....
+....KdddddmmmmdddddK....
+....KoooobommmbmmmbK....
+...KnommbbommmbbmmbK....
+..KnXmmmbbmmmmbbmmXXK...
+.KnXKKbbbbmmmmbbbbKXXK..
+KmXK..KbbbmbbmbbbK.KXXK.
+KmmK..KbbdbbbbdbbK..KXbK
+KoK....KddbbbbddK...KbbK
+.K....KKmooommmbKK...KbK
+......KmoddddddmbK....K.
+......KmdgGwwGgdbK......
+......KmbdXXdddbbK......
+......KobKKKKKKbbK......
+......KobK....KbbK......
+......KobK....KbbK......
+.......KoK....KbK.......
+........K......K........
+........................
+frame f2 100
+........................
+..K....KKKK..KKKK.......
+.KoK...KnnK..KddK....K..
+KomK..KKddKKKKddKK..KmK.
+KmmK.KoooooommmmmbK.KmmK
+.KnXKommmboommbmmmbKKbbK
+..KnXoddmboommbmddbnnXK.
+...KnommbboommbbmmbnXK..
+....KoddbbommmbbddbXK...
+....KodbbbmmmmbbbbbK....
+....KdddddmmmmdddddK....
+....KoooobommmbmmmbK....
+....KommbbommmbbmmbXK...
+...KnmmmbbmmmmbbmmnnXK..
+..KnXKbbbbmmmmbbbbKKnXK.
+.KnXK.KbbbmbbmbbbK..KnbK
+KmXK..KbbdbbbbdbbK..KbbK
+KmmK...KddbbbbddK....KbK
+KoK...KKmooommmbKK....K.
+.K....KmoddddddmbK......
+......KmdgGwwGgdbK......
+......KmbdXXdddbbK......
+......KobKKKKKKbbK......
+......KobK....KbbK......
+......KobK....KbbK......
+.......KoK....KbK.......
+........K......K........
+........................

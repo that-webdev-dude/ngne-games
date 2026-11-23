@@ -1,34 +1,27 @@
-# chip.px - power chip pickup, spinning gem
-# canvas 8x8, 2 frames (spin pair, loop): a = facet face-on (full rhombus), b = turned edge-on (narrow).
-# cyan ramp c C b w + steel-5 (6) as the white glint; K outline.
-# light: top-left (upper-left facets w/6, lower-right C/c).
-# smallest must-read feature: the white glint + w facet (2 px) so it sparkles at 1x.
-# anchor: frame centre (4,4).
-# timing: 100 ms each.
+# CHIP: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-6 #e4ecfa  steel-5 glint
-C #1d86b8  cyan-1
-K #0b0d1a  outline shared-dark
-b #46c8ee  cyan-2
-c #0d4a6e  cyan-0
-w #b2f4ff  cyan-3 glint
-ramp cyan c C b w
-frame a 100
+K #0b0d1a outline
+a #0d4a6e
+b #1d86b8
+c #46c8ee
+d #b2f4ff
+e #e4ecfa
+frame f1 100
 ...KK...
-..K6bK..
-.KwwbCK.
-KwwwbCCK
-KbbbCCcK
-.KbCCcK.
-..KCcK..
+..KecK..
+.KddcbK.
+KdddcbbK
+KcccbbaK
+.KcbbaK.
+..KbaK..
 ...KK...
-frame b 100
+frame f2 100
 ...KK...
-..K6bK..
-..KwbK..
-..KwCK..
-..KbCK..
-..KbcK..
-..KbcK..
+..KecK..
+..KdcK..
+..KdbK..
+..KcbK..
+..KcaK..
+..KcaK..
 ...KK...

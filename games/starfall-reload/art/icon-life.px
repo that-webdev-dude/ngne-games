@@ -1,26 +1,20 @@
-# icon-life.px - HUD life icon
-# canvas 9x10, 1 frame. Simplified player interceptor (faces up): nose, cyan canopy, canards,
-# delta wing, two nacelle stubs. Odd width so the fuselage is one centre column (x=4).
-# light: top-left (left half one step lighter). K exterior outline.
-# smallest must-read feature: cyan canopy 1x2 + the delta/canard silhouette.
-# anchor: frame centre.
+# ICON-LIFE: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-5 #a7b8d8  steel-4
-6 #e4ecfa  steel-5
-K #0b0d1a  outline shared-dark
-b #46c8ee  cyan-2
-ramp steel 3 4 5 6
-frame life
+K #0b0d1a outline
+a #4a5a82
+b #7184ad
+c #46c8ee
+d #a7b8d8
+e #e4ecfa
+frame f1 100
 ....K....
-...K6K...
-...KbK...
-..K5b3K..
-...K5K...
-..K565K..
-.K55654K.
-K5555443K
-KK5KKK3KK
+...KeK...
+...KcK...
+..KdcaK..
+...KdK...
+..KdedK..
+.KddedbK.
+KddddbbaK
+KKdKKKaKK
 ..K...K..

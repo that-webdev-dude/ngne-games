@@ -1,59 +1,47 @@
-# fence-pylon - Area 3 laser-fence pylon (orbital emitter node; the developer draws the wall). 16x16, 2 frames,
-# straight top-down, left-right symmetric shape. light: top-left. K exterior outline, seams where jaws meet hull.
-# Layout: steel octagonal hull (cols 4-11, rows 1-14); one emitter jaw each side (cols 0-3 and 12-15, rows 4-11):
-# steel prongs on rows 5 and 10 around an open mouth (cols 0-1 / 14-15, rows 7-8) with a 2x2 red lens
-# (cols 2-3 left, 12-13 right, rows 7-8).
-# Wall attach: frame side edges, centre y=8 (edge coords, between rows 7 and 8), as pylon.px. A wall drawn from
-# lx+6 to rx-6 (render/world.ts) runs through the open mouths and meets the lenses at edge x=14 / x=2.
-# Use the same sprite for both pylons, unmirrored (mirroring would flip the top-left light).
-# Palette: steel 1 2 3 4 5, red n r p, fire-4 W, K (10 colours). Lens matches the fence wall ramp.
-# Frames: 0 idle (lens r over n), 1 pulse (lens W/p, hot like the wall's hot line). 200 ms each, loop.
-# Option for the developer: show idle while the wall is off and pulse during flicker/on. Anchor: frame centre (8,8).
+# FENCE-PYLON: relit from fence-pylon.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-1 #1c2238  steel-0
-2 #2f3a5a  steel-1
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-5 #a7b8d8  steel-4
-n #92203a  red-1
-r #da3d4f  red-2
-p #ff8a86  red-3
-W #fff0b8  fire-4 glint
-ramp steel 1 2 3 4 5
-ramp red n r p
-frame idle 200
+K #0b0d1a outline
+d #261a2e shared-dark
+b #665350 armour-mid
+m #998177 armour-light
+o #ecdcc4 bone
+5 #92203a emitter-dark
+6 #da3d4f emitter
+7 #ff8a86 emitter-light
+8 #fff0b8 emitter-glint
+frame f1 100
 ................
 ......KKKK......
-.....K5554K.....
-....K544444K....
-KKKKK544443KKKKK
-K555K544443K444K
-KKKKK544432KKKKK
-..rrK544432Krr..
-..nnK444332Knn..
-KKKKK443332KKKKK
-K333K433322K222K
-KKKKK333221KKKKK
-....K322211K....
-.....K2211K.....
+.....KooomK.....
+....KommmmmK....
+KKKKKommmmbKKKKK
+KooodommmmbdmmmK
+KKKddommmbbddKKK
+..66dommmbbd66..
+..55dmmmbbbd55..
+KKKddmmbbbbddKKK
+KbbbdmbbbbbdbbbK
+KKKKKbbbbbdKKKKK
+....KbbbbddK....
+.....KbbddK.....
 ......KKKK......
 ................
-frame pulse 200
+frame f2 100
 ................
 ......KKKK......
-.....K5554K.....
-....K544444K....
-KKKKK544443KKKKK
-K555K544443K444K
-KKKKK544432KKKKK
-..WpK544432KpW..
-..ppK444332Kpp..
-KKKKK443332KKKKK
-K333K433322K222K
-KKKKK333221KKKKK
-....K322211K....
-.....K2211K.....
+.....KooomK.....
+....KommmmmK....
+KKKKKommmmbKKKKK
+KooodommmmbdmmmK
+KKKddommmbbddKKK
+..87dommmbbd78..
+..77dmmmbbbd77..
+KKKddmmbbbbddKKK
+KbbbdmbbbbbdbbbK
+KKKKKbbbbbdKKKKK
+....KbbbbddK....
+.....KbbddK.....
 ......KKKK......
 ................

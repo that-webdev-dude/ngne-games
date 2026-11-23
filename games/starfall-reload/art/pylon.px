@@ -1,57 +1,51 @@
-# pylon - barrier pylon (ground prop; the developer draws the energy wall sideways from the emitters).
-# 16x16, 2 frames, straight top-down. light: top-left. K exterior outline, seams at the struts.
-# Layout: olive pillar (cols 5-10) with a 2x2 violet core; steel struts (rows 7-8) to two violet
-# emitter heads (cols 0-3, 12-15) whose outer column faces the wall direction.
-# Wall emission points: x=0 and x=15, rows 4-11 (emitter column), i.e. centre y=8 (edge coords).
-# Palette: olive b c d e, steel 2 3, violet u v V i I, K. Frames: 0 idle, 1 pulse (heads + core brighten). 200 ms each.
+# PYLON: relit from sketch/pylon.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-b #31443a  olive-1
-c #4f6852  olive-2
-d #7e9a78  olive-3
-e #b9cfa2  olive-4
-2 #2f3a5a  steel-1
-3 #4a5a82  steel-2
-u #261338  violet-0
-v #44206a  violet-1
-V #6f37a0  violet-2
-i #a964d2  violet-3
-I #e6a8ff  violet-4 glint
-ramp olive b c d e
-ramp steel 2 3
-ramp violet u v V i I
-frame idle 200
+K #0b0d1a outline
+d #261a2e shared-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+b #665350 armour-mid
+m #998177 armour-light
+o #ecdcc4 bone
+g #4e9a1e core-dark
+G #a8f030 core
+w #f0ffb0 core-glint
+v #6f37a0 emitter-dark
+V #a964d2 emitter
+u #e6a8ff emitter-glint
+frame f1 100
 ................
 ......KKKK......
-.....KeeccK.....
-KKKK.KdccbK.KKKK
-KivK.KdccbK.KviK
-KivK.KdccbK.KviK
-KivKKKdccbKKKviK
-KivK3KdVVbK2KviK
-KivK3KdvvbK2KviK
-KivKKKdccbKKKviK
-KivK.KdccbK.KviK
-KivK.KccbbK.KviK
-KKKK.KcbbbK.KKKK
-.....KbbbbK.....
+.....KoombK.....
+KKKK.KommbK.KKKK
+KooK.KddddK.KbbK
+KVVK.KommbK.KbVK
+KVvKKKmmmbKKKvVK
+KVvnndmGgmdnnvVK
+KVvXXdmmmmdddvVK
+KVvKKKmmmmKKKvVK
+KVbK.KddddK.KbVK
+KbbK.KbbbbK.KbbK
+KKKK.KbbbbK.KKKK
+.....KbddbK.....
 ......KKKK......
 ................
-frame pulse 200
+frame f2 100
 ................
 ......KKKK......
-.....KeeccK.....
-KKKK.KdccbK.KKKK
-KIVK.KdccbK.KVIK
-KIVK.KdccbK.KVIK
-KIVKKKdccbKKKVIK
-KIVK3KdIIbK2KVIK
-KIVK3KdiibK2KVIK
-KIVKKKdccbKKKVIK
-KIVK.KdccbK.KVIK
-KIVK.KccbbK.KVIK
-KKKK.KcbbbK.KKKK
-.....KbbbbK.....
+.....KoombK.....
+KKKK.KommbK.KKKK
+KooK.KddddK.KbbK
+KuuK.KommbK.KbuK
+KuVKKKmmmbKKKVuK
+KuVnndmwGmdnnVuK
+KuVXXdmmmmdddVuK
+KuVKKKmmmmKKKVuK
+KubK.KddddK.KbuK
+KbbK.KbbbbK.KbbK
+KKKK.KbbbbK.KKKK
+.....KbddbK.....
 ......KKKK......
 ................

@@ -1,33 +1,26 @@
-# oneup.px - extra-ship pickup
-# canvas 16x12, 1 frame. Gold tag (rounded rectangle, gold ramp, K outline) carrying the
-# miniature player silhouette from icon-life (9x10) at x3..11, rows 1..10.
-# light: top-left (H rim top/left, G/g bottom/right).
-# smallest must-read feature: cyan canopy + delta silhouette over the gold.
-# anchor: frame centre (8,6).
+# ONEUP: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-5 #a7b8d8  steel-4
-6 #e4ecfa  steel-5
-G #a87b22  gold-1
-H #fff2a8  gold-3
-K #0b0d1a  outline shared-dark
-b #46c8ee  cyan-2
-g #5e3f10  gold-0
-h #e8c252  gold-2
-ramp steel 3 4 5 6
-ramp gold g G h H
-frame oneup
+K #0b0d1a outline
+a #5e3f10
+b #4a5a82
+c #a87b22
+d #7184ad
+e #46c8ee
+f #a7b8d8
+g #e8c252
+h #e4ecfa
+i #fff2a8
+frame f1 100
 .KKKKKKKKKKKKKK.
-KHHHHHhKhhhhhhGK
-KHhhhhK6KhhhhGgK
-KHhhhhKbKhhhhGgK
-KHhhhK5b3KhhhGgK
-KHhhhhK5KhhhhGgK
-KhhhhK565KhhhGgK
-KhhhK55654KhhGgK
-KhhK5555443KGGgK
-KhhKK5KKK3KKGGgK
-KhGGGKGGGKGGGGgK
+KiiiiigKggggggcK
+KiggggKhKggggcaK
+KiggggKeKggggcaK
+KigggKfebKgggcaK
+KiggggKfKggggcaK
+KggggKfhfKgggcaK
+KgggKffhfdKggcaK
+KggKffffddbKccaK
+KggKKfKKKbKKccaK
+KgcccKcccKccccaK
 .KKKKKKKKKKKKKK.

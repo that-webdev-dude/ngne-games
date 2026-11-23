@@ -1,69 +1,60 @@
-# skiff - capsule carrier (drops a weapon capsule when destroyed). 28x20, 2 frames, straight top-down, faces DOWN.
-# light: top-left. K exterior outline; seams where the engine pods meet the hull.
-# Bulky olive transport: 18px hull, two rear-thrust engine pods (nozzles at the top = rear),
-# recessed cargo bay (dark walls up-left, lit walls down-right) carrying a gold capsule (the cargo marking),
-# red 2x2 sensor/cockpit in the blunt nose (bottom).
-# Palette: olive a b c d e, steel 2, red n r, gold Y G L, fire O Q, K (14 colours).
-# Frames: 0 nozzle fire O, 1 nozzle fire Q (flicker pair, 100 ms each, loop). Only 4 nozzle pixels change.
+# SKIFF: relit from sketch/skiff.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-a #1b2622  olive-0
-b #31443a  olive-1
-c #4f6852  olive-2
-d #7e9a78  olive-3
-e #b9cfa2  olive-4
-2 #2f3a5a  steel-1
-n #92203a  red-1
-r #da3d4f  red-2
-Y #a87b22  gold-1
-G #e8c252  gold-2
-L #fff2a8  gold-3 glint
-O #ec7424  fire-2
-Q #ffb347  fire-3
-ramp olive a b c d e
-ramp red n r
-ramp fire O Q
-ramp gold Y G L
-frame f0 100
-............................
-.KKKK.KKKKKKKKKKKKKKKK.KKKK.
-.KOOKKeedddddddddddddcKKOOK.
-K2222KdccccccccccccccbK2222K
-KddccKdccccccccccccccbKddccK
-KdccbKdccaaaaaaaaaaccbKdccbK
-KdccbKdccabbbbbbbbcccbKdccbK
-KdccbKdccabbGGGGbbcccbKdccbK
-KdccbKdccabGLGGGYbcccbKdccbK
-KdccbKdccabGGGGYYbcccbKdccbK
-KdccbKdccabbYYYYbbcccbKdccbK
-KcccbKdccabbbbbbbbcccbKcccbK
-KcbbbKdcccdddddddddccbKcbbbK
-.KKKKKdccccccKKccccccbKKKKK.
-.....KdcccccKrrKcccccbK.....
-.....KdcccccKnnKcccccbK.....
-......KccccccKKbbbbbbK......
-.......KccccccbbbbbbK.......
-........KKKKKKKKKKKK........
-............................
+K #0b0d1a outline
+d #261a2e shared-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+N #bfbdc8 steel-pale
+b #4e4475 armour-mid
+m #867db2 armour-light
+o #ecdcc4 bone
+g #4e9a1e core-dark
+G #a8f030 core
+w #f0ffb0 core-glint
+y #a87b22 capsule-dark
+Y #e8c252 capsule
+z #fff2a8 capsule-glint
 frame f1 100
 ............................
-.KKKK.KKKKKKKKKKKKKKKK.KKKK.
-.KQQKKeedddddddddddddcKKQQK.
-K2222KdccccccccccccccbK2222K
-KddccKdccccccccccccccbKddccK
-KdccbKdccaaaaaaaaaaccbKdccbK
-KdccbKdccabbbbbbbbcccbKdccbK
-KdccbKdccabbGGGGbbcccbKdccbK
-KdccbKdccabGLGGGYbcccbKdccbK
-KdccbKdccabGGGGYYbcccbKdccbK
-KdccbKdccabbYYYYbbcccbKdccbK
-KcccbKdccabbbbbbbbcccbKcccbK
-KcbbbKdcccdddddddddccbKcbbbK
-.KKKKKdccccccKKccccccbKKKKK.
-.....KdcccccKrrKcccccbK.....
-.....KdcccccKnnKcccccbK.....
-......KccccccKKbbbbbbK......
-.......KccccccbbbbbbK.......
-........KKKKKKKKKKKK........
+.KKK...KKKKKKKKKKKKKK...KKK.
+KNNNK.KooooooommmmmmbK.KNNnK
+KnnXK.KommddddddddmmbK.KdnnK
+KombXXXommdYYYYYbbmmbnndbmbK
+KombK.KommdYzYYYybmmbK.KbmbK
+KombK.KommdYYYYyybmmbK.KbmbK
+KombK.KommdyyyyybbmmbK.KbmbK
+KombnnoommbbbbbbbbmmbnnbbmbK
+KombK.KoddddddddddddbK.KbmbK
+KombK.KooooooommmmmmbK.KbmbK
+KdddK.KooobmmmmmmbbbbK.KdddK
+KombK..KoobmmmmmmbbbK..KbbbK
+.KmbK..KooobmmmmbbbbK..KbbK.
+.KmbK...KoobmmmmbbbK...KbbK.
+..KbK...KooobmmbbbbK...KbK..
+..KoK....KobXXddbbK....KbK..
+...K.....KbgGwwGgbK.....K...
+..........KbXXddbK..........
+...........KKKKKK...........
+frame f2 100
 ............................
+.KKK...KKKKKKKKKKKKKK...KKK.
+KnnnK.KooooooommmmmmbK.KnnnK
+KnnXK.KommddddddddmmbK.KdnnK
+KombXXXommdYYYYYbbmmbnndbmbK
+KombK.KommdYzYYYybmmbK.KbmbK
+KombK.KommdYYYYyybmmbK.KbmbK
+KombK.KommdyyyyybbmmbK.KbmbK
+KombnnoommbbbbbbbbmmbnnbbmbK
+KombK.KoddddddddddddbK.KbmbK
+KombK.KooooooommmmmmbK.KbmbK
+KdddK.KooobmmmmmmbbbbK.KdddK
+KombK..KoobmmmmmmbbbK..KbbbK
+.KmbK..KooobmmmmbbbbK..KbbK.
+.KmbK...KoobmmmmbbbK...KbbK.
+..KbK...KooobmmbbbbK...KbK..
+..KoK....KobXXddbbK....KbK..
+...K.....KbgGwwGgbK.....K...
+..........KbXXddbK..........
+...........KKKKKK...........

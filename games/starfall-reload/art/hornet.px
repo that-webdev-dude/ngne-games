@@ -1,64 +1,56 @@
-# hornet.px - aimed-shooter fighter
-# canvas 20x20, 2 frames (pincer twitch, loop). Faces DOWN (nose at the bottom).
-# narrow olive fuselage; short wings swept back to high tips; from each tip a 2 px prong sweeps
-# FORWARD (down) and inward towards the nose, giving a horseshoe silhouette open to the front.
-# red nose accent 2x2 at the front between the prongs. Frame b: prong tips close 1 px (pincer).
-# light: top-left (left half lit, right half one olive step darker; red nose E/e lit, e/R shade).
-# smallest must-read feature: red nose 2x2.
-# anchor: frame centre (10,10).
-# timing: a 167 ms, b 83 ms (quick snap).
+# HORNET: relit from sketch/hornet.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-E #ff8a86  red-3
-K #0b0d1a  outline shared-dark
-N #4f6852  olive-2
-R #92203a  red-1
-V #b9cfa2  olive-4
-e #da3d4f  red-2
-m #1b2622  olive-0
-n #31443a  olive-1
-v #7e9a78  olive-3
-ramp olive m n N v V
-ramp red R e E
-frame a 167
+K #0b0d1a outline
+d #261a2e shared-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+b #804676 armour-mid
+m #bd7da5 armour-light
+o #ecdcc4 bone
+g #4e9a1e core-dark
+G #a8f030 core
+w #f0ffb0 core-glint
+frame f1 100
 ....................
+.........KK.........
+........KomK........
+........KmmK........
+KKK....KXXddK....KKK
+KooKK..KommbK..KKmbK
+.KmooKKmmmmmbKKmmbK.
+.KbmmmodmbbmdmmmmbK.
+..KbbmmdbbbbdmmbbK..
+...KbbmdXnnddmbbK...
+..KoomdXommmddmmbK..
+.KoommKXmmmddKmmmbK.
+KombK..KbmmbK..KbmbK
+KmbK...KbwGbK...KbbK
+KmbK....KGgK....KbbK
+KmbK.K..KnnK..K.KbbK
+.KmbKoK..KK..KbKbbK.
+..KbbbK......KbbbK..
+...KKK........KKK...
 ....................
+frame f2 100
 ....................
-.......KKKKKK.......
-.KK....KVVvvK....KK.
-KVVKK..KVvNvK..KKvvK
-KVvvvKKNVvNvnKKNNNvK
-KVvvvvvNvvNNnNNNNNvK
-KvvKKNNNvvNNnnnKKNNK
-KvNK.KKKvNnNKKK.KnNK
-KvNK...KvNnNK...KnNK
-.KvNK..KvNnNK..KnNK.
-.KvNK..KNNnnK..KnNK.
-.KvNK..KNNnnK..KnNK.
-..KvK..KNnmnK..KNK..
-..KvK...KEeK...KNK..
-...KvK..KeRK..KNK...
-....K....KK....K....
-....................
-....................
-frame b 83
-....................
-....................
-....................
-.......KKKKKK.......
-.KK....KVVvvK....KK.
-KVVKK..KVvNvK..KKvvK
-KVvvvKKNVvNvnKKNNNvK
-KVvvvvvNvvNNnNNNNNvK
-KvvKKNNNvvNNnnnKKNNK
-KvNK.KKKvNnNKKK.KnNK
-KvNK...KvNnNK...KnNK
-.KvNK..KvNnNK..KnNK.
-.KvNK..KNNnnK..KnNK.
-.KvNK..KNNnnK..KnNK.
-..KvK..KNnmnK..KNK..
-...KvK..KEeK..KNK...
-....KvK.KeRK.KNK....
-.....K...KK...K.....
-....................
+.........KK.........
+........KomK........
+........KmmK........
+KKK....KXXddK....KKK
+KooKK..KommbK..KKmbK
+.KmooKKmmmmmbKKmmbK.
+.KbmmmodmbbmdmmmmbK.
+..KbbmmdbbbbdmmbbK..
+...KbbmdXnnddmbbK...
+..KoomdXommmddmmbK..
+.KoommKXmmmddKmmmbK.
+KombK..KbmmbK..KbmbK
+KmbK...KbwGbK...KbbK
+KmbK....KGgK....KbbK
+KmbK..K.KnnK.K..KbbK
+.KmbKKoK.KK.KbKKbbK.
+..KbbbbK....KbbbbK..
+...KKKK......KKKK...
 ....................

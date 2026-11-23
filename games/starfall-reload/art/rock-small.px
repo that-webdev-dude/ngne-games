@@ -1,50 +1,46 @@
-# rock-small - two small debris variants (frames are variants, not animation). 16x16 each.
-# Top-down, light top-left. Low-poly planes quantised to a 4-step ramp. K exterior outline.
-# Frame 0 rust chunk (rust t T h H). Frame 1 grey slag chunk (steel 2 3 4 5) with a rust stain.
+# ROCK-SMALL: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-K #0b0d1a  outline
-2 #2f3a5a  steel-1
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-5 #a7b8d8  steel-4
-t #2a1a16  rust-0
-T #4d2e24  rust-1
-h #7a4a32  rust-2
-H #b0744a  rust-3
-ramp steel 2 3 4 5
-ramp rust t T h H
-frame rust 500
+K #0b0d1a outline
+a #2a1a16
+b #4d2e24
+c #2f3a5a
+d #7a4a32
+e #4a5a82
+f #b0744a
+g #7184ad
+h #a7b8d8
+frame f1 100
 ................
 .......KKKK.....
-....KKKHHHTK....
-...KHHHHHHTTK...
-...KHHHHHHTTTK..
-..KHHHHHHTTTTTK.
-..KHHHHHHTTTttK.
-.KHHHhhhhtttttK.
-.KhhhhhhTtttttK.
-.KhhhhhTTTtttK..
-..KhhhTTTTtttK..
-..KhhTTTTttttK..
-..KhTTtttttKK...
-...KKKtttKK.....
+....KKKfffbK....
+...KffffffbbK...
+...KffffffbbbK..
+..KffffffbbbbbK.
+..KffffffbbbaaK.
+.KfffddddaaaaaK.
+.KddddddbaaaaaK.
+.KdddddbbbaaaK..
+..KdddbbbbaaaK..
+..KddbbbbaaaaK..
+..KdbbaaaaaKK...
+...KKKaaaKK.....
 ......KKK.......
 ................
-frame slag 500
+frame f2 100
 ................
 .........KKKK...
-.....KKKK555K...
-....K55555533K..
-...K555555333K..
-..K5555553333K..
-.K444444422233K.
-.K444444222222K.
-.K444444222222K.
-.K444hh422222K..
-.K444hTT22222K..
-.K33333222222K..
-..K333222222K...
-...K33222KKKK...
+.....KKKKhhhK...
+....KhhhhhheeK..
+...KhhhhhheeeK..
+..KhhhhhheeeeK..
+.KgggggggccceeK.
+.KggggggccccccK.
+.KggggggccccccK.
+.KgggddgcccccK..
+.KgggdbbcccccK..
+.KeeeeeccccccK..
+..KeeeccccccK...
+...KeecccKKKK...
 ....KKKKK.......
 ................

@@ -1,84 +1,78 @@
-# capsule.px - weapon capsule pickup
-# canvas 16x16, 4 frames = 4 weapon letters, order V, L, H, S (frame index = weapon; not an animation).
-# gold rounded pod (gold ramp g G h H), K outline, recessed dark window with a bold cyan letter.
-# light: top-left (H rim top-left, h faces, G/g bottom-right).
-# smallest must-read feature: letter strokes 2 px wide (vertical) so V/L/H/S separate at 1x.
-# anchor: frame centre (8,8).
+# CAPSULE: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-1 #1c2238  steel-0
-G #a87b22  gold-1
-H #fff2a8  gold-3
-K #0b0d1a  outline shared-dark
-b #46c8ee  cyan-2
-g #5e3f10  gold-0
-h #e8c252  gold-2
-ramp gold g G h H
-frame V
+K #0b0d1a outline
+a #1c2238
+b #5e3f10
+c #a87b22
+d #46c8ee
+e #e8c252
+f #fff2a8
+frame f1 100
 .....KKKKKK.....
-...KKHHHHhhKK...
-..KHHhhhhhhhGK..
-.KHhhKKKKKKhGGK.
-.KHhKbb11bb1GGK.
-KHhhKbb11bb1GGGK
-KHhhKbb11bb1GGGK
-KhhhKbb11bb1GGgK
-KhhhK1bbbb11GGgK
-KhhhK1bbbb11GGgK
-KhhhK11bb111GGgK
-.KhhG111111GGgK.
-.KhhGGGGGGGGggK.
-..KGGGGGGggggK..
-...KKggggggKK...
+...KKffffeeKK...
+..KffeeeeeeecK..
+.KfeeKKKKKKeccK.
+.KfeKddaaddaccK.
+KfeeKddaaddacccK
+KfeeKddaaddacccK
+KeeeKddaaddaccbK
+KeeeKaddddaaccbK
+KeeeKaddddaaccbK
+KeeeKaaddaaaccbK
+.KeecaaaaaaccbK.
+.KeeccccccccbbK.
+..KccccccbbbbK..
+...KKbbbbbbKK...
 .....KKKKKK.....
-frame L
+frame f2 100
 .....KKKKKK.....
-...KKHHHHhhKK...
-..KHHhhhhhhhGK..
-.KHhhKKKKKKhGGK.
-.KHhKbb11111GGK.
-KHhhKbb11111GGGK
-KHhhKbb11111GGGK
-KhhhKbb11111GGgK
-KhhhKbb11111GGgK
-KhhhKbbbbbb1GGgK
-KhhhKbbbbbb1GGgK
-.KhhG111111GGgK.
-.KhhGGGGGGGGggK.
-..KGGGGGGggggK..
-...KKggggggKK...
+...KKffffeeKK...
+..KffeeeeeeecK..
+.KfeeKKKKKKeccK.
+.KfeKddaaaaaccK.
+KfeeKddaaaaacccK
+KfeeKddaaaaacccK
+KeeeKddaaaaaccbK
+KeeeKddaaaaaccbK
+KeeeKddddddaccbK
+KeeeKddddddaccbK
+.KeecaaaaaaccbK.
+.KeeccccccccbbK.
+..KccccccbbbbK..
+...KKbbbbbbKK...
 .....KKKKKK.....
-frame H
+frame f3 100
 .....KKKKKK.....
-...KKHHHHhhKK...
-..KHHhhhhhhhGK..
-.KHhhKKKKKKhGGK.
-.KHhKbb11bb1GGK.
-KHhhKbb11bb1GGGK
-KHhhKbb11bb1GGGK
-KhhhKbbbbbb1GGgK
-KhhhKbb11bb1GGgK
-KhhhKbb11bb1GGgK
-KhhhKbb11bb1GGgK
-.KhhG111111GGgK.
-.KhhGGGGGGGGggK.
-..KGGGGGGggggK..
-...KKggggggKK...
+...KKffffeeKK...
+..KffeeeeeeecK..
+.KfeeKKKKKKeccK.
+.KfeKddaaddaccK.
+KfeeKddaaddacccK
+KfeeKddaaddacccK
+KeeeKddddddaccbK
+KeeeKddaaddaccbK
+KeeeKddaaddaccbK
+KeeeKddaaddaccbK
+.KeecaaaaaaccbK.
+.KeeccccccccbbK.
+..KccccccbbbbK..
+...KKbbbbbbKK...
 .....KKKKKK.....
-frame S
+frame f4 100
 .....KKKKKK.....
-...KKHHHHhhKK...
-..KHHhhhhhhhGK..
-.KHhhKKKKKKhGGK.
-.KHhK1bbbbb1GGK.
-KHhhKbb11111GGGK
-KHhhKbb11111GGGK
-KhhhK1bbbb11GGgK
-KhhhK1111bb1GGgK
-KhhhK1111bb1GGgK
-KhhhKbbbbb11GGgK
-.KhhG111111GGgK.
-.KhhGGGGGGGGggK.
-..KGGGGGGggggK..
-...KKggggggKK...
+...KKffffeeKK...
+..KffeeeeeeecK..
+.KfeeKKKKKKeccK.
+.KfeKadddddaccK.
+KfeeKddaaaaacccK
+KfeeKddaaaaacccK
+KeeeKaddddaaccbK
+KeeeKaaaaddaccbK
+KeeeKaaaaddaccbK
+KeeeKdddddaaccbK
+.KeecaaaaaaccbK.
+.KeeccccccccbbK.
+..KccccccbbbbK..
+...KKbbbbbbKK...
 .....KKKKKK.....

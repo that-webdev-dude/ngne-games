@@ -1,46 +1,38 @@
-# bomb-pickup.px - bomb stock pickup
-# canvas 12x12, 2 frames (pulse pair, loop): a = core at rest, b = core flares (hot fire-4 centre grows).
-# gold octagonal shell (gold ramp), K outline and K socket ring around a 4x4 orange core (fire ramp).
-# light: top-left on the shell; the core is self-lit (hot centre, cooler corners).
-# smallest must-read feature: orange core 4x4 inside the gold shell.
-# anchor: frame centre (6,6).
-# timing: a 200 ms, b 133 ms.
+# BOMB-PICKUP: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-F #a8401a  fire-1
-G #a87b22  gold-1
-H #fff2a8  gold-3
-K #0b0d1a  outline shared-dark
-O #ffb347  fire-3
-g #5e3f10  gold-0
-h #e8c252  gold-2
-o #ec7424  fire-2
-y #fff0b8  fire-4
-ramp fire F o O y
-ramp gold g G h H
-frame a 200
+K #0b0d1a outline
+a #5e3f10
+b #a8401a
+c #a87b22
+d #ec7424
+e #ffb347
+f #e8c252
+g #fff0b8
+h #fff2a8
+frame f1 100
 ...KKKKKK...
-..KHHHhhhK..
-.KHHhhhhhGK.
-KHhhKKKKhGgK
-KHhKFooFKGgK
-KHhKoOOoKGgK
-KhhKoOOoKGgK
-KhhKFooFKGgK
-KhhhKKKKGGgK
-.KhGGGGGggK.
-..KGGGgggK..
+..KhhhfffK..
+.KhhfffffcK.
+KhffKKKKfcaK
+KhfKbddbKcaK
+KhfKdeedKcaK
+KffKdeedKcaK
+KffKbddbKcaK
+KfffKKKKccaK
+.KfcccccaaK.
+..KcccaaaK..
 ...KKKKKK...
-frame b 133
+frame f2 100
 ...KKKKKK...
-..KHHHhhhK..
-.KHHhhhhhGK.
-KHhhKKKKhGgK
-KHhKoOOoKGgK
-KHhKOyyOKGgK
-KhhKOyyOKGgK
-KhhKoOOoKGgK
-KhhhKKKKGGgK
-.KhGGGGGggK.
-..KGGGgggK..
+..KhhhfffK..
+.KhhfffffcK.
+KhffKKKKfcaK
+KhfKdeedKcaK
+KhfKeggeKcaK
+KffKeggeKcaK
+KffKdeedKcaK
+KfffKKKKccaK
+.KfcccccaaK.
+..KcccaaaK..
 ...KKKKKK...

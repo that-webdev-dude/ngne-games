@@ -1,44 +1,34 @@
-# turret-base - rooftop turret mount (ground unit). 22x22, 1 frame, straight top-down, front = down.
-# light: top-left. K exterior outline; seams only where the armour ring sits on the deck plate.
-# Layers: rust octagonal deck plate (T h H) with four bolt slots and a 1px cast shadow from the ring;
-# dark olive armour ring (a b c d) - darker than the barrel hub so the rotating gun separates from it;
-# 10px socket centred on the frame centre (11,11 edge coords) where turret-barrel's 8px hub sits.
-# Red accent: 2x2 sensor lamp on the front (bottom) lip of the ring.
-# Generated under-drawing, hand-finished in this grid.
+# TURRET-BASE: relit from sketch/turret-base.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-a #1b2622  olive-0
-b #31443a  olive-1
-c #4f6852  olive-2
-d #7e9a78  olive-3
-n #92203a  red-1
-r #da3d4f  red-2
-T #4d2e24  rust-1
-h #7a4a32  rust-2
-H #b0744a  rust-3
-ramp olive a b c d
-ramp red n r
-ramp rust T h H
+K #0b0d1a outline
+d #261a2e shared-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+b #665350 armour-mid
+m #998177 armour-light
+o #ecdcc4 bone
+frame f1 100
 ...KKKKKKKKKKKKKKKK...
-..KHHHHHHHHHHHHHHHhK..
-.KHTThhhhhhhhhhhTThhK.
-KHhhhhhhKKKKKKhhhhhhhK
-KHhhhhKKddccccKKhhhhTK
-KHhhhKdcccccbbbbKhhhTK
-KHhhKdcccKKKKbbbbKhhTK
-KHhhKdcKKaaaaKKbbKThTK
-KHhKdccKaaaaaaKbbaKTTK
-KHhKdcKaaaaaaaaKbaKTTK
-KHhKdcKaaaaaaaaKbaKTTK
-KHhKccKaaaaaaabKaaKTTK
-KHhKcbKaaaaaaabKaaKTTK
-KHhKcbbKaaaabbKaaaKTTK
-KHhhKbbKKabbbKKaaKTTTK
-KHhhKbbbbKKKKaaaaKThTK
-KHhhhKbbaarraaaaKTThTK
-KHhhhhKKaannaaKKTThhTK
-KhhhhhhhKKKKKKTTThhhTK
-.KhTThhhhTTTTThhTThTK.
-..KhTTTTTTTTTTTTTTTK..
+..KnndooooommmmmdXXK..
+.KnndoommmmbbbbmmdXdK.
+KnndoommmmmbbbbbmmdXXK
+KndodmmmmmmbbbbbbdmdXK
+KdommdmmmmmbbbbbdbbmdK
+KommmmdbddddddddbbbbmK
+KommmmbdXXXXXXddbbbbmK
+KommmbdXXddddXXddbbbmK
+KoXXmbdXddddddXddbddmK
+KommmbdXddddddXddbbbmK
+KoXXmbdXddddddXddbddmK
+KombbbdXddddddXddddbmK
+KmbbbbdXXddddXXdddddbK
+KmbbbbbdXXXXXXddddddbK
+KmbbbbdbddddddddddddbK
+KdbbbdbbbbbddddddddddK
+KXdbdbbbddddddddddddXK
+KXXdbddddXXXXddddddXXK
+.KXXddddddddddddddXdK.
+..KXXddddddddddddXXK..
 ...KKKKKKKKKKKKKKKK...

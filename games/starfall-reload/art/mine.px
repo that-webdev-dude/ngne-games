@@ -1,48 +1,39 @@
-# mine - Area 3 drifting space mine (hazard: shoot it, don't touch it). 12x12, 2 frames, straight top-down,
-# radially symmetric (no facing; safe to rotate). light: top-left. K exterior outline; four diagonal contact
-# horns (an X) pierce the outline, unlike the sentry's + spikes.
-# Palette: steel 1 2 3 4 5, fire f o O y, K (10 colours). Dark steel shell, lit top-left, shaded bottom-right.
-# Accent: thruster-orange beacon 2x2 at pixels (5,5)-(6,6) inside a K socket. Orange, not red (the sentry's
-# core), gold (pickup shells) or cyan (player). Smallest must-read feature: the 2x2 beacon.
-# Frames: 0 dim (beacon o over f) 333 ms, 1 flash (beacon y/O) 167 ms, loop. Only the 4 beacon pixels change.
-# Anchor: frame centre (6,6). In a field, offset each mine's blink phase so the group twinkles, not strobes.
+# MINE: relit from mine.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-1 #1c2238  steel-0
-2 #2f3a5a  steel-1
-3 #4a5a82  steel-2
-4 #7184ad  steel-3
-5 #a7b8d8  steel-4
-f #a8401a  fire-1
-o #ec7424  fire-2
-O #ffb347  fire-3
-y #fff0b8  fire-4 glint
-ramp steel 1 2 3 4 5
-ramp fire f o O y
-frame dim 333
+K #0b0d1a outline
+x #1f1e26 steel-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+N #bfbdc8 steel-pale
+1 #a8401a light-dark
+2 #ec7424 light-mid
+3 #ffb347 light
+4 #fff0b8 light-glint
+frame f1 100
 .K........K.
-K5K.KKKK.K4K
-.K5K5544K4K.
-..K544443K..
-.K444KK332K.
-.K44KooK32K.
-.K43KffK22K.
-.K333KK221K.
-..K332221K..
-.K4K2221K3K.
-K4K.KKKK.K3K
+KNK.KKKK.KnK
+.KNKNNnnKnK.
+..KNnnnnXK..
+.KnnnxxXXXK.
+.Knnx22xXXK.
+.KnXx11xXXK.
+.KXXXxxXXxK.
+..KXXXXXxK..
+.KnKXXXxKXK.
+KnK.KKKK.KXK
 .K........K.
-frame flash 167
+frame f2 100
 .K........K.
-K5K.KKKK.K4K
-.K5K5544K4K.
-..K544443K..
-.K444KK332K.
-.K44KyOK32K.
-.K43KOOK22K.
-.K333KK221K.
-..K332221K..
-.K4K2221K3K.
-K4K.KKKK.K3K
+KNK.KKKK.KnK
+.KNKNNnnKnK.
+..KNnnnnXK..
+.KnnnxxXXXK.
+.Knnx43xXXK.
+.KnXx33xXXK.
+.KXXXxxXXxK.
+..KXXXXXxK..
+.KnKXXXxKXK.
+KnK.KKKK.KXK
 .K........K.

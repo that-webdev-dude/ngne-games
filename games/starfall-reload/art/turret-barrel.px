@@ -1,32 +1,31 @@
-# turret-barrel - rotating gun for turret-base. 8x16, 1 frame, straight top-down, points UP (engine rotates).
-# Pivot = frame centre (4,8 in pixel-edge coords): the 8px hub occupies rows 4-11, cols 0-7.
-# light: top-left (engine rotation will turn it; shading kept mild and mostly radial-safe).
-# Parts: muzzle brake (rows 0-2), barrel (rows 2-4), hub with 2x2 red sight, breech counterweight (rows 11-14).
-# Palette: olive a b c d e, red n r, K.
+# TURRET-BARREL: relit from sketch/turret-barrel.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a  outline
-b #31443a  olive-1
-c #4f6852  olive-2
-d #7e9a78  olive-3
-e #b9cfa2  olive-4
-n #92203a  red-1
-r #da3d4f  red-2
-ramp olive b c d e
-ramp red n r
+K #0b0d1a outline
+d #261a2e shared-dark
+n #7c7a88 steel-light
+N #bfbdc8 steel-pale
+b #665350 armour-mid
+m #998177 armour-light
+o #ecdcc4 bone
+g #4e9a1e core-dark
+G #a8f030 core
+w #f0ffb0 core-glint
+frame f1 100
 ..KKKK..
-.KeedbK.
-.KKdbKK.
-..KdbK..
-..KdbK..
-.KedccK.
-KeddccbK
-KddrrcbK
-KdcnncbK
-KccccbbK
-.KcbbbK.
-.KKKKKK.
-.KcccbK.
+.KNNNnK.
+.KKnnKK.
+..KNNK..
+.KKNNKK.
+KooommbK
+KommmmbK
+KomwGmbK
+KmmGgmbK
+KmmmmmbK
+KmmmmmbK
+.KddddK.
+.KmmmbK.
 .KbbbbK.
-..KKKK..
+.KKKKKK.
 ........

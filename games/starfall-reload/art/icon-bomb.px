@@ -1,30 +1,23 @@
-# icon-bomb.px - HUD bomb icon
-# canvas 9x10, 1 frame. Miniature of the bomb pickup: gold octagonal shell with a K socket ring
-# around an orange core, so HUD stock and pickup share one gold + orange code.
-# light: top-left. K exterior outline.
-# smallest must-read feature: orange core 3x4 inside the gold shell.
-# anchor: frame centre.
+# ICON-BOMB: ported unchanged from the game sprite. light: top-left.
 palette
 . transparent
-F #a8401a  fire-1
-G #a87b22  gold-1
-H #fff2a8  gold-3
-K #0b0d1a  outline shared-dark
-O #ffb347  fire-3
-g #5e3f10  gold-0
-h #e8c252  gold-2
-o #ec7424  fire-2
-y #fff0b8  fire-4
-ramp fire F o O y
-ramp gold g G h H
-frame bomb
+K #0b0d1a outline
+a #5e3f10
+b #a8401a
+c #a87b22
+d #ec7424
+e #ffb347
+f #e8c252
+g #fff0b8
+h #fff2a8
+frame f1 100
 ..KKKKK..
-.KHHhhGK.
-KHhKKKhGK
-KHKoOoKgK
-KHKOyOKgK
-KhKOOoKgK
-KhKooFKgK
-KhhKKKGgK
-.KhGGGgK.
+.KhhffcK.
+KhfKKKfcK
+KhKdedKaK
+KhKegeKaK
+KfKeedKaK
+KfKddbKaK
+KffKKKcaK
+.KfcccaK.
 ..KKKKK..

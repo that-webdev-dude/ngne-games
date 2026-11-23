@@ -1,85 +1,80 @@
-# halberd-pod - Halberd wing gun pod, 32x32 x2 (0 intact, 1 damaged/burnt), faces down
-# frames are states, not a loop; centre (16,16) sits on the wing socket
-# light top-left, K outline, steel; fire ramp only on the damaged frame
+# HALBERD-POD: relit from sketch/halberd-pod.png, silhouette unchanged.
+# light: top-left, shaded per plate. K on the outer contour only; inner seams use the dark step.
 palette
 . transparent
-K #0b0d1a outline shared dark
-1 #1c2238 steel-0
-2 #2f3a5a steel-1
-3 #4a5a82 steel-2
-4 #7184ad steel-3
-5 #a7b8d8 steel-4
-6 #e4ecfa steel-5 highlight
-z #5c1d12 fire-0
-x #a8401a fire-1
-c #ec7424 fire-2
-v #ffb347 fire-3
-b #fff0b8 fire-4
-ramp steel 1 2 3 4 5 6
-ramp fire z x c v b
-frame intact 100
+K #0b0d1a outline
+x #1f1e26 steel-dark
+X #45444e steel-mid
+n #7c7a88 steel-light
+N #bfbdc8 steel-pale
+a #4c3a30 accent-dark
+A #886c4e accent-mid
+h #b8a680 accent-light
+G #a8f030 core
+w #f0ffb0 core-glint
+frame f1 100
+...........KKKKKKKKKK...........
+...........KnnXXXXXXK...........
+...........KXXxxxxXXK...........
+....KKKKKKKKxxxxxxxxKKKKKKKK....
+...KNNNNNxNNNNNNNNNNNNxNNNNnK...
+..KNXXXXXxNnnnnnnnnnnNxXXXXXnK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KNxxxxXxNnnnnnnnnnnNxXxxxxXK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KNxxxxXxNnnnnnnnnnnNxXxxxxXK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KNxxxxXxNnnnnnnnnnnNxXxxxxXK..
+..KNXXXXXxNxxxxxxxxxxNxXXXXXXK..
+..KNXXXXXxNNNNNNNNNNNNxXXXXXXK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KxNXXXXxNnnnnnnnnnnNxXXXXXxK..
+..KhxXXXXxNnnnnnnnnnnNxXXXXxxK..
+.KnXhxXXXxNXXXXXXXXXXNxXXXxhXxK.
+KnXXXhxXxxxxxxxxxxxxxxxxXxhXXXxK
+KKKnXXhKnnnnnnnnnnnnnnnXKhXXxKKK
+..KnXAK.KxxxxxxxxxxxxxxK.KAXxK..
+.KnXXAK.KhXXXXXnxXXXXXaK.KAXXxK.
+KnXXXAK.KhXXXXXnxXXXXXaK.KAXXXxK
+KKKnXAK.KhXXXXXnxXXXXXaK.KAXxKKK
+..KnAK...KhXXXXnxXXXXaK...KAxK..
+.KnXAK....KhXXhhaaXXaK....KAXxK.
+KnXXAK.....KhhhnnaaaK.....KAXXxK
+KKKAK.......KKKnnKKK.......KAKKK
+..KK..........KwGK..........KK..
+..............KGGK..............
 ..............KKKK..............
-............KK6555KK............
-...........K55655554K...........
-..........K5556555544K..........
-..........K4556554433K..........
-...KKKK..K445565544332K..KKKK...
-..K5432K.K445565544332K.K5432K..
-..K5432K.K445565544332K.K5432K..
-..K5432KKK445565544332KKK5432K..
-..K5432555K45565544332444K432K..
-..K5432543K45565544332432K432K..
-..K5432543K45565544332432K432K..
-..K5432543K45565544332432K432K..
-..K5432533K45565544332422K432K..
-..K5432KKK445565544332KKK5432K..
-..K5432K.KKKKKKKKKKKKKK.K5432K..
-..K5432K.K556666655443K.K5432K..
-..K5112K.K445565544332K.K5112K..
-..K5432K.K445565544332K.K5432K..
-..K5432K.K445565544332K.K5432K..
-..K5112K.K445565544332K.K5112K..
-..K5432K.K334454433222K.K5432K..
-..K5432K..K3445443322K..K5432K..
-..K5432K...K44544332K...K5432K..
-.K554322K...K454433K...K554322K.
-.K554322K....KKKKKK....K554322K.
-.K554322K..............K554322K.
-.K5KKKK2K..............K5KKKK2K.
-..KK22KK................KK22KK..
-....KK....................KK....
 ................................
-................................
-frame damaged 100
+frame f2 100
+...........KKKKKKKKKK...........
+...........KnnXXXXXXK...........
+...........KXXxxxxXXK...........
+....KKKKKKKKxxxxxxxxKKKKKKKK....
+...KNNNNXxxxxxxXnnnnnnxNNNNnK...
+..KNXXXXxxaaaaxxXXXXXnxXXXXXnK..
+..KNXXXXxxaAAaxxXXXXXnxXXXXXXK..
+..KNxxxxxxAhhAxxXXXXXnxXxxxxXK..
+..KNXXXXxxxAAxxxXXXxxnxXXXXXXK..
+..KNxxxxXxxxxxxXXXXxxnxXxxxxXK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KNxxxxXxNnnnnnnnnnnNxXxxxxXK..
+..KNXXXXXxNxxxxxxxxxxNxXXXXXXK..
+..KNXXXXXxNNNNNNNNNNNNxXXXXXXK..
+..KNXXXXXxNnnnnnnnnnnNxXXXXXXK..
+..KxNXXXXxNnnnnnnnnnnNxXXXXXxK..
+..KhxXXXXxNnnnnnnnnnnNxXXXXxxK..
+.KnXhxXXXxNXXXXXXXXXXNxXXXxhXxK.
+KnXXXhxXxxxxxxxxxxxxxxxxXxhXXXxK
+KKKnXXhKnnnnnnnnnnnnnnnXKhXXXKKK
+..KnXAK.KxxxxxxxxxxxxxxK.KhXxK..
+.KnXXAK.KhXXXXXnxXXXXXaK.KAXXxK.
+KnXXXAK.KhXXXXXnxXXXXXaK.KAXXXxK
+KKKnXAK.KhXXXXXnxXXXXXaK.KAXxKKK
+..KnAK...KhXXXXnxXXXXaK...KAxK..
+.KnXAK....KhXXhhaaXXaK....KAXxK.
+KnXXAK.....KhhhnnaaaK.....KAXXxK
+KKKAK.......KKKnnKKK.......KAKKK
+..KK..........KwGK..........KK..
+..............KGGK..............
 ..............KKKK..............
-............KK5444KK............
-...........K54544443K...........
-..........K5445444433K..........
-..........K344KKKK322K..........
-...KKKK..K334K1zz1K222K..KKKK...
-..K5432K.K33K1zxxz1K22K.K5432K..
-..K5432K.K33Kzxccxz222K.K5432K..
-..K5432KKK33Kxcvvcx222KKK5432K..
-..K5432555K34KcbvcK222333K432K..
-..K5432543K344KKKK3222322K432K..
-..K5432543K3445Kc33222322K432K..
-..K5432543K3445Kx33222322K432K..
-..K5432533K44454K33222322K432K..
-..K5432KKK444454433222KKKx432K..
-..K5432K.K22KKKKKKKKKKK.KxcvxK..
-..K5432K.K222666644443K..KxxK...
-..K5112K.K122565544332K...KK....
-..K5432K.K425565544332K.........
-..K5432K.K445565544332K.........
-..K5112K.K445565544332K.........
-..K5432K.K334454433222K.........
-..K5432K..K3445443322K..........
-..K5432K...K44544332K...........
-.K554322K...K454433K............
-.K554322K....KKKKKK.............
-.K554322K.......................
-.K5KKKK2K.......................
-..KK22KK........................
-....KK..........................
-................................
 ................................
