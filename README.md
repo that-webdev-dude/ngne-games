@@ -4,16 +4,6 @@ A collection of small games built with NGNE. Each game owns its source, assets, 
 
 ## Games
 
-### Starfall
-
-A full-window arcade shoot-em-up with three sectors, sector bosses, and a rechargeable Nova blast. Requires a WebGPU-capable desktop browser; touch controls are not included.
-
-[![Starfall facing the Starfall Engine in Midnight Citadel](games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png)](games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png)
-
-[Gameplay and controls](games/starfall/README.md) · [Source](games/starfall/) · [Screenshot provenance](games/starfall/docs/screenshots/README.md)
-
-[Open the gallery](https://that-webdev-dude.github.io/ngne-games/) or [play Starfall](https://that-webdev-dude.github.io/ngne-games/starfall/). This collection is Starfall's deployment home. Build and preview locally with the commands below.
-
 ### Starfall Reload
 
 A full-screen vertical arcade shooter in a cabinet layout: three areas, four weapon families with Shot Control, power-as-armour, graze-reloaded bombs and multi-phase bosses. Requires a WebGPU-capable desktop browser; plays with a keyboard or a standard gamepad.
@@ -22,11 +12,13 @@ A full-screen vertical arcade shooter in a cabinet layout: three areas, four wea
 
 [Gameplay and controls](games/starfall-reload/README.md) · [Source](games/starfall-reload/) · [Screenshot provenance](games/starfall-reload/docs/screenshots/README.md)
 
+[Open the gallery](https://that-webdev-dude.github.io/ngne-games/) or [play Starfall Reload](https://that-webdev-dude.github.io/ngne-games/starfall-reload/). Starfall Reload replaces the original Starfall, which is retired; the old `/starfall/` address redirects to it. Build and preview locally with the commands below.
+
 ## Requirements
 
 - Node.js 24 or newer
 - npm
-- A desktop browser with WebGPU support to play Starfall, served over localhost or HTTPS
+- A desktop browser with WebGPU support to play Starfall Reload, served over localhost or HTTPS
 
 ## Install
 
@@ -41,21 +33,20 @@ The collection uses npm workspaces and a single root `package-lock.json`.
 Run these commands from the repository root:
 
 ```sh
-npm run dev --workspace=starfall -- --port 5173 --strictPort
+npm run dev --workspace=starfall-reload -- --port 5173 --strictPort
 npm run typecheck
 npm test
 npm run build
-npm run check:campaign
 ```
 
-To build or preview Starfall independently:
+To build or preview Starfall Reload independently:
 
 ```sh
-npm run build --workspace=starfall
-npm run preview --workspace=starfall -- --port 4173 --strictPort
+npm run build --workspace=starfall-reload
+npm run preview --workspace=starfall-reload -- --port 4173 --strictPort
 ```
 
-Game output is in `games/starfall/dist/`. Root `build` typechecks/builds every game, then assembles the gallery and games into root `dist/`. Root `test` runs site-tooling checks and all game suites. `check:campaign` runs Starfall seeds 17, 41, and 83 and fails unless all three clear every sector without diagnostics. Its ignored output is `.test-output/campaign-bot.json`; it does not verify rendering, audible audio, controllers, or human difficulty. See the [Starfall README](games/starfall/README.md) for gameplay, controls, fixtures, and detailed checks.
+Game output is in `games/starfall-reload/dist/`. Root `build` typechecks/builds every game, then assembles the gallery and games into root `dist/`. Root `test` runs site-tooling checks and all game suites, including Starfall Reload's headless campaign: a bot clears all three areas with each weapon. It does not verify rendering, audible audio, controllers, or human difficulty. See the [Starfall Reload README](games/starfall-reload/README.md) for gameplay, controls, and detailed checks.
 
 To preview the combined artifact:
 
@@ -64,27 +55,26 @@ npm run build
 npm run preview -- --port 4173 --strictPort
 ```
 
-Open the printed local URL for the gallery, or `/starfall/` on that origin for the game. Production paths are `/ngne-games/` and `/ngne-games/starfall/`; local preview at `/` alone does not verify a repository prefix.
+Open the printed local URL for the gallery, or `/starfall-reload/` on that origin for the game. Production paths are `/ngne-games/` and `/ngne-games/starfall-reload/`; local preview at `/` alone does not verify a repository prefix.
 
-`site/games.json` owns catalog metadata. Play and source links are derived from each game's slug and workspace directory. Build every game first; `npm run build:site` then assembles existing game output without running game builds. Missing inputs, unsafe paths, symlinks/junctions, and non-production files in game builds fail assembly. The gallery has no game runtime and links to each full-window game.
+`site/games.json` owns catalog metadata. `site/redirects.json` lists retired game slugs; each gets a small page that sends visitors on to a catalog game, so `/starfall/` leads to `/starfall-reload/`. Play and source links are derived from each game's slug and workspace directory. Build every game first; `npm run build:site` then assembles existing game output without running game builds. Missing inputs, unsafe paths, symlinks/junctions, and non-production files in game builds fail assembly. The gallery has no game runtime and links to each full-window game.
 
 ## Repository layout
 
 ```text
-games/starfall/       Game source, assets, tests, configuration, documentation, legal notices
-games/starfall-reload/ Second game: source, sprites and .px sources, tests, documentation, notices
-site/                Static gallery template, stylesheet, and catalog
-tooling/             Site assembly, campaign assertions, and tooling tests
+games/starfall-reload/ Game source, sprites and .px sources, tests, documentation, legal notices
+site/                Static gallery template, stylesheet, catalog, and redirects
+tooling/             Site assembly and tooling tests
 docs/                Contributor and deployment guides
 .github/workflows/   CI and manual Pages deployment
 package-lock.json    The single collection lockfile
 ```
 
-Each game owns its runtime dependencies and can pin its own published NGNE version. Shared developer tools live at the root. Legal notices and asset provenance are game-specific; Starfall's NGNE notices do not establish a collection-wide license.
+Each game owns its runtime dependencies and can pin its own published NGNE version. Shared developer tools live at the root. Legal notices and asset provenance are game-specific; a game's NGNE notice does not establish a collection-wide license.
 
 ## CI and deployment
 
-CI checks pull requests targeting `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It installs with `npm ci`, checks formatting, runs tooling/game tests, builds the complete collection, and asserts the three Starfall campaign clears. Failed runs upload scoped logs and any campaign report for seven days.
+CI checks pull requests targeting `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It installs with `npm ci`, checks formatting, runs tooling/game tests and builds the complete collection. Failed runs upload scoped logs for seven days.
 
 Pages publication is manual-only and guarded to `main`; pushing or merging does not deploy. See [Deployment](docs/deployment.md) for prerequisites, separate approvals, verification, and rollback. Check workflow results in [GitHub Actions](https://github.com/that-webdev-dude/ngne-games/actions).
 

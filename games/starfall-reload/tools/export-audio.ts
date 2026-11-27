@@ -17,7 +17,7 @@ function toWav(r: Rendered): Uint8Array {
     const buf = new ArrayBuffer(44 + dataBytes);
     const v = new DataView(buf);
     const text = (at: number, s: string): void => {
-        for (let i = 0; i < s.length; i++) v.setUint8(at + i, s.charCodeAt(i));
+        for (let i = 0; i < s.length; i++) v.setUint8(at + i, s.codePointAt(i)!);
     };
     text(0, "RIFF");
     v.setUint32(4, 36 + dataBytes, true);
@@ -59,7 +59,7 @@ function measure(r: Rendered): string {
     }
     const n = frames * chs.length;
     const db = (x: number): string => (x > 0 ? (20 * Math.log10(x)).toFixed(1) : "-inf");
-    const seam = r.loop ? Math.max(...chs.map((ch) => Math.abs(ch[0]! - ch[frames - 1]!))) : NaN;
+    const seam = r.loop ? Math.max(...chs.map((ch) => Math.abs(ch[0]! - ch[frames - 1]!))) : Number.NaN;
     return [
         `${(frames / r.sampleRate).toFixed(3)}s`,
         `${chs.length}ch`,

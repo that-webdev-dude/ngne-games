@@ -113,6 +113,48 @@ function escapeHtml(value) {
     );
 }
 
+function safeSlug(slug) {
+    return slugPattern.test(slug) && slug.length <= 64 && !deviceNamePattern.test(slug);
+}
+
+// Optional site/redirects.json: [{ "slug": "old", "to": "catalog-slug" }]. Each entry serves a
+// static page at ./old/ that sends visitors to ../catalog-slug/, so retired game URLs keep working.
+function readRedirects(root, slugs, games) {
+    const file = path.join(root, "site", "redirects.json");
+    if (!lstatSync(file, { throwIfNoEntry: false })) return [];
+    const list = JSON.parse(readFileSync(inputPath(root, "site/redirects.json", "file"), "utf8"));
+    if (!Array.isArray(list)) throw new Error("Redirects must be an array");
+    return list.map((entry) => {
+        if (!entry || typeof entry !== "object" || Array.isArray(entry))
+            throw new Error("Invalid redirect entry");
+        const slug = textField(entry, "slug");
+        const to = textField(entry, "to");
+        if (!safeSlug(slug) || slugs.has(slug))
+            throw new Error(`Invalid, duplicate, or reserved redirect slug: ${slug}`);
+        slugs.add(slug);
+        const target = games.find((game) => game.slug === to);
+        if (!target) throw new Error(`Redirect target is not a catalog game: ${to}`);
+        return { slug, href: `../${target.slug}/`, title: target.title };
+    });
+}
+
+function redirectPage(redirect) {
+    const title = escapeHtml(redirect.title);
+    return `<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0; url=${redirect.href}" />
+        <link rel="canonical" href="${redirect.href}" />
+        <title>${title}</title>
+    </head>
+    <body>
+        <p>This game has moved to <a href="${redirect.href}">${title}</a>.</p>
+    </body>
+</html>
+`;
+}
+
 function card(game) {
     const play = `./${game.slug}/`;
     const source = `${repository}/tree/main/${game.directory}`;
@@ -165,12 +207,7 @@ export function buildSite(projectRoot = defaultRoot) {
                 "screenshotAlt",
             ].map((key) => [key, textField(entry, key)]),
         );
-        if (
-            !slugPattern.test(game.slug) ||
-            game.slug.length > 64 ||
-            deviceNamePattern.test(game.slug) ||
-            slugs.has(game.slug)
-        )
+        if (!safeSlug(game.slug) || slugs.has(game.slug))
             throw new Error(`Invalid, duplicate, or reserved slug: ${game.slug}`);
         slugs.add(game.slug);
         if (
@@ -193,6 +230,7 @@ export function buildSite(projectRoot = defaultRoot) {
         game.files = walk(game.build, true);
         return game;
     });
+    const redirects = readRedirects(root, slugs, games);
     const html = template.replace(marker, () => games.map(card).join("\n"));
     // Every input and the exact output target have been validated before clearing root dist.
     rmSync(output, { recursive: true, force: true });
@@ -206,6 +244,10 @@ export function buildSite(projectRoot = defaultRoot) {
             mkdirSync(path.dirname(destination), { recursive: true });
             copyFileSync(file, destination);
         }
+    }
+    for (const redirect of redirects) {
+        mkdirSync(path.join(output, redirect.slug));
+        writeFileSync(path.join(output, redirect.slug, "index.html"), redirectPage(redirect));
     }
     return output;
 }

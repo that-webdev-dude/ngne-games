@@ -24,7 +24,7 @@ type Rng = () => number;
 function hashSeed(text: string): number {
     let h = 2166136261;
     for (let i = 0; i < text.length; i++) {
-        h ^= text.charCodeAt(i);
+        h ^= text.codePointAt(i)!;
         h = Math.imul(h, 16777619);
     }
     return h >>> 0;
@@ -48,7 +48,7 @@ for (let i = 0; i <= SIN_N; i++) SIN_TABLE[i] = Math.sin((TAU * i) / SIN_N);
 /** Sine of a phase given in cycles (table lookup with linear interpolation). */
 function sinc(phase: number): number {
     const x = (phase - Math.floor(phase)) * SIN_N;
-    const i = x | 0;
+    const i = Math.trunc(x);
     const a = SIN_TABLE[i]!;
     return a + (SIN_TABLE[i + 1]! - a) * (x - i);
 }
@@ -94,12 +94,18 @@ function midiToHz(midi: number): number {
 
 const PITCH_CLASS: Record<string, number> = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
 
+/** Semitone offset of an accidental: "#" sharpens, "b" flattens, none is natural. */
+function accidental(mark: string | undefined): number {
+    if (mark === "#") return 1;
+    if (mark === "b") return -1;
+    return 0;
+}
+
 /** "c#4", "bb3", "e5" -> MIDI number (a4 = 69). */
 function noteToMidi(name: string): number {
-    const m = /^([a-g])(#|b)?(\d)$/.exec(name);
+    const m = /^([a-g])([#b])?(\d)$/.exec(name);
     if (!m) throw new Error(`bad note "${name}"`);
-    const acc = m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0;
-    return 12 * (Number(m[3]) + 1) + PITCH_CLASS[m[1]!]! + acc;
+    return 12 * (Number(m[3]) + 1) + PITCH_CLASS[m[1]!]! + accidental(m[2]);
 }
 
 /** Topology-preserving state-variable filter (lp / bp / hp). */
@@ -850,10 +856,9 @@ interface ChordSlot {
 const CHORD_SHAPES: Record<string, number[]> = { "": [0, 4, 7], m: [0, 3, 7], dim: [0, 3, 6] };
 
 function parseChord(name: string): ChordSlot {
-    const m = /^([A-G])(#|b)?(m|dim)?$/.exec(name);
+    const m = /^([A-G])([#b])?(m|dim)?$/.exec(name);
     if (!m) throw new Error(`bad chord "${name}"`);
-    const acc = m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0;
-    const root = (PITCH_CLASS[m[1]!.toLowerCase()]! + acc + 12) % 12;
+    const root = (PITCH_CLASS[m[1]!.toLowerCase()]! + accidental(m[2]) + 12) % 12;
     return { root, tones: CHORD_SHAPES[m[3] ?? ""]! };
 }
 
@@ -1224,7 +1229,7 @@ function peakOf(L: Float32Array, R: Float32Array): number {
 function removeMean(...chs: Float32Array[]): void {
     for (const d of chs) {
         let sum = 0;
-        for (let i = 0; i < d.length; i++) sum += d[i]!;
+        for (const x of d) sum += x;
         const mean = sum / d.length;
         for (let i = 0; i < d.length; i++) d[i] = d[i]! - mean;
     }
@@ -1302,8 +1307,16 @@ function trackTitle(sr: number): Rendered {
     melody(c, LEAD_PULSE, 12, B, 2, 0.12, -0.35, 0.2, -12);
     pad(c, PAD, 0, 24, 55, 0.05);
     forBars(0, 24, (b) => arp(c, ARP, b, b < 4 || b >= 20 ? "0 . 1 . 2 . 3 . 4 . 3 . 2 . 1 ." : "0 1 2 3 2 1 0 1 2 3 4 3 2 1 2 3", 62, 0.13, 0.35));
-    forBars(0, 24, (b) => bassLine(c, BASS, b, b < 2 ? "0 - - - - - - -" : b < 4 ? "0 - - 0 - - 12 -" : "0 - 0 12 0 - 0 12", 2, 28, 0.42));
-    forBars(2, 24, (b) => drums(c, kit, b, b === 3 || b === 11 || b === 23 ? DR_FILL : b === 19 ? DR_FILL_TOM : b < 4 ? DR_INTRO : DR_HALF));
+    forBars(0, 24, (b) => {
+        if (b < 2) bassLine(c, BASS, b, "0 - - - - - - -", 2, 28, 0.42);
+        else if (b < 4) bassLine(c, BASS, b, "0 - - 0 - - 12 -", 2, 28, 0.42);
+        else bassLine(c, BASS, b, "0 - 0 12 0 - 0 12", 2, 28, 0.42);
+    });
+    forBars(2, 24, (b) => {
+        if (b === 3 || b === 11 || b === 23) drums(c, kit, b, DR_FILL);
+        else if (b === 19) drums(c, kit, b, DR_FILL_TOM);
+        else drums(c, kit, b, b < 4 ? DR_INTRO : DR_HALF);
+    });
     [4, 12, 20].forEach((b) => crash(c, kit, b));
     echo(c, 3, 0.38, 0.5);
     return master(c, 0.85);
@@ -1381,7 +1394,8 @@ function trackArea3(sr: number): Rendered {
     forBars(2, 32, (b) => {
         if (b === 3 || b === 11 || b === 27) drums(c, kit, b, DR_FILL);
         else if (b === 19 || b === 31) drums(c, kit, b, DR_FILL_TOM);
-        else drums(c, kit, b, b < 4 ? DR_INTRO : (b >= 12 && b < 20) || b >= 28 ? DR_ORBIT_B : DR_ORBIT);
+        else if (b < 4) drums(c, kit, b, DR_INTRO);
+        else drums(c, kit, b, (b >= 12 && b < 20) || b >= 28 ? DR_ORBIT_B : DR_ORBIT);
     });
     [4, 12, 20, 28].forEach((b) => crash(c, kit, b));
     echo(c, 3, 0.42, 0.55);
@@ -1435,7 +1449,8 @@ function trackFinalBoss(sr: number): Rendered {
     forBars(0, 32, (b) => {
         if (b === 3 || b === 11 || b === 27) drums(c, kit, b, DR_BOSS_FILL);
         else if (b === 19 || b === 31) drums(c, kit, b, DR_FILL_TOM);
-        else drums(c, kit, b, (b >= 12 && b < 20) || b >= 28 ? DR_BOSS_DBL : b < 2 ? { k: "x.x.x.x.x.x.x.x.", h: "x-x-x-x-x-x-x-x-" } : DR_BOSS);
+        else if ((b >= 12 && b < 20) || b >= 28) drums(c, kit, b, DR_BOSS_DBL);
+        else drums(c, kit, b, b < 2 ? { k: "x.x.x.x.x.x.x.x.", h: "x-x-x-x-x-x-x-x-" } : DR_BOSS);
     });
     [0, 4, 12, 20, 28].forEach((b) => crash(c, kit, b));
     echo(c, 3, 0.3, 0.35);

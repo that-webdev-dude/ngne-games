@@ -27,8 +27,8 @@ export class Pixels {
         this.data = new Uint8ClampedArray(w * h * 4);
     }
     set(x: number, y: number, rgb: number, a = 255): void {
-        x |= 0;
-        y |= 0;
+        x = Math.trunc(x);
+        y = Math.trunc(y);
         if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
         const i = (y * this.w + x) * 4;
         this.data[i] = (rgb >> 16) & 255;

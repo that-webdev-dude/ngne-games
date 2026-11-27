@@ -65,6 +65,6 @@ The tests cover rules (armour, chips, chains, extends, score table, display fit)
 
 ## Assets
 
-Sprites in `src/assets/sprites/` were drawn for this game as palette-index grids; their editable sources are in `art/*.px`. Effects, fonts, backdrops and cabinet panels are generated at load. Music and sound effects are original deterministic synthesis (`src/audio/synth.ts`) with no samples. Art direction drew on a study of 1990s arcade shooters; no third-party art, music or code is included.
+Sprites in `src/assets/sprites/` were drawn for this game as palette-index grids; their editable sources are in `art/*.px`. The launcher icons in `public/icons/` show the player sprite, scaled up without smoothing, on the game's background colour. Effects, fonts, backdrops and cabinet panels are generated at load. Music and sound effects are original deterministic synthesis (`src/audio/synth.ts`) with no samples. Art direction drew on a study of 1990s arcade shooters; no third-party art, music or code is included.
 
-NGNE is used through the pinned published package. Its MIT licence is reproduced in [LICENSE-NGNE.txt](LICENSE-NGNE.txt).
+NGNE is used through the pinned published package. Its MIT licence is reproduced in [LICENSE-NGNE.txt](LICENSE-NGNE.txt). A copy in `public/` ships with every build as `LICENSE-NGNE.txt`.

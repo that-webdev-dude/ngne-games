@@ -48,17 +48,12 @@ jobs:
       - name: Build complete collection
         run: npm run build 2>&1 | tee .test-output/ci/build.log
 
-      - name: Check Starfall campaign clears
-        run: npm run check:campaign 2>&1 | tee .test-output/ci/campaign.log
-
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: check-failure-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            .test-output/ci/*.log
-            .test-output/campaign-bot.json
+          path: .test-output/ci/*.log
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 7

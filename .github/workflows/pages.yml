@@ -40,9 +40,6 @@ jobs:
       - name: Build complete collection
         run: npm run build
 
-      - name: Check Starfall campaign clears
-        run: npm run check:campaign
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:

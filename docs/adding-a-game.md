@@ -30,7 +30,7 @@ For example, a TypeScript/Vite game can use this package shape. The NGNE version
 }
 ```
 
-That example requires game-local `tsconfig.json`, `tests/tsconfig.json`, test files, Vite config, and an HTML entry. Keep relative config relationships intact; for example, `tests/tsconfig.json` extends `../tsconfig.json`. `games/starfall/` demonstrates the existing layout, but its gameplay/configuration need not become shared abstractions.
+That example requires game-local `tsconfig.json`, `tests/tsconfig.json`, test files, Vite config, and an HTML entry. Keep relative config relationships intact; for example, `tests/tsconfig.json` extends `../tsconfig.json`. `games/starfall-reload/` demonstrates the existing layout, but its gameplay/configuration need not become shared abstractions.
 
 ## Installation and working directory
 
@@ -75,12 +75,20 @@ Slugs and workspace directories must each be unique. All fields are required, no
 
 The assembler derives `./my-game/`, the source URL under `games/my-game` on `main`, and `gallery/my-game.png`. Adding a game requires no game-specific assembler branch. Update the root README catalog and any gallery introduction that no longer describes the collection accurately.
 
+When a game is retired, remove its catalog entry and keep its old URL working with an entry in `site/redirects.json`:
+
+```json
+[{ "slug": "old-game", "to": "my-game" }]
+```
+
+The assembler writes `old-game/index.html`, a page that sends visitors to `../my-game/`. A redirect slug follows the catalog slug rules, must not match a catalog slug, and must point to a catalog game.
+
 ## Storage, fixtures, and legal files
 
 - Browser storage is shared by origin, including all games on the same GitHub Pages host. Namespace keys by game, such as `my-game.settings` and `my-game.best`. Preserve established keys when moving a game; changing its URL path does not create a new origin.
 - Keep browser fixtures under the game's `tests/` and outside the production entry/import graph. They may be served by the game's development server; they must not enter its production `dist/`.
 - The assembler rejects symlinks/junctions, hidden local files, source maps, TypeScript/JSX source, archives, and directories such as `tests`, `fixtures`, `src`, `node_modules`, `art`, `artifacts`, and `evidence` in game output. Keep only intended runtime files and required notices there.
-- Include required runtime notices through the game's `public/` or equivalent build input. Starfall includes `LICENSE-NGNE.txt` in its build. Determine the new game's own legal requirements; this does not license its art/audio or every other game.
+- Include required runtime notices through the game's `public/` or equivalent build input. Starfall Reload ships `LICENSE-NGNE.txt` from its `public/` folder. Determine the new game's own legal requirements; this does not license its art/audio or every other game.
 
 ## Validation
 
@@ -92,11 +100,10 @@ npm run format:check
 npm run typecheck
 npm test
 npm run build
-npm run check:campaign
 npm run preview -- --port 4173 --strictPort
 ```
 
-`check:campaign` remains Starfall's three-seed regression check. Add the new game's meaningful automated/manual checks within its workspace; do not present a Starfall clear as acceptance of another game.
+Add the new game's meaningful automated/manual checks within its workspace; root `npm test` runs them. Do not present another game's checks as acceptance of the new one.
 
 Check the gallery thumbnail, keyboard focus, Play and source links, direct game load/reload, resources, and license output. Also serve a copy of `dist/` beneath a real `/ngne-games/` directory and check `/ngne-games/<slug>/`; previewing only at `/` does not verify repository-prefixed paths. Record actual browser/device/audio/controller checks separately from automated tests.
 

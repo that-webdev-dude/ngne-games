@@ -1,0 +1,13 @@
+{
+    "id": "/ngne-games/starfall-reload/",
+    "name": "Starfall Reload",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "theme_color": "#05060c",
+    "background_color": "#05060c",
+    "icons": [
+        { "src": "./icons/starfall-reload-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "./icons/starfall-reload-512.png", "sizes": "512x512", "type": "image/png" }
+    ]
+}

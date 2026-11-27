@@ -1,18 +1,19 @@
 # Deployment
 
-The collection builds one static artifact in root `dist/`. Pages publication uses `.github/workflows/pages.yml`, is manual-only, and accepts only `main`. The verified deployment is commit [`3d9da22`](https://github.com/that-webdev-dude/ngne-games/commit/3d9da22d4367c08ace397c246310324f982b6fdf), published by [this successful run](https://github.com/that-webdev-dude/ngne-games/actions/runs/41719715671).
+The collection builds one static artifact in root `dist/`. Pages publication uses `.github/workflows/pages.yml`, is manual-only, and accepts only `main`. The verified deployment is commit [`3d9da22`](https://github.com/that-webdev-dude/ngne-games/commit/3d9da22d4367c08ace397c246310324f982b6fdf), published by [this successful run](https://github.com/that-webdev-dude/ngne-games/actions/runs/41719715671). It predates Starfall Reload and still serves the retired Starfall.
 
 ## Destinations
 
-| Item                | URL                                                                                                                                     |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Gallery             | https://that-webdev-dude.github.io/ngne-games/                                                                                          |
-| Starfall play       | https://that-webdev-dude.github.io/ngne-games/starfall/                                                                                 |
-| Collection source   | https://github.com/that-webdev-dude/ngne-games                                                                                          |
-| Starfall source     | https://github.com/that-webdev-dude/ngne-games/tree/main/games/starfall                                                                 |
-| Starfall screenshot | https://raw.githubusercontent.com/that-webdev-dude/ngne-games/main/games/starfall/docs/screenshots/midnight-citadel-starfall-engine.png |
+| Item                       | URL                                                                                                                               |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Gallery                    | https://that-webdev-dude.github.io/ngne-games/                                                                                    |
+| Starfall Reload play       | https://that-webdev-dude.github.io/ngne-games/starfall-reload/                                                                    |
+| Retired Starfall redirect  | https://that-webdev-dude.github.io/ngne-games/starfall/ (sends visitors to Starfall Reload)                                       |
+| Collection source          | https://github.com/that-webdev-dude/ngne-games                                                                                    |
+| Starfall Reload source     | https://github.com/that-webdev-dude/ngne-games/tree/main/games/starfall-reload                                                    |
+| Starfall Reload screenshot | https://raw.githubusercontent.com/that-webdev-dude/ngne-games/main/games/starfall-reload/docs/screenshots/cirrus-line-halberd.png |
 
-This collection manages Starfall's deployment. These gallery, game, source, and screenshot targets have been verified. Keep operational play/source/screenshot links on these collection destinations; retain genuine historical attribution in provenance files.
+This collection manages Starfall Reload's deployment. Verify these targets at the next publication. Keep operational play/source/screenshot links on these collection destinations; retain genuine historical attribution in provenance files.
 
 ## Prerequisites and approvals
 
@@ -35,26 +36,28 @@ npm run format:check
 npm run typecheck
 npm test
 npm run build
-npm run check:campaign
 npm run preview -- --port 4173 --strictPort
 ```
 
-Both workflows install from the root lockfile, check formatting, run tooling/game tests, run `npm run build`, and assert Starfall campaign clears for seeds 17, 41, and 83. Game builds already typecheck game and test code. The bot JSON is written to ignored `.test-output/campaign-bot.json`; headless reachability does not establish rendered, audible, controller, or human acceptance.
+Both workflows install from the root lockfile, check formatting, run tooling/game tests (including Starfall Reload's headless campaign) and run `npm run build`. Game builds already typecheck game and test code. Headless reachability does not establish rendered, audible, controller, or human acceptance.
 
 Root `build` builds every game before assembling the gallery. Expected output includes:
 
 ```text
 dist/index.html
 dist/style.css
-dist/gallery/starfall.png
-dist/starfall/index.html
-dist/starfall/assets/...
-dist/starfall/LICENSE-NGNE.txt
+dist/gallery/starfall-reload.png
+dist/starfall-reload/index.html
+dist/starfall-reload/assets/...
+dist/starfall-reload/icons/...
+dist/starfall-reload/manifest.webmanifest
+dist/starfall-reload/LICENSE-NGNE.txt
+dist/starfall/index.html        (redirect to ../starfall-reload/)
 ```
 
-Check a copy of this artifact served below `/ngne-games/`, including `/ngne-games/starfall/`, emitted JS/CSS/images/audio, and the license. Relative gallery/game links must work with the trailing slash. Do not upload only `games/starfall/dist/` or a repository root. Fixtures, dependencies, source maps, archives, and local evidence must stay out of the artifact.
+Check a copy of this artifact served below `/ngne-games/`, including `/ngne-games/starfall-reload/`, the `/ngne-games/starfall/` redirect, emitted JS/CSS/images/audio, the manifest, and the license. Relative gallery/game links must work with the trailing slash. Do not upload only `games/starfall-reload/dist/` or a repository root. Fixtures, dependencies, source maps, archives, and local evidence must stay out of the artifact.
 
-CI runs for pull requests into `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It uploads scoped check logs and any campaign JSON on failure with seven-day retention. Review CI results in the repository's [Actions history](https://github.com/that-webdev-dude/ngne-games/actions/workflows/ci.yml).
+CI runs for pull requests into `main` and pushes to `main` or a `feat/**`, `dev/**`, `cleanup/**` or `chore/**` branch. It uploads scoped check logs on failure with seven-day retention. Review CI results in the repository's [Actions history](https://github.com/that-webdev-dude/ngne-games/actions/workflows/ci.yml).
 
 ## Manual publication
 
@@ -63,14 +66,14 @@ After separate publication approval:
 1. Confirm successful CI and the exact reviewed commit on remote `main`. Ensure the workflow on `main` is the reviewed manual-only version.
 2. Open **Actions → Deploy NGNE Games to GitHub Pages → Run workflow**, choose **main**, and run it. With GitHub CLI, the equivalent is `gh workflow run pages.yml --ref main`.
 3. Check the selected run's commit SHA, all build checks, one `github-pages` artifact uploaded from root `dist/`, environment approvals, and the deployment result. Build and deploy are linked by `needs: build`; failed checks prevent deployment. No workflow publishes on push or pull request.
-4. Verify the gallery and direct Starfall URL, thumbnail, keyboard navigation, launch, reload, console, resources, and `starfall/LICENSE-NGNE.txt` at the published origin. Check the source and raw screenshot URLs after `main` is available. Verify existing production browser storage separately from localhost.
+4. Verify the gallery and direct Starfall Reload URL, the `/starfall/` redirect, thumbnail, keyboard navigation, launch, reload, console, resources, and `starfall-reload/LICENSE-NGNE.txt` at the published origin. Check the source and raw screenshot URLs after `main` is available. Verify existing production browser storage separately from localhost.
 5. Record the accepted commit, run, artifact, and URLs. Only then update deployment-status wording in the READMEs. Commit and push those edits under their own authorizations.
 
 The Pages workflow serializes deployments without canceling an active run. It builds its own artifact and deploys that run's output; a green local build or CI artifact alone is not publication evidence.
 
 ## Rollback
 
-Retain the accepted commit SHA and download a copy of its Pages artifact before its seven-day retention expires. Keep accepted source/assets/legal notices available; rollback must not depend on a separate Starfall site or repository.
+Retain the accepted commit SHA and download a copy of its Pages artifact before its seven-day retention expires. Keep accepted source/assets/legal notices available; rollback must not depend on a separate game site or repository. The retired Starfall is kept under the `starfall-v1` tag.
 
 The existing workflow has no selector for an old artifact. The normal rollback is a reviewed source revert on `main`, rechecking the complete collection and manually publishing it under separate commit/push/main/publication authorizations. Do not rewrite history or force-push. Using a retained artifact directly would require a separately reviewed and authorized redeployment path; do not assume re-running an old workflow bypasses its current permissions, environment rules, or approval requirements.
 

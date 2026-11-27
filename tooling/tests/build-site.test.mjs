@@ -159,6 +159,47 @@ test("metadata cannot inject HTML or link schemes", (t) => {
     assert.ok(html.includes("$&amp; $$ $`"));
 });
 
+test("redirects send a retired slug to a catalog game under the repository prefix", (t) => {
+    const f = fixture(t);
+    f.catalog[0].title = "Alpha <script>x</script>";
+    f.saveCatalog();
+    f.put("site/redirects.json", JSON.stringify([{ slug: "retired", to: "alpha" }]));
+    const output = buildSite(f.root);
+    const page = readFileSync(path.join(output, "retired/index.html"), "utf8");
+    assert.match(page, /<meta http-equiv="refresh" content="0; url=\.\.\/alpha\/" \/>/);
+    assert.ok(page.includes('<a href="../alpha/">Alpha &lt;script&gt;x&lt;/script&gt;</a>'));
+    assert.doesNotMatch(page, /<script/);
+    const target = new URL("../alpha/", "https://example.test/ngne-games/retired/");
+    assert.equal(target.pathname, "/ngne-games/alpha/");
+    assert.ok(existsSync(path.join(output, "alpha/index.html")));
+    const html = readFileSync(path.join(output, "index.html"), "utf8");
+    assert.equal((html.match(/<article /g) ?? []).length, 1);
+    assert.doesNotMatch(html, /retired/);
+});
+
+test("invalid redirects fail before replacing existing output", (t) => {
+    const f = fixture(t);
+    f.put("dist/keep.txt", "previous artifact");
+    for (const redirects of [
+        {},
+        [null],
+        [{ slug: "alpha", to: "alpha" }],
+        [{ slug: "gallery", to: "alpha" }],
+        [{ slug: "../escape", to: "alpha" }],
+        [{ slug: "con", to: "alpha" }],
+        [{ slug: "retired", to: "missing" }],
+        [{ slug: "retired" }],
+        [
+            { slug: "retired", to: "alpha" },
+            { slug: "retired", to: "alpha" },
+        ],
+    ]) {
+        f.put("site/redirects.json", JSON.stringify(redirects));
+        assert.throws(() => buildSite(f.root));
+        assert.equal(readFileSync(path.join(f.root, "dist/keep.txt"), "utf8"), "previous artifact");
+    }
+});
+
 test("rebuild removes stale root output without changing game builds or other directories", (t) => {
     const f = fixture(t);
     f.put("dist/retired-game/old.js", "stale");
@@ -188,7 +229,7 @@ test("invalid catalogs fail before replacing existing output", (t) => {
             entry.slug = "index.html";
         },
         (entry) => {
-            entry.slug = "Starfall";
+            entry.slug = "Alpha";
         },
         (entry) => {
             entry.slug = "con";
