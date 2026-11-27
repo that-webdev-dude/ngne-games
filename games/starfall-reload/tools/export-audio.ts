@@ -1,13 +1,13 @@
 // Renders every SFX cue and music track to 16-bit WAV for review and prints
-// measured properties. Output goes to the given folder (default: the OS temp directory):
-//   node --experimental-strip-types tools/export-audio.ts [sampleRate] [outDir]
+// measured properties. Output always goes to starfall-reload-audio in the OS temp directory:
+//   node --experimental-strip-types tools/export-audio.ts [sampleRate]
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { MUSIC_IDS, renderMusic, renderSfx, SFX_IDS, type Rendered } from "../src/audio/synth.ts";
 
 const sampleRate = Number(process.argv[2] ?? 44100);
-const outDir = process.argv[3] ?? join(tmpdir(), "starfall-reload-audio");
+const outDir = join(tmpdir(), "starfall-reload-audio");
 
 function toWav(r: Rendered): Uint8Array {
     const chs = r.channels;
