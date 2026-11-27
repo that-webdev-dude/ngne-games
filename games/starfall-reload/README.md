@@ -1,6 +1,6 @@
 # Starfall Reload
 
-A full-screen vertical arcade shoot-'em-up built with **@ngne/core 0.3.0** and TypeScript. It is an original follow-up to Starfall, with a new cabinet layout, weapons, rules, areas, bosses, art and sound. Requires a WebGPU-capable desktop browser.
+A full-screen vertical arcade shoot-'em-up built with **@ngne/core 0.4.0** and TypeScript. It is an original follow-up to Starfall, with a new cabinet layout, weapons, rules, areas, bosses, art and sound. Requires a WebGPU-capable desktop browser.
 
 [![Fighting the Seraph Engine above the aurora](docs/screenshots/aurora-orbit-seraph-engine.png)](docs/screenshots/aurora-orbit-seraph-engine.png)
 

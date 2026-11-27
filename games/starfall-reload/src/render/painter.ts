@@ -22,6 +22,23 @@ export interface TextOptions {
     alpha?: number;
 }
 
+/** Blending, layer and space of a solid rectangle or line. */
+export interface ShapeOptions {
+    alpha?: number;
+    layer?: number;
+    screen?: boolean;
+}
+
+/**
+ * Half-pixel bias for an odd integer size. With pixelSnap, NGNE rounds a quad's corner, so an odd
+ * size lands on floor(centre) and an even size on round(centre); the bias puts odd sizes on
+ * round(centre) too, so parts that share a centre stay aligned while they move.
+ * Reported as https://github.com/that-webdev-dude/ngne/issues/64.
+ */
+function oddBias(size: number): number {
+    return Number.isInteger(size) && size % 2 !== 0 ? 0.5 : 0;
+}
+
 /** Thin drawing facade over one NGNE frame and the packed atlas. Centre-anchored, like NGNE. */
 export class Painter {
     frame!: Frame;
@@ -31,11 +48,14 @@ export class Painter {
     }
 
     region(r: Region, x: number, y: number, o: SpriteOptions = {}): void {
+        const width = r.w * (o.sx ?? 1),
+            height = r.h * (o.sy ?? 1);
+        const straight = !o.rotation;
         this.frame.sprite({
-            x,
-            y,
-            width: r.w * (o.sx ?? 1),
-            height: r.h * (o.sy ?? 1),
+            x: straight ? x - oddBias(width) : x,
+            y: straight ? y - oddBias(height) : y,
+            width,
+            height,
             texture: this.atlas.id,
             u: r.u,
             v: r.v,
@@ -54,14 +74,14 @@ export class Painter {
     }
 
     /** Solid rectangle from its top-left corner (batched through the atlas). */
-    rect(x: number, y: number, w: number, h: number, color: number, alpha = 1, layer = 0, screen = false): void {
+    rect(x: number, y: number, w: number, h: number, color: number, o: ShapeOptions = {}): void {
         if (w <= 0 || h <= 0) return;
         const r = this.atlas.get("px");
-        this.frame.sprite({ x: x + w / 2, y: y + h / 2, width: w, height: h, texture: this.atlas.id, u: r.u + r.uw * 0.25, v: r.v + r.vh * 0.25, uw: r.uw * 0.5, vh: r.vh * 0.5, color, alpha, layer, screen });
+        this.frame.sprite({ x: x + w / 2 - oddBias(w), y: y + h / 2 - oddBias(h), width: w, height: h, texture: this.atlas.id, u: r.u + r.uw * 0.25, v: r.v + r.vh * 0.25, uw: r.uw * 0.5, vh: r.vh * 0.5, color, alpha: o.alpha ?? 1, layer: o.layer ?? 0, screen: o.screen ?? false });
     }
 
     /** Line segment of thickness `t` (rotated quad). */
-    line(x0: number, y0: number, x1: number, y1: number, t: number, color: number, alpha = 1, layer = 0, screen = false): void {
+    line(x0: number, y0: number, x1: number, y1: number, t: number, color: number, o: ShapeOptions = {}): void {
         const dx = x1 - x0,
             dy = y1 - y0;
         const len = Math.hypot(dx, dy);
@@ -79,9 +99,9 @@ export class Painter {
             uw: r.uw * 0.5,
             vh: r.vh * 0.5,
             color,
-            alpha,
-            layer,
-            screen,
+            alpha: o.alpha ?? 1,
+            layer: o.layer ?? 0,
+            screen: o.screen ?? false,
         });
     }
 
@@ -89,8 +109,10 @@ export class Painter {
     text(text: string, x: number, y: number, o: TextOptions = {}): number {
         const scale = o.scale ?? 1;
         const width = textWidth(text, scale);
-        let cx = o.align === "center" ? x - width / 2 : o.align === "right" ? x - width : x;
-        cx = Math.round(cx);
+        let left = x;
+        if (o.align === "center") left -= width / 2;
+        else if (o.align === "right") left -= width;
+        let cx = Math.round(left);
         for (const ch of text) {
             if (ch !== " ") {
                 const r = this.atlas.get("font", glyphIndex(ch));

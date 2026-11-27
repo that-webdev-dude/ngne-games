@@ -30,8 +30,8 @@ export function drawPanels(p: Painter, sim: Sim, flow: Flow): void {
     p.frame.sprite({ x: LEFT_X, y: 180, width: 176, height: 360, texture: "panels", u: 0, v: 0, uw: 0.5, vh: 1, layer: L.panel, screen: true });
     p.frame.sprite({ x: RIGHT_X, y: 180, width: 176, height: 360, texture: "panels", u: 0.5, v: 0, uw: 0.5, vh: 1, layer: L.panel, screen: true });
     for (const x of [FIELD.left - 1, FIELD.left + FIELD.width]) {
-        p.rect(x - 1, 0, 3, 360, CYAN, 0.18, L.panel, true);
-        p.rect(x, 0, 1, 360, CYAN, 0.85, L.panel, true);
+        p.rect(x - 1, 0, 3, 360, CYAN, { alpha: 0.18, layer: L.panel, screen: true });
+        p.rect(x, 0, 1, 360, CYAN, { alpha: 0.85, layer: L.panel, screen: true });
     }
     drawHudRows(p, sim, flow);
 }
@@ -73,8 +73,8 @@ function drawHudRows(p: Painter, sim: Sim, flow: Flow): void {
         const w = textWidth(label);
         p.text(label, fx(FIELD_W - EDGE), HUD.top + 1, { ...hud, color: GOLD, align: "right" });
         const k = Math.min(1, run.chainT / CHAIN.window);
-        p.rect(fx(FIELD_W - EDGE - w) - 1, HUD.top + 9, w + 2, 3, INK, 0.9, L.fieldText, true);
-        p.rect(fx(FIELD_W - EDGE) - w * k, HUD.top + 10, w * k, 1, GOLD, 1, L.fieldText, true);
+        p.rect(fx(FIELD_W - EDGE - w) - 1, HUD.top + 9, w + 2, 3, INK, { alpha: 0.9, layer: L.fieldText, screen: true });
+        p.rect(fx(FIELD_W - EDGE) - w * k, HUD.top + 10, w * k, 1, GOLD, { layer: L.fieldText, screen: true });
     }
     if (playing) drawBottomRow(p, sim);
 }
@@ -95,24 +95,24 @@ function drawBottomRow(p: Painter, sim: Sim): void {
     // Reload gauge: graze fills it; a full gauge reloads one bomb. Blinks when nearly full.
     const fill = run.grazeMeter / GRAZE.perBomb;
     const gy = BOT_ROW + 3;
-    p.rect(fx(GAUGE_X) - 1, gy - 1, GAUGE_W + 2, 7, INK, 0.9, L.fieldText, true);
+    p.rect(fx(GAUGE_X) - 1, gy - 1, GAUGE_W + 2, 7, INK, { alpha: 0.9, layer: L.fieldText, screen: true });
     const blink = fill > 0.8 && Math.floor(t * 10) % 2 === 1;
-    for (let i = 0; i < GAUGE_SEGS; i++) p.rect(fx(GAUGE_X + i * 6), gy, 5, 5, i / GAUGE_SEGS < fill ? (blink ? WHITE : CYAN) : OFF, 1, L.fieldText, true);
+    for (let i = 0; i < GAUGE_SEGS; i++) p.rect(fx(GAUGE_X + i * 6), gy, 5, 5, i / GAUGE_SEGS < fill ? (blink ? WHITE : CYAN) : OFF, { layer: L.fieldText, screen: true });
     // Weapon letter, mode name, power pips with the chip progress line under them.
     const w = WEAPONS[run.weapon]!;
     const mode = w.modes[run.mode]!;
     const modeRight = PIPS_X - 5;
     p.text(mode, fx(modeRight), BOT_Y, { ...hud, color: 0xa7b8d8, align: "right" });
     p.text(w.letter, fx(modeRight - textWidth(mode) - 4), BOT_Y, { ...hud, color: w.color, align: "right" });
-    p.rect(fx(PIPS_X) - 1, gy - 1, PIPS_W + 2, 9, INK, 0.9, L.fieldText, true);
+    p.rect(fx(PIPS_X) - 1, gy - 1, PIPS_W + 2, 9, INK, { alpha: 0.9, layer: L.fieldText, screen: true });
     for (let i = 0; i < PLAYER.maxPower; i++) {
         const on = i < run.power;
-        p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 5, on ? CYAN : OFF, 1, L.fieldText, true);
-        if (on) p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 1, 0xb2f4ff, 1, L.fieldText, true);
+        p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 5, on ? CYAN : OFF, { layer: L.fieldText, screen: true });
+        if (on) p.rect(fx(PIPS_X + i * (PIP_W + PIP_GAP)), gy, PIP_W, 1, 0xb2f4ff, { layer: L.fieldText, screen: true });
     }
     const need = chipsForNext(run.power);
     const progress = Number.isFinite(need) ? run.chips / need : 1;
-    p.rect(fx(PIPS_X), gy + 6, PIPS_W * progress, 1, Number.isFinite(need) ? 0x7fe0ff : GOLD, 1, L.fieldText, true);
+    p.rect(fx(PIPS_X), gy + 6, PIPS_W * progress, 1, Number.isFinite(need) ? 0x7fe0ff : GOLD, { layer: L.fieldText, screen: true });
 }
 
 const FX0 = FIELD.left;
@@ -138,7 +138,7 @@ export function drawFieldOverlays(p: Painter, sim: Sim, flow: Flow): void {
         if (Math.floor(t * 1.6) % 2 === 0) p.text("PRESS START", CX, 50, { color: WHITE, align: "center", layer: L.fieldText, screen: true });
     }
     // Screen flash.
-    if (fb.flash > 0) p.rect(fx(0), 0, FIELD_W, FIELD_H, fb.flashColor, Math.min(0.7, fb.flash * (flow.settings.calm ? 0.3 : 0.6)), L.overlay, true);
+    if (fb.flash > 0) p.rect(fx(0), 0, FIELD_W, FIELD_H, fb.flashColor, { alpha: Math.min(0.7, fb.flash * (flow.settings.calm ? 0.3 : 0.6)), layer: L.overlay, screen: true });
 }
 
 function drawBanner(p: Painter, text: string, sub: string, style: string, bt: number, life: number, t: number): void {
@@ -148,25 +148,25 @@ function drawBanner(p: Painter, text: string, sub: string, style: string, bt: nu
         const cy = 150;
         const open = Math.min(1, bt * 3);
         const h = 70 * open;
-        p.rect(fx(0), cy - h / 2, FIELD_W, h, 0x2a0410, 0.75 * fade, L.fieldText, true);
+        p.rect(fx(0), cy - h / 2, FIELD_W, h, 0x2a0410, { alpha: 0.75 * fade, layer: L.fieldText, screen: true });
         for (const y of [cy - h / 2, cy + h / 2 - 6]) {
             for (let x = -12; x < FIELD_W + 12; x += 12) {
                 const sx = x + ((t * 60) % 12);
                 if (sx < 0 || sx > FIELD_W - 6) continue;
-                p.rect(fx(sx), y, 6, 6, RED, fade, L.fieldText, true);
+                p.rect(fx(sx), y, 6, 6, RED, { alpha: fade, layer: L.fieldText, screen: true });
             }
         }
         if (Math.floor(bt * 4) % 2 === 0) p.text("WARNING", CX, cy - 14, { scale: 3, color: RED, align: "center", layer: L.fieldText, screen: true, alpha: fade });
         p.text(sub, CX, cy + 12, { color: 0xffd6d6, align: "center", layer: L.fieldText, screen: true, alpha: fade });
         // Grid scan lines sweeping down the band.
         const scan = (bt * 120) % h;
-        p.rect(fx(0), cy - h / 2 + scan, FIELD_W, 1, 0xff8a86, 0.5 * fade, L.fieldText, true);
+        p.rect(fx(0), cy - h / 2 + scan, FIELD_W, 1, 0xff8a86, { alpha: 0.5 * fade, layer: L.fieldText, screen: true });
         return;
     }
     if (style === "warning") {
-        p.rect(fx(0), 96, FIELD_W, 34, 0x2a0410, 0.3 * fade, L.fieldText, true);
-        p.rect(fx(0), 96, FIELD_W, 1, RED, fade, L.fieldText, true);
-        p.rect(fx(0), 129, FIELD_W, 1, RED, fade, L.fieldText, true);
+        p.rect(fx(0), 96, FIELD_W, 34, 0x2a0410, { alpha: 0.3 * fade, layer: L.fieldText, screen: true });
+        p.rect(fx(0), 96, FIELD_W, 1, RED, { alpha: fade, layer: L.fieldText, screen: true });
+        p.rect(fx(0), 129, FIELD_W, 1, RED, { alpha: fade, layer: L.fieldText, screen: true });
         p.text(text, CX, 101, { scale: 2, color: 0xff8a86, align: "center", layer: L.fieldText, screen: true, alpha: fade });
         p.text(sub, CX, 119, { color: 0xffd6d6, align: "center", layer: L.fieldText, screen: true, alpha: fade });
         return;
@@ -182,11 +182,11 @@ function drawAreaCard(p: Painter, index: number, t: number): void {
     const area = AREAS[index]!;
     const fade = Math.min(1, t * 3, (CARD_TIME - t) * 2.5);
     const bar = Math.min(1, t * 2.5) * 46;
-    p.rect(fx(0), 0, FIELD_W, bar, 0x000000, 0.85 * fade, L.fieldText, true);
-    p.rect(fx(0), FIELD_H - bar, FIELD_W, bar, 0x000000, 0.85 * fade, L.fieldText, true);
+    p.rect(fx(0), 0, FIELD_W, bar, 0x000000, { alpha: 0.85 * fade, layer: L.fieldText, screen: true });
+    p.rect(fx(0), FIELD_H - bar, FIELD_W, bar, 0x000000, { alpha: 0.85 * fade, layer: L.fieldText, screen: true });
     const y = 112;
-    p.rect(fx(16), y - 6, FIELD_W - 32, 96, 0x05060c, 0.6 * fade, L.fieldText, true);
-    p.rect(fx(16), y - 6, 3, 96, GOLD, fade, L.fieldText, true);
+    p.rect(fx(16), y - 6, FIELD_W - 32, 96, 0x05060c, { alpha: 0.6 * fade, layer: L.fieldText, screen: true });
+    p.rect(fx(16), y - 6, 3, 96, GOLD, { alpha: fade, layer: L.fieldText, screen: true });
     p.text(area.number, fx(28), y, { color: GOLD, layer: L.fieldText, screen: true, alpha: fade });
     p.text(area.name, fx(28), y + 12, { scale: 3, color: WHITE, layer: L.fieldText, screen: true, alpha: fade });
     p.text(area.subtitle, fx(28), y + 38, { color: 0xa7b8d8, layer: L.fieldText, screen: true, alpha: fade });
@@ -198,7 +198,7 @@ function drawAreaCard(p: Painter, index: number, t: number): void {
     const ticker = `TARGET ▶ ${area.target}   ·   `;
     const tw = ticker.length * 6;
     const off = (t * 50) % tw;
-    p.rect(fx(0), FIELD_H - 40, FIELD_W, 11, 0x5a0a1c, fade, L.fieldText, true);
+    p.rect(fx(0), FIELD_H - 40, FIELD_W, 11, 0x5a0a1c, { alpha: fade, layer: L.fieldText, screen: true });
     for (let x = -off; x < FIELD_W; x += tw) p.text(ticker, fx(x), FIELD_H - 38, { color: 0xffd6d6, layer: L.fieldText, screen: true, alpha: fade });
 }
 
@@ -213,7 +213,7 @@ export function drawScreens(p: Painter, sim: Sim, flow: Flow): void {
             p.text("PAUSE", CX, 120, { scale: 3, color: WHITE, align: "center", layer: L.screenText, screen: true });
             pauseItems(sim.run).forEach((item, i) => {
                 const active = i === flow.menu;
-                if (active) p.rect(CX - 70, 156 + i * 18, 140, 13, CYAN, 0.2, L.screen, true);
+                if (active) p.rect(CX - 70, 156 + i * 18, 140, 13, CYAN, { alpha: 0.2, layer: L.screen, screen: true });
                 p.text((active ? "▶ " : "  ") + item, CX, 159 + i * 18, { color: active ? WHITE : DIM, align: "center", layer: L.screenText, screen: true });
             });
             return;
@@ -262,11 +262,11 @@ export function drawScreens(p: Painter, sim: Sim, flow: Flow): void {
 }
 
 function shade(p: Painter, alpha: number): void {
-    p.rect(fx(0), 0, FIELD_W, FIELD_H, 0x05060c, alpha, L.screen, true);
+    p.rect(fx(0), 0, FIELD_W, FIELD_H, 0x05060c, { alpha, layer: L.screen, screen: true });
 }
 
 function logo(p: Painter, y: number, t: number): void {
-    p.rect(fx(14), y - 10, FIELD_W - 28, 74, 0x05060c, 0.55, L.screen, true);
+    p.rect(fx(14), y - 10, FIELD_W - 28, 74, 0x05060c, { alpha: 0.55, layer: L.screen, screen: true });
     p.text("STARFALL", CX + 3, y + 3, { scale: 4, color: 0x5c1d12, align: "center", layer: L.screenText, screen: true });
     p.text("STARFALL", CX, y, { scale: 4, color: 0xffb347, align: "center", layer: L.screenText, screen: true });
     p.text("STARFALL", CX, y - 1, { scale: 4, color: 0xfff2a8, align: "center", layer: L.screen, screen: true, alpha: 0.6 });
@@ -276,12 +276,12 @@ function logo(p: Painter, y: number, t: number): void {
         const len = 30 + i * 6;
         const a = Math.max(0, sx),
             b = Math.min(FIELD_W, sx + len);
-        if (b > a) p.rect(fx(a), y + 36 + i * 4, b - a, 1, CYAN, 0.5, L.screen, true);
+        if (b > a) p.rect(fx(a), y + 36 + i * 4, b - a, 1, CYAN, { alpha: 0.5, layer: L.screen, screen: true });
     }
     p.text("RELOAD", CX + 2, y + 34, { scale: 3, color: 0x0d4a6e, align: "center", layer: L.screenText, screen: true });
     p.text("RELOAD", CX, y + 32, { scale: 3, color: Math.floor(t * 8) % 16 === 0 ? WHITE : CYAN, align: "center", layer: L.screenText, screen: true });
     const shine = ((t * 120) % 500) - 100;
-    if (shine > 0 && shine < 200) p.rect(CX - 100 + shine, y - 2, 6, 31, WHITE, 0.35, L.screenText, true);
+    if (shine > 0 && shine < 200) p.rect(CX - 100 + shine, y - 2, 6, 31, WHITE, { alpha: 0.35, layer: L.screenText, screen: true });
 }
 
 function drawAttract(p: Painter, sim: Sim, flow: Flow): void {
@@ -367,7 +367,7 @@ function drawEntry(p: Painter, sim: Sim, flow: Flow): void {
     for (let i = 0; i < 3; i++) {
         const x = CX - 36 + i * 36;
         const active = i === entry.cursor && !entry.done;
-        p.rect(x - 14, 160, 28, 34, active ? CYAN : 0x1c2238, active ? 0.3 : 0.8, L.screen, true);
+        p.rect(x - 14, 160, 28, 34, active ? CYAN : 0x1c2238, { alpha: active ? 0.3 : 0.8, layer: L.screen, screen: true });
         p.text(ENTRY_CHARS[entry.letters[i]!]!, x, 166, { scale: 4, color: active && Math.floor(t * 4) % 2 ? WHITE : GOLD, align: "center", layer: L.screenText, screen: true });
         if (active) {
             p.text("▲", x, 150, { color: CYAN, align: "center", layer: L.screenText, screen: true });

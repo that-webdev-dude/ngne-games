@@ -35,20 +35,20 @@ const FENCE_LOOK: WallLook = { glow: 0x92203a, core: 0xda3d4f, hot: 0xfff0b8, cr
 
 /** Telegraph: blinking dashes between the emitters. */
 function wallDashes(p: Painter, lx: number, rx: number, ly: number, t: number, look: WallLook, layer: number): void {
-    if (Math.floor(t * 16) % 2 === 0) for (let x = lx + 8; x < rx - 8; x += 6) p.rect(x, ly - 0.5, 3, 1, look.dash, 0.8, layer);
+    if (Math.floor(t * 16) % 2 === 0) for (let x = lx + 8; x < rx - 8; x += 6) p.rect(x, ly - 0.5, 3, 1, look.dash, { alpha: 0.8, layer });
 }
 
 /** A live beam with crackle. */
 function wallBeam(p: Painter, lx: number, rx: number, ly: number, t: number, row: number, look: WallLook, layer: number): void {
     const pulse = 0.75 + 0.25 * Math.sin(t * 30 + row);
     const w = rx - lx - 12;
-    p.rect(lx + 6, ly - 5, w, 10, look.glow, 0.3 * pulse, layer);
-    p.rect(lx + 6, ly - 2.5, w, 5, look.core, 0.8 * pulse, layer);
-    p.rect(lx + 6, ly - 1, w, 2, look.hot, 1, layer);
+    p.rect(lx + 6, ly - 5, w, 10, look.glow, { alpha: 0.3 * pulse, layer });
+    p.rect(lx + 6, ly - 2.5, w, 5, look.core, { alpha: 0.8 * pulse, layer });
+    p.rect(lx + 6, ly - 1, w, 2, look.hot, { layer });
     // Crackle: short bright arcs crawling along the beam.
     for (let k = 0; k < 4; k++) {
         const cx = lx + 6 + (((t * 90 + k * 37 + row * 13) % w) + w) % w;
-        p.rect(cx, ly - 3 + (k % 3), 3, 1, look.crackle, 1, layer);
+        p.rect(cx, ly - 3 + (k % 3), 3, 1, look.crackle, { layer });
     }
 }
 
@@ -88,8 +88,8 @@ export function drawBackdrop(p: Painter, sim: Sim, areaIndex: number, distance: 
                     const speed = 40 + ((k * 13) % 30);
                     const y = (((phase + distance + (up ? -t * speed : t * speed)) % (FIELD_H + 20)) + FIELD_H + 20) % (FIELD_H + 20) - 10;
                     const lx = x + (up ? -1.5 : 1.5);
-                    p.rect(lx, y, 1, 2, up ? 0xfff0b8 : 0xff3d4f, 1, L.skyMid);
-                    p.rect(lx - 1, y - 1, 3, 4, up ? 0xffb347 : 0x92203a, 0.25, L.skyMid);
+                    p.rect(lx, y, 1, 2, up ? 0xfff0b8 : 0xff3d4f, { layer: L.skyMid });
+                    p.rect(lx - 1, y - 1, 3, 4, up ? 0xffb347 : 0x92203a, { alpha: 0.25, layer: L.skyMid });
                 }
             }
             tile(p, "bg-grid-haze", distance * 1.8, L.wisps, 0.3, 0xa0a0ff);
@@ -230,8 +230,8 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
                 p.spr("player", 0, x, y, { layer: L.player });
                 if (sim.input.focus) {
                     p.spr("glow-s", 0, x, y, { layer: L.bullet, color: 0xff4fa0, alpha: 0.55, sx: 0.6, sy: 0.6 });
-                    p.rect(x - 1.5, y - 1.5, 3, 3, 0xffffff, 1, L.bullet);
-                } else p.rect(x - 1, y - 1, 2, 2, 0xffffff, 0.85, L.player);
+                    p.rect(x - 1.5, y - 1.5, 3, 3, 0xffffff, { layer: L.bullet });
+                } else p.rect(x - 1, y - 1, 2, 2, 0xffffff, { alpha: 0.85, layer: L.player });
             }
         });
         sim.q.halos.eachChunk((chunk) => {
@@ -284,7 +284,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
                 case FX.spark: {
                     const len = size2 * (1 - k);
                     const a = Math.atan2(f.vy[row]!, f.vx[row]!);
-                    p.line(x, y, x - Math.cos(a) * len, y - Math.sin(a) * len, size, color, 1 - k * 0.5, layer);
+                    p.line(x, y, x - Math.cos(a) * len, y - Math.sin(a) * len, size, color, { alpha: 1 - k * 0.5, layer });
                     break;
                 }
                 case FX.explosion: {
@@ -315,7 +315,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
                 case FX.muzzle: {
                     const s = (size * (1 - k * 0.5)) / 16;
                     p.spr("glow-s", 0, x, y, { layer, color, alpha: 0.9, sx: s, sy: s });
-                    p.rect(x - 1, y - 2, 2, 4, 0xffffff, 1, layer);
+                    p.rect(x - 1, y - 2, 2, 4, 0xffffff, { layer });
                     break;
                 }
                 case FX.twinkle:
@@ -330,7 +330,7 @@ export function drawWorld(p: Painter, sim: Sim, alpha: number, shadows: boolean)
     if (run.bombT > 0) {
         const s = Math.min(run.bombR, 460) / 32;
         p.spr("ring", 0, run.bombX, run.bombY, { layer: L.overlay, color: 0xfff0b8, alpha: Math.min(1, run.bombT * 2), sx: s, sy: s });
-        p.rect(0, 0, FIELD_W, FIELD_H, 0xffb347, Math.min(0.25, run.bombT * 0.3), L.overlay);
+        p.rect(0, 0, FIELD_W, FIELD_H, 0xffb347, { alpha: Math.min(0.25, run.bombT * 0.3), layer: L.overlay });
     }
 }
 
@@ -348,10 +348,10 @@ function shellMarker(p: Painter, x: number, y: number, left: number, t: number):
         for (const sy of [-1, 1]) {
             const cx = x + sx * r,
                 cy = y + sy * r;
-            p.line(cx, cy, cx - sx * 4, cy, 1, SHELL_MARK, alpha, L.fx);
-            p.line(cx, cy, cx, cy - sy * 4, 1, SHELL_MARK, alpha, L.fx);
+            p.line(cx, cy, cx - sx * 4, cy, 1, SHELL_MARK, { alpha, layer: L.fx });
+            p.line(cx, cy, cx, cy - sy * 4, 1, SHELL_MARK, { alpha, layer: L.fx });
         }
-    p.rect(x - 1, y - 1, 2, 2, 0xffffff, alpha, L.fx);
+    p.rect(x - 1, y - 1, 2, 2, 0xffffff, { alpha, layer: L.fx });
 }
 
 function pxUv(p: Painter) {
